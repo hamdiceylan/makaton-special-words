@@ -1,0 +1,247 @@
+/*
+ * Special Words/bg.lproj/Localizable.strings
+ *
+ * Copyright 2013-2018 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Специални думи";
+"Special Stories" = "Специални истории";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Свържи картините";
+"Match Words"		= "Свържи думите";
+"Word to Picture"	= "Дума с картина";
+"Picture to Word"   	= "Картина с дума";
+"Sound to Picture"	= "Звук с картина";
+"Sound to Word"   	= "Звук с дума";
+"Word List"		= "Списък с думи";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "За да прочетете онлайн документацията, кликнете на Списъка с думи и след това на действащия бутон.";
+"The currently selected profile doesn't contain any words." = "Избраният профил не съдържа никакви думи";
+"To operate padlock, press and hold for 3 seconds." = "За да работите с катинар, натиснете и задръжте за 3 секунди."; // FIX ME
+
+// Text used in word details view
+"Word Details"      	= "Детайли";
+"new word"          	= "Нова дума";
+"Choose Picture"	= "Избери картина";
+"Take Picture"		= "Снимай";
+"Record Sound"		= "Запиши звук";
+"Play Sound"		= "Възпроизведи звук";
+"Stop Recording"	= "Спри записа";
+"Audio Error" 		= "Звукова грешка";
+"Cannot record sound" 	= "Не може да бъде записан звук";
+"Cannot play sound"   	= "Звукът не може да бъде възпроизведен";
+"Audio format not supported by device" 	= "Този аудио формат не се поддържа от вашето устройство";
+"Could not initialize audio session" 	= "Аудио сесията не може да бъде инициализирана";
+"Could not activate audio session" 	= "Аудио сесията не може да бъде активирана";
+"Could not set audio session category" 	= "Не може да се определи категория на аудио сесията";
+"Unable to convert file format" 	= "Форматът на този файл не може да бъде конвертиран";
+
+// Text used in extra actions view
+"Extra Actions"           	= "Допълнителни действия";
+"View Online Documentation"	= "Погледни онлайн документацията";
+"Manage Profiles"		= "Управление на профилите";
+"Export Word List"		= "Експортирай списък с думи";
+"Import Word List"		= "Импортирай списък с думи";
+"Choose Format"			= "Избери формат";
+"Use Email"			= "Използвай имейл";
+"Use Bluetooth or Wi-Fi"	= "Използвай Bluetooth или Wi-Fi";
+"Cancel Export"			= "Прекрати експортирането";
+"Cancel Import"			= "Прекрати импортирането";
+"Reset Contents and Settings"	= "Изтрий съдържанието и настройките";
+"This will delete all profiles and any words, photos and sounds you have added." = "Това действие ще изтрие всички профили, думи, снимки и звуци, които сте добавили досега";
+"This will replace any words, photos and sounds you have added to this word list." = "Това действие ще замени всички думи, снимки, звуци, които сте добавили към този списък с думи";
+"Type in '%@'"              	= "Напиши в ‘%@’"; // '%@' will be translation of word 'Reset' from below 
+"Cannot use Email"          	= "Не може да се използва имейл";
+"This device cannot currently send or receive email." = "Вашето устройство в момента не може да изпраща или получава имейли";
+"Cannot Export Data"            = "Не може да се експортира информация";
+"Cannot Import Data"            = "Не може да се импортира информация";
+"Editing has been disabled in Settings." = "Редактирането е забранено в настройките на приложението";
+"Use the Mail app to Import"    = "Използвай приложението Поща, за да изпратиш";
+"Tap on Special Words attachment in email message." = "Чукни върху прикачените файлове в имейл съобщението";
+"To import data, tap on attachment." = "За да импортираш данни, чукни върху прикачения файл";
+"Connection Request"            = "Изискване на връзка";
+"Connect with %@?"              = "Свързване с %@";
+"Connection Failed"             = "Връзката не е осъществена";
+"Connection with other device failed."  = "Свързването с други устройства е неосъществено";
+"Copy to Special Stories"       = "Отвори в Специални истории";
+"Copy to ..."                   = "Отвори в ...";
+"Error Creating Directory"      = "Възникна грешка при създаването на директорията";
+"Error Saving File"             = "Възникна грешка при запазването на файла";
+"Error Contacting Server"       = "Възникна грешка при свързването със сървъра";
+"Unable to save image file"     = "Снимката не може да бъде запазена";
+"Unable to save sound file"     = "Звуковият запис не мое да бъде запазен";
+
+// Text used in documentation viewer
+"Documentation"    = "Документация";
+"Online documentation not found" = "Онлайн документацията не е намерена";
+
+// Text used for profiles
+"Profile"          = "Профил";
+"Profiles"         = "Профили";
+"Profile %u"       = "Профил %u";
+"Choose Profile"   = "Избери профил";
+"Choose Word List" = "Избери Списък с думи";
+"Default"          = "По подразбиране";
+"Empty"            = "Празен";
+"Copy '%@'"        = "Копирай ‘%@’";
+"Profile Name"     = "Име на профил";
+"Profile name: %@" = "Име на профил: %@";
+"Language"         = "Език";
+"Replace '%@'"     = "Замяна ‘%@’";
+"Add new profile"  = "Добави нов профил";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Отмени";
+"Delete"   = "Изтрий";
+"Connect"  = "Свържи";
+"Import"   = "Въведи";
+"Replace"  = "Замени";
+"Reset"    = "Изчисти";
+"Copy"     = "Копирай";
+"Open"     = "Отвори";
+"Close"    = "Затвори";
+"Settings" = "Настройки";
+"Print"    = "Печат";
+
+// Other buttons not translated by Apple
+"Edit"     = "Редиктиране";
+"Done"     = "Готово";
+"Save"     = "Запамети";
+
+// Accessibility text
+"Previous page"		= "Предишна страница";
+"Next page"		= "Следваща страница";
+"Tap if matches"	= "Чукни, ако си подхождат";
+"Tap matching card" 	= "Чукни на съответстващата карта";
+"Already matched"	= "Вече са свързани";
+"Current text"		= "Настоящ текст";
+"Current picture"	= "Настояща картина";
+
+// Text for on-screen keyboard map legend
+"More"			= "Още"; // FIX ME
+"Drag Card"		= "Издърпайте карта"; // FIX ME
+"Tap Card"		= "Чукни карта"; // FIX ME
+"Page Navigation"	= "Страници за навигация"; // FIX ME
+"Animation Speed"	= "Скорост на анимацията";
+"Switches" 		= "Превключване";
+
+// Help text for individual keyboard keys
+"Padlock" 		= "Катинар"; // FIX ME
+
+// Other text
+"Unable to Print"	= "Не може да се печата";
+"Download" 		= "Изтегляне";
+"Download from Special iApps"  = "Изтегляне от Special iApps";
+"Send to Printer"	= "Изпратете на принтера";
+"Email as %@"		= "Изпрати имейл като %@"; // e.g. Email as PDF
+"Exported Profile"	= "Изнесения профил"; // FIX ME
+"Exported Story"	= "Изнесената история"; // FIX ME
+"Picture Cards"		= "Карти с картини"; // FIX ME
+"Word Cards"		= "Карти с думи"; // FIX ME
+"Assessment Form"	= "Оценка"; // FIX ME
+
+"Child Safety Gate"	= "Родителски контрол";
+"Story title: %@"	= "Име на историята: %@";
+
+// Default words supplied with App resources
+"ball"		= "топка";
+"book"		= "книга";
+"dolly"		= "кукла";
+"car"		= "кола";
+"bird"		= "птица";
+"dog"		= "куче";
+"cat"		= "котка";
+"fish"		= "риба";
+"flower"	= "цвете";
+"keys"		= "ключове";
+"teddy"		= "мече";
+"cup"		= "чаша";
+"brush"		= "четка";
+"coat"		= "яке";
+"shoes"		= "обувки";
+"hat"		= "шапка";
+"socks"		= "чорапи";
+"duck"		= "патица";
+"pig"		= "прасе";
+"sheep"		= "овца";
+"cow"		= "крава";
+"apple"		= "ябълка";
+"banana"	= "банан";
+"biscuit"	= "бисквита";
+"drink"		= "пия";
+"bed"		= "легло";
+"chair"		= "стол";
+"table"		= "маса";
+"bath"		= "вана";
+"eyes"		= "очи";
+"mouth"		= "уста";
+"hair"		= "коса";
+"nose"		= "нос";
+"spoon"		= "лъжица";
+"bag"		= "чанта";
+"phone"		= "телефон";
+"bricks"	= "кубче";
+"eating"	= "хранене";
+"sleeping"	= "спане";
+"drinking"	= "пиене";
+"brushing"	= "сресване";
+"sitting"	= "седене";
+"washing"	= "миене";
+"walking"	= "вървене";
+"crying"	= "плач";
+"television"	= "телевизор";
+"light"		= "лампа";
+"balloon"	= "балон";
+"box"		= "кутия";
+"bubbles"	= "балончета";
+"big"		= "голям";
+"splashing"	= "пляскане във вода";
+"little"	= "малък";
+"garden"	= "двор";
+"star"		= "звезда";
+"house"		= "къща";
+"tree"		= "дърво";
+"jumping"	= "скачане";
+"playing"	= "игра";
+"running"	= "бягане";
+"kissing"	= "целуване";
+"clapping"	= "пляскане с ръце";
+"reading"	= "четене";
+"cutting"	= "рязане";
+"throwing"	= "хвърляне";
+"towel"		= "хавлия";
+"soap"		= "сапун";
+"toothbrush"	= "четка за зъби";
+"teeth"		= "зъби";
+"bread"		= "хляб";
+"dinner"	= "вечеря";
+"juice"		= "сок";
+"yogurt"	= "кисело мляко";
+"chicken"	= "кокошка";
+"monkey"	= "маймуна";
+"rabbit"	= "заек";
+"horse"		= "кон";
+"dress"		= "рокля";
+"jumper"	= "пуловер";
+"boots"		= "ботуши";
+"trousers"	= "панталон";
+"foot"		= "стъпало";
+"tummy"		= "корем";
+"hand"		= "ръка";
+"ear"		= "ухо";
+"up"		= "горе";
+"down"		= "долу";
+"swing"		= "люлка";
+"bike"		= "колело";
+"boat"		= "лодка";
+"bus"		= "автобус";
+"aeroplane"	= "самолет";
+"train"		= "влак";
+"wet"		= "мокър";
+"dirty"		= "мръсен";
+"hot"		= "горещ";
+"cold"		= "студен";

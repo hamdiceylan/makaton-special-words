@@ -1,0 +1,12 @@
+/*
+ * Special Words/en-AU.lproj/InfoPlist.strings
+ *
+ * Copyright 2011-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Special Words";
+NSCameraUsageDescription          = "so you can add your own image for this word";
+NSLocalNetworkUsageDescription    = "so you can exchange content with other devices";
+NSMicrophoneUsageDescription      = "so you can record your own voice for this word";
+NSPhotoLibraryUsageDescription    = "so you can add your own image for this word";
+NSPhotoLibraryAddUsageDescription = "so you can use this image again later";

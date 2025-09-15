@@ -1,0 +1,12 @@
+/*
+ * Special Words/sv.lproj/InfoPlist.strings
+ *
+ * Copyright 2011-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Speciella Ord";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

@@ -1,0 +1,284 @@
+/*
+ * Special Words/sq.lproj/Localizable.strings
+ *
+ * Copyright 2013-2019 Special iApps. All rights reserved.
+ */
+
+
+// The name of this and other apps
+"Special Words"     = "Fjalë të Veçanta";
+"Special Stories"   = "Tregime të Veçanta";
+
+// The names of the activities in this app (must be short)
+"Match Pictures"    = "Bashko Figurat";
+"Match Words"       = "Bashko Fjalët";
+"Word to Picture"   = "Fjalë në Figurë";
+"Picture to Word"   = "Figurë në Fjalë";
+"Sound to Picture"  = "Zëri në Figurë";
+"Sound to Word"     = "Zëri në Fjalë";
+"Word List"         = "Lista";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Për të lexuar dokumentacionin online, shtyp Lista e Fjalëve, dhe pastaj butonin Vepro.";
+"The currently selected profile doesn't contain any words." = "Profili që ju zgjodhët nuk përmban asnjë fjalë.";
+"To operate padlock, press and hold for 3 seconds." = "Për të aktivizuar kyçjen, shtypni dhe mbajeni shtypur për 3 sekonda.";
+
+// Text used in word details view
+"Word Details"        = "Detaje të Fjalës";
+"new word"            = "fjalë e re";
+"Choose Picture"      = "Zgjidh Figurën";
+"Take Picture"        = "Bëj Foto";
+"Record Sound"        = "Regjistro Zërin";
+"Play Sound"          = "Dëgjo Zërin";
+"Stop Recording"      = "Ndalo Regjistrimin";
+"Audio Error"         = "Gabim me Zërin";
+"Cannot record sound" = "Nuk mund të regjistrojë zë";
+"Cannot play sound"   = "Nuk mund të luajë zërin";
+"Audio format not supported by device" = "Ky format nuk mbështetet nga pajisja";
+"Could not initialize audio session"   = "Nuk mund të fillojë sesioni i audios";
+"Could not activate audio session"     = "Nuk mund të aktivizohet sesioni i audios";
+"Could not set audio session category" = "Nuk mundi të përcaktojë kategorinë e sesionit të audios";
+"Unable to convert file format"        = "Nuk mundi të konvertojë formatin";
+
+// Text used in extra actions view
+// "Extra Actions"            = "Veprime të Tjera"; // too long
+"Extra Actions"               = "Veprime";
+"View Online Documentation"   = "Shiko Dokumentacionin Online";
+"Manage Profiles"             = "Manaxhimi i Profileve";
+"Export Word List"            = "Eksporto Listën e Fjalëve";
+"Import Word List"            = "Importo Listën e Fjalëve";
+"Choose Format"               = "Zgjidh Formatin"; // format might be PDF, etc
+"Use Email"                   = "Perdor Email";
+"Use Bluetooth or Wi-Fi"      = "Përdor Bluetooth ose Wi-Fi";
+"Cancel Export"               = "Anullo Eksportin";
+"Cancel Import"               = "Anullo Importin";
+"Reset Contents and Settings" = "Ribëj Përmbajtjen dhe Konfigurimin";
+"This will delete all profiles and any words, photos and sounds you have added." = "Ky veprim do të fshijë të gjitha profilet dhe ndonjë fjalë, figurë apo zë që ju keni shtuar.";
+"This will replace any words, photos and sounds you have added to this word list." = "Ky veprim do të zëvëndësojë çdo fjalë, figurë dhe zë qe ju keni shtuar në këtë listë fjalësh.";
+"Type in '%@'"                = "Shkuani '%@'"; // e.g. "Type in 'Reset'"
+"Cannot use Email"            = "Nuk mund të përdor Email";
+"This device cannot currently send or receive email." = "Kjo pajisje momentalisht nuk mund të dërgojë apo marrë email.";
+"Cannot Export Data"          = "Nuk mund të eksportojë të dhëna";
+"Cannot Import Data"          = "Nuk mund të importojë të dhëna";
+"Editing has been disabled in Settings." = "Modifikimi është ç'aktivizuar në konfigurim.";
+"Use the Mail app to Import"  = "Përdorni aplikacioni Mail për të importuar";
+"Tap on Special Words attachment in email message." = "Shtypni bashkëlidhur mesazhi të Emailit Fjalë të Veçanta.";
+"To import data, tap on attachment." = "Për të importuar të dhëna, shtyp mbi Bashkëlidhur.";
+"Connection Request"          = "Duke tentuar lidhjen";
+"Connect with %@?"            = "Lidhu me %@?"; // %@ might be "Colin's iPad"
+"Connection Failed"           = "Lidhja Dështoi";
+"Connection with other device failed."  = "Lidhja me pajisje të tjera dështoi.";
+"Copy to Special Stories"     = "Kopjo tek Tregime të Veçanta";
+"Copy to ..."                 = "Kopjo tek ...";
+"Error Creating Directory"    = "Gabim në krijimin e dosjes";
+"Error Saving File"           = "Gabim në raujtjen e skedarit";
+"Error Contacting Server"     = "Gabim në lidhjen me serverin";
+"Unable to save image file"   = "Nuk mund të ruhet skedari i figurës";
+"Unable to save sound file"   = "Nuk mund të ruhet skedari i zërit";
+
+// Text used for selecting audio voices
+"Select a Voice"   = "Zgjidhni një Zë";
+"Male Voice"       = "Zë Mashkullor";
+"Male"             = "Mashkull";
+"Female Voice"     = "Zë Femëror";
+"Female"           = "Femër";
+
+// Text used in documentation viewer
+"Documentation"    = "Dokumentacioni";
+"Online documentation not found" = "Dokumentacioni online nuk u gjet";
+
+// Text used for profiles
+"Profile"          = "Profili";
+"Profiles"         = "Profilet";
+"Profile %u"       = "Profili %u";
+"Choose Profile"   = "Zgjidhni Profilin";
+"Choose Word List" = "Zgjidhni Listën e Fjalëve";
+"Default"          = "Parazgjedhur";
+"Empty"            = "Bosh";
+"Copy '%@'"        = "Kopjo '%@'";
+"Profile Name"     = "Emri i profilit";
+"Profile name: %@" = "Emri i profilit: %@";
+"Language"         = "Gjuha";
+"Replace '%@'"     = "Zëvendëso '%@'";
+"Add new profile"  = "Shto një profil të ri";
+
+// Text used for various buttons
+"OK"       = "Dakord";
+"Cancel"   = "Anullo";
+"Delete"   = "Fshi";
+"Connect"  = "Lidhu";
+"Import"   = "Importo";
+"Replace"  = "Zëvendëso";
+"Reset"    = "Zero";
+"Copy"     = "Kopjo";
+"Open"     = "Hap";
+"Close"    = "Mbyll";
+"Settings" = "Konfigurime";
+"Print"    = "Printo";
+
+// Other buttons not translated by Apple, and a flag to indicate we have these
+"Edit"     = "Edito";
+"Done"     = "U Bë";
+"Save"     = "Ruaj";
+
+// Accessibility text
+"Tap if matches"    = "Prek nëse përputhen";
+"Tap matching card" = "Prek kartat që përputhen";
+"Already matched"   = "Përputhja është kryer";
+"Current text"      = "Teksti aktual";
+"Current picture"   = "Figura aktuale";
+
+// Text for on-screen keyboard map legend
+"More"              = "Më shumë";
+"Drag Card"         = "Zvarrit Kartën";
+"Tap Card"          = "Prek Kartën";
+"Page Navigation"   = "Navigatori i faqes"; // i.e. moving from one page to the next or back
+"Animation Speed"   = "Shpejtësia e Animacionit";
+"Switches"          = "Çelësa"; // used by people with severe physical disabilities
+
+// Help text for individual keyboard keys
+"Drag to Card %u"     = "Leviz tek Karta %u";
+"Drag Left"           = "Lëviz Majtas";
+"Drag Right"          = "Lëviz Djathtas";
+"Drag Up"             = "Lëviz Lart";
+"Drag Down"           = "Lëviz Poshtë";
+"Drag Back"           = "Lëviz Mbrapa";
+"Tap Card %u"         = "Prek Kartën %u";
+"1 Card"              = "1 Kartë";
+"%u Cards"            = "%u Karta";
+"Previous Page"       = "Faqja Paraardhëse";
+"Next Page"           = "Faqja Pasardhëse";
+"Reload Page"         = "Ringarko Faqen";
+"First Page"          = "Faqja e Parë";
+"Last Page"           = "Faqja e Fundit";
+"Home Screen"         = "Kryefaqja";
+"Terminate"           = "Përfundo";
+"Keyboard Map"        = "Tastjera"; // a picture on the screen showing a keyboard
+"Padlock"             = "Butoni i Kyçjes"; // a button used to lock the child into an activity
+"Speed Up"            = "Rrit Shpejtësinë"; // i.e. faster
+"Speed Down"          = "Ul Shpejtësinë"; // i.e. slower
+"Volume Up"           = "Rrit Volumin"; // i.e. louder
+"Volume Down"         = "Ul Volumin"; // i.e. quieter
+"Shuffle Off"         = "Pa Përzierje"; // setting so that app doesn't shuffle the cards
+"Shuffle Page"        = "Përzie Faqet"; // setting to shuffle cards on each individual page
+"Shuffle All"         = "Përzie të Gjitha"; // setting to shuffle cards across all pages
+"Auto Next"           = "Automatikisht Tjetra"; // setting to automatically advance to next page
+"Reward On"           = "Shpërblimi Aktiv";
+"Reward Off"          = "Shpërblimi Jo Aktiv";
+"Capitals On"         = "Shkronja të Mëdha"; // setting to display words in capitals, e.g. CAT, DOG
+"Capitals Off"        = "Shkronja të Vogla";
+"Large Text"          = "Shkrim i gjerë";
+"Small Text"          = "Shkrim i vogël";
+"Switch %u"           = "Ndërro %u";
+
+// Other text
+"Unable to Print"     = "Nuk mund të Printojë";
+"Download"            = "Shkarko";
+"Download from Special iApps"  = "Shkarko nga Special iApps"; // i.e. from Special iApps website
+"Send to Printer"     = "Dërgo në Printer"; // device, not person
+"Email as %@"         = "Email si %@"; // %@ might be PDF, …
+"Exported Profile"    = "Profili i Eksportuar";
+"Exported Story"      = "Tregimi i Eksportuar";
+"Picture Cards"       = "Karta me Figura"; // cards with pictures on them
+"Word Cards"          = "Karta me Fjalë"; // cards with written words on them
+"Assessment Form"     = "Forma e Vlerësimit"; // a form to fill in to record a child's progress
+"Child Safety Gate"   = "Dera e Sigurisë së Fëmijës"; // also called a "Parental Lock" or "Parental Gate"
+"Story title: %@"     = "Titulli i tregimit: %@";
+
+// Default words supplied with App resources
+"ball"		= "topi";
+"book"		= "libri";
+"dolly"		= "kukulla";
+"car"		= "makina";
+"bird"		= "zogu";
+"dog"		= "qeni";
+"cat"		= "macja";
+"fish"		= "peshku";
+"flower"	= "lulja";
+"keys"		= "çelësat";
+"cup"		= "filxhani";
+"brush"		= "krëhëri";
+"coat"		= "pallto";
+"shoes"		= "këpucët";
+"hat"		= "kapelja";
+"socks"		= "çorapet";
+"duck"		= "pata";
+"pig"		= "derrkuci";
+"sheep"		= "delja";
+"cow"		= "lopa";
+"apple"		= "molla";
+"banana"	= "banania";
+"biscuit"	= "biskota";
+"drink"		= "gota";
+"bed"		= "krevati";
+"chair"		= "karrigia";
+"table"		= "tavolina";
+"bath"		= "vaska";
+"eyes"		= "sytë";
+"mouth"		= "goja";
+"hair"		= "flokët";
+"nose"		= "hunda";
+"spoon"		= "luga";
+"bag"		= "çanta";
+"phone"		= "celulari";
+"bricks"	= "kubat";
+"eating"	= "ha";
+"sleeping"	= "fle";
+"drinking"	= "pi";
+"brushing"	= "krihem";
+"sitting"	= "ulem";
+"washing"	= "lahem";
+"walking"	= "eci";
+"crying"	= "qaj";
+"television"	= "televizori";
+"light"		= "abazhuri";
+"balloon"	= "tullumbaci";
+"box"		= "kutia";
+"bubbles"	= "flluska";
+"big"		= "i madh";
+"splashing"	= "spërkas";
+"little"	= "i vogël";
+"garden"	= "oborri";
+"star"		= "ylli";
+"house"		= "shtëpia";
+"tree"		= "pema";
+"jumping"	= "kërcej";
+"playing"	= "luaj";
+"running"	= "vrapoj";
+"kissing"	= "puth";
+"clapping"	= "duartrokas";
+"reading"	= "lexoj";
+"cutting"	= "pres";
+"throwing"	= "hedh";
+"towel"		= "peshqiri";
+"soap"		= "sapuni";
+"toothbrush"	= "furça e dhëmbëve";
+"teeth"		= "dhëmbi";
+"bread"		= "buka";
+"dinner"	= "ushqimi";
+"juice"		= "lëngu";
+"yogurt"	= "kosi";
+"chicken"	= "pula";
+"monkey"	= "majmuni";
+"rabbit"	= "lepuri";
+"horse"		= "kali";
+"dress"		= "fustani";
+"jumper"	= "triko";
+"boots"		= "çizmet";
+"trousers"	= "pantallonat";
+"foot"		= "këmba";
+"tummy"		= "barku";
+"hand"		= "dora";
+"ear"		= "veshi";
+"up"		= "lart";
+"down"		= "poshtë";
+"swing"		= "lisharëse";
+"bike"		= "biçikleta";
+"boat"		= "varka";
+"bus"		= "autobusi";
+"aeroplane"	= "aeroplani";
+"train"		= "treni";
+"wet"		= "i lagur";
+"dirty"		= "pis";
+"hot"		= "ngrohtë";
+"cold"		= "ftohtë";

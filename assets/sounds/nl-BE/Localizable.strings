@@ -1,0 +1,272 @@
+/*
+ * Special Words/nl-BE.lproj/Localizable.strings
+ *
+ * Copyright 2011-2018 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Speciale Woorden";
+"Special Stories" = "Speciale Verhalen";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Zoek Beeld";
+"Match Words"		= "Zoek Woord";
+"Word to Picture"	= "Woord & Beeld";
+"Picture to Word"	= "Beeld & Woord";
+"Sound to Picture"	= "Geluid & Beeld";
+"Sound to Word"   	= "Geluid & Woord";
+"Word List"		= "Woordenlijst";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Om de online documentatie te lezen, selecteer woordenlijst en dan de actie knop";
+"The currently selected profile doesn't contain any words." = "Het geselecteerde profiel bevat geen woorden.";
+"To operate padlock, press and hold for 3 seconds." = "Om het hangslot te bedienen, houd het gedurende 3 seconden ingedrukt.";
+
+// Text used in word details view
+"Word Details"      = "Woord gegevens";
+"new word"          = "nieuw woord";
+"Choose Picture"	= "Kies foto";
+"Take Picture"		= "Neem foto";
+"Record Sound"		= "Neem geluid";
+"Play Sound"		= "Speel geluid";
+"Stop Recording"	= "Stop opname";
+"Audio Error" = "Geluid fout";
+"Cannot record sound" = "Kan geen geluid opnemen";
+"Cannot play sound"   = "Kan geen geluid afspelen";
+"Audio format not supported by device" = "Audio formaat wordt niet ondersteund door het apparaat";
+"Could not initialize audio session" = "Kon geen audio sessie initialiseren";
+"Could not activate audio session" = "Kon geen audio sessie activeren";
+"Could not set audio session category" = "Kon geen audio sessie categorie aanmaken";
+"Unable to convert file format" = "Bestandsindeling kon niet geconverteerd worden";
+
+// Text used in extra actions view
+"Extra Actions"                 = "Extra acties";
+"View Online Documentation"	= "Bekijk de online documentatie";
+"Manage Profiles"		= "Profielen beheer";
+"Export Word List"		= "Exporteer woordenlijst";
+"Import Word List"		= "Importeer woordenlijst";
+"Choose Format"			= "Kies formaat";
+"Use Email"			= "Gebruik email";
+"Use Bluetooth or Wi-Fi"	= "Gebruik Bluetooth of Wi-Fi";
+"Cancel Export"			= "Annuleer exporteren";
+"Cancel Import"			= "Annuleer importeren";
+"Reset Contents and Settings"	= "Brengt programma terug in oorspronkelijke staat";
+"This will delete all profiles and any words, photos and sounds you have added." = "Dit zal alle profielen en alle toegevoegde woorden, beelden en geluiden die door je zijn toegevoegd verwijderen";
+"This will replace any words, photos and sounds you have added to this word list." = "Dit vervangt alle woorden, beelden en geluiden die u toegevoegd hebt aan deze woordenlijst.";
+"Type in '%@'"                  = "Typ “%@”"; // Must fit on 1 line in alert
+"Cannot use Email"              = "Email kan niet gebruikt worden";
+"This device cannot currently send or receive email." = "Dit apparaat kan op dit moment geen email sturen of ontvangen";
+"Cannot Export Data"            = "Kan geen data exporteren";
+"Cannot Import Data"            = "Kan geen data importeren";
+"Editing has been disabled in Settings." = "Aanpassen is uitgezet in instellingen";
+"Use the Mail app to Import"    = "Gebruik de Mail applicatie om te importeren";
+"Tap on Special Words attachment in email message." = "Tik op de Speciale Woorden bijlage in de email boodschap";
+"To import data, tap on attachment." = "Om data te importeren tik op de bijlage";
+"Connection Request"            = "Verbinding verzoek";
+"Connect with %@?"              = "Verbind met %@?";
+"Connection Failed"             = "Er kon geen verbinding worden gemaakt";
+"Connection with other device failed."  = "Verbinding met ander apparaat is mislukt";
+"Copy to Special Stories"       = "Kopieer naar Speciale Verhalen";
+"Copy to ..."                   = "Kopieer naar ...";
+"Error Creating Directory"      = "Fout directory aanmaken";
+"Error Saving File"             = "Fout opslaan bestand";
+"Error Contacting Server"       = "Geen contact met de server";
+"Unable to save image file"     = "Kan beeld niet opslaan";
+"Unable to save sound file"     = "Kan geluid niet opslaan";
+
+// Text used in documentation viewer
+"Documentation"    = "Documentatie";
+"Online documentation not found" = "De online documentatie kon niet gevonden worden";
+
+// Text used for profiles
+"Profile"          = "Profiel";
+"Profiles"         = "Profielen";
+"Profile %u"       = "Profiel %u";
+"Choose Profile"   = "Kies profiel";
+"Choose Word List" = "Kies woordenlijst";
+"Default"          = "Standaard";
+"Empty"            = "Leeg";
+"Copy '%@'"        = "Kopieer “%@”";
+"Profile Name"     = "Profiel naam";
+"Profile name: %@" = "Profiel naam: %@";
+"Language"         = "Taal";
+"Replace '%@'"     = "Vervang “%@”";
+"Add new profile"  = "Voeg nieuw profiel toe";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Annuleer";
+"Delete"   = "Verwijder";
+"Connect"  = "Verbind";
+"Import"   = "Importeer";
+"Replace"  = "Vervang";
+"Reset"    = "Stel opnieuw in";
+"Copy"     = "Kopieer";
+"Open"     = "Openen";
+"Close"    = "Sluiten";
+"Settings" = "Instellingen";
+"Print"    = "Afdrukken";
+
+// Accessibility text
+"Previous page"			= "Vorige pagina";
+"Next page"			= "Volgende pagina";
+"Tap if matches"		= "Tik als het hetzelfde is";
+"Tap matching card"     	= "Tik op de gelijke kaart";
+"Already matched"		= "Reeds gebruikt";
+"Current text"			= "Geselecteerde tekst";
+"Current picture"		= "Geselecteerde plaatje";
+
+// Text for on-screen keyboard map legend
+"More"			= "Meer";
+"Drag Card"		= "Sleep kaart";
+"Tap Card"		= "Tik op de kaart";
+"Page Navigation"	= "Navigatie";
+"Animation Speed"	= "Animatie snelheid";
+"Switches" 		= "Schakelaars";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Sleep naar kaart %u";
+"Drag Left"   		= "Sleep links";
+"Drag Right"  		= "Sleep rechts";
+"Drag Up"     		= "Sleep naar boven";
+"Drag Down"   		= "Sleep naar onder";
+"Drag Back"   		= "Sleep terug";
+"Tap Card %u"  		= "Tik op kaart %u";
+"1 Card"      		= "1 kaart";
+"%u Cards"     		= "%u kaarten";
+//"Play Sound"  	= "Speel geluid";
+"Previous Page" 	= "Vorige pagina";
+"Next Page"		= "Volgende pagina";
+"Reload Page" 		= "Pagina herladen";
+"First Page"  		= "Eerste pagina";
+"Last Page"		= "Laatste pagina";
+"Home Screen"		= "Beginscherm";
+"Terminate" 		= "Beëindigen";
+"Keyboard Map"		= "Toetsenbordindeling";
+"Padlock" 		= "Hangslot";
+"Speed Up"		= "Tempo omhoog";
+"Speed Down" 		= "Tempo omlaag";
+"Volume Up"		= "Volume omhoog";
+"Volume Down"		= "Volume omhoog";
+"Shuffle Off"		= "Zonder schudden";
+"Shuffle Page"		= "Pagina schudden";
+"Shuffle All"		= "Alles schudden";
+"Auto Next"		= "Automatisch doorgaan";
+"Reward On"		= "Beloning aan";
+"Reward Off"		= "Beloning uit";
+"Capitals On"		= "Hoofdletters aan";
+"Capitals Off"		= "Hoofdletters uit";
+"Switch %u"		= "Schakelaar %u";
+
+// Other text
+"Unable to Print"	= "Niet in staat om af te drukken";
+"Download" 		= "Downloaden";
+"Download from Special iApps"  = "Downloaden van Special iApps";
+"Send to Printer"	= "Naar printer sturen";
+"Email as %@"		= "Email als %@"; // e.g. "PDF"
+"Exported Profile"	= "Geëxporteerd profiel";
+"Exported Story"	= "Geëxporteerd verhaal";
+"Picture Cards"		= "Beeldkaarten";
+"Word Cards"		= "Woordkaarten";
+"Assessment Form"	= "Beoordelingsformulier";
+"Child Safety Gate"	= "Ouderlijk toezicht";
+"Story title: %@"	= "Titel van verhaal: %@";
+
+// Default words supplied with App resources
+"ball"	   = "bal";
+"book"	   = "boek";
+"dolly"	   = "pop";
+"car"	   = "auto";
+"bird"	   = "vogel";
+"dog"	   = "hond";
+"cat"	   = "kat";
+"fish"	   = "vis";
+"flower"   = "bloem";
+"keys"	   = "sleutels";
+"teddy"	   = "beer";
+"cup"	   = "beker";
+"brush"	   = "haarborstel";
+"coat"	   = "jas";
+"shoes"	   = "schoenen";
+"hat"	   = "muts";
+"socks"	   = "sokken";
+"duck"	   = "eend";
+"pig"	   = "varken";
+"sheep"	   = "schaap";
+"cow"	   = "koe";
+"apple"	   = "appel";
+"banana"   = "banaan";
+"biscuit"  = "koekje";
+"drink"	   = "drank";
+"bed"	   = "bed";
+"chair"	   = "stoel";
+"table"	   = "tafel";
+"bath"	   = "bad";
+"eyes"	   = "ogen";
+"mouth"	   = "mond";
+"hair"	   = "haar";
+"nose"	   = "neus";
+"spoon"	   = "lepel";
+"bag"	   = "tas";
+"phone"	   = "GSM";
+"bricks"   = "blokken";
+"eating"   = "eten";
+"sleeping" = "slapen";
+"drinking" = "drinken";
+"brushing" = "kammen";
+"sitting"  = "zitten";
+"washing"  = "wassen";
+"walking"  = "stappen";
+"crying"   = "wenen";
+"television" = "tv";
+"light"	   = "lamp";
+"balloon"  = "ballon";
+"box"	   = "doos";
+"bubbles"  = "zeepbellen";
+"big"	   = "groot";
+"splashing" = "spatten";
+"little"   = "klein";
+"garden"   = "hof";
+"star"	   = "ster";
+"house"	   = "huis";
+"tree"	   = "boom";
+"jumping"  = "springen";
+"playing"  = "spelen";
+"running"  = "lopen";
+"kissing"  = "kussen";
+"clapping" = "handjes klappen";
+"reading"  = "lezen";
+"cutting"  = "snijden";
+"throwing" = "gooien";
+"towel"	   = "handdoek";
+"soap"	   = "zeep";
+"toothbrush" = "tandenborstel";
+"teeth"	   = "tanden";
+"bread"	   = "brood";
+"dinner"   = "middag";
+"juice"	   = "fruitsap";
+"yogurt"   = "yoghurt";
+"chicken"  = "kip";
+"monkey"   = "aap";
+"rabbit"   = "konijn";
+"horse"	   = "paard";
+"dress"	   = "jurk";
+"jumper"   = "trui";
+"boots"	   = "botten";
+"trousers" = "broek";
+"foot"	   = "voet";
+"tummy"	   = "buik";
+"hand"	   = "hand";
+"ear"	   = "oor";
+"up"	   = "klimmen";
+"down"	   = "naar beneden";
+"swing"	   = "schommel";
+"bike"	   = "fiets";
+"boat"	   = "zeilboot";
+"bus"	   = "bus";
+"aeroplane" = "vliegtuig";
+"train"	   = "trein";
+"wet"	   = "nat";
+"dirty"	   = "vuil";
+"hot"	   = "warm";
+"cold"	   = "koud";

@@ -1,0 +1,12 @@
+/*
+ * Special Words/fi.lproj/InfoPlist.strings
+ *
+ * Copyright 2013-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName = "ErityisSanat";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

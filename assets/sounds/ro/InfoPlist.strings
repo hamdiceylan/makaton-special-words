@@ -1,0 +1,12 @@
+/*
+ * Special Words/ro.lproj/InfoPlist.strings
+ *
+ * Copyright 2016-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Cuvinte speciale";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

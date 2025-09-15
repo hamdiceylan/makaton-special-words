@@ -1,0 +1,270 @@
+/*
+ * Special Words/fi.lproj/Localizable.strings
+ *
+ * Copyright 2013-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "ErityisSanat";
+"Special Stories" = "ErityisTarinat";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Yhdistä kuvat";
+"Match Words"		= "Yhdistä sanat";
+"Word to Picture"	= "Sana kuvaan";
+"Picture to Word"   	= "Kuva sanaan";
+"Sound to Picture"	= "Ääni kuvaan";
+"Sound to Word"   	= "Ääni sanaan";
+"Word List"		= "Sanalista";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Lukeaksesi dokumentaation, valitse Sanalista ja Seuraava ikkuna -painike.";
+"The currently selected profile doesn't contain any words." = "Valittu profiili ei sisällä lainkaan sanoja.";
+
+// Text used in word details view
+"Word Details"      	= "Sanat";
+"new word"          	= "Uusi sana";
+"Choose Picture"	= "Valitse kuva";
+"Take Picture"		= "Ota kuva";
+"Record Sound"		= "Nauhoita ääni";
+"Play Sound"		= "Toista ääni";
+"Stop Recording"	= "Lopeta nauhoitus";
+"Audio Error" 		= "Virhe äänentoistossa";
+"Cannot record sound" 	= "Äänen nauhoitus ei onnistu";
+"Cannot play sound"   	= "Äänen toisto ei onnistu";
+"Audio format not supported by device" 	= "Laite ei tue äänitiedoston formaattia";
+"Could not initialize audio session" 	= "Äänityksen käynnistäminen ei onnistunut";
+"Could not activate audio session" 	= "Äänityksen aktivointi ei onnistunut";
+"Could not set audio session category" 	= "Äänityssession kategoria ei selvillä";
+"Unable to convert file format" 	= "Tiedostomuodon muuttaminen ei onnistunut";
+
+// Text used in extra actions view
+"Extra Actions"           	= "Lisätoiminnot";
+"View Online Documentation"	= "Katso käyttöohjeet verkossa";
+"Manage Profiles"		= "Muokkaa profiileja";
+"Export Word List"		= "Siirrä sanalista";
+"Import Word List"		= "Tuo sanalista";
+"Choose Format"			= "Valitse muoto";
+"Use Email"			= "Käytä sähköpostia";
+"Use Bluetooth or Wi-Fi"	= "Käytä Blootoothia tai Wi-Fi:ä";
+"Cancel Export"			= "Peruuta vienti";
+"Cancel Import"			= "Peruuta tuonti";
+"Reset Contents and Settings"	= "Palauta sisältö ja asetukset";
+"This will delete all profiles and any words, photos and sounds you have added." = "Tämä toiminto poistaa kaiki profiilit ja sanat, kuvat sekä äänet, jotka olet lisännyt.";
+"This will replace any words, photos and sounds you have added to this word list." = "Tämä toiminto poistaa kaikki sanat, kuvat sekä äänet, jotka olet lisännyt sanalistaan.";
+"Type in '%@'"              	= "Kirjoita “%@”"; // '%@' will be translation of word 'Reset' from below 
+"Cannot use Email"          	= "Sähköpostin käyttö epäonnistui";
+"This device cannot currently send or receive email." = "Tämä laite ei nyt pysty lähettämään tai vastaanottamaan sähköposteja.";
+"Cannot Export Data"            = "Tietojen siirtäminen epäonnistui";
+"Cannot Import Data"            = "Tietojen tuonti epäonnistui";
+"Editing has been disabled in Settings." = "Editointi on poistettu käytöstä kohdassa Asetukset.";
+"Use the Mail app to Import"    = "Käytä sähköpostia tietojen tuontiin";
+"Tap on Special Words attachment in email message." = "Avaa ErityisSanat-liite sähköpostiviestissä.";
+"To import data, tap on attachment." = "Siirrä tiedot avaamalla liitetiedosto.";
+"Connection Request"            = "Yhteyspyyntö";
+"Connect with %@?"              = "Yhteys laitteeseen %@?";
+"Connection Failed"             = "Yhteydenotto epäonnistui";
+"Connection with other device failed."  = "Toiseen laitteeseen ei saatu yhteyttä.";
+"Copy to Special Stories"       = "Vie ohjelmaan ErityisTarinat";
+"Copy to ..."                   = "Vie ohjelmaan ...";
+"Error Creating Directory"      = "Hakemiston luonti epäonnistui";
+"Error Saving File"             = "Virhe tiedoston tallentamisessa";
+"Error Contacting Server"       = "Yhdistettäessä palvelimeen tapahtui virhe";
+"Unable to save image file"     = "Kuvatiedoston tallennus epäonnistui";
+"Unable to save sound file"     = "Äänitiedoston tallennus epäonnistui";
+
+// Text used in documentation viewer
+"Documentation"    = "Dokumentaatio";
+"Online documentation not found" = "Dokumentaatiota ei löydy verkosta";
+
+// Text used for profiles
+"Profile"          = "Profiili";
+"Profiles"         = "Profiilit";
+"Profile %u"       = "Profiili %u";
+"Choose Profile"   = "Valitse profiili";
+"Choose Word List" = "Valitse sanalista";
+"Default"          = "Oletus";
+"Empty"            = "Tyhjä";
+"Copy '%@'"        = "Kopioi “%@”";
+"Profile Name"     = "Profiilin nimi";
+"Profile name: %@" = "Profiilin nimi: %@";
+"Language"         = "Kieli";
+"Replace '%@'"     = "Korvaa “%@”";
+"Add new profile"  = "Lisää uusi profiili";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Kumoa";
+"Delete"   = "Poista";
+"Connect"  = "Yhdistä";
+"Import"   = "Tuo";
+"Replace"  = "Korvaa";
+"Reset"    = "Palauta";
+"Copy"     = "Kopioi";
+"Open"     = "Avaa";
+"Close"    = "Sulje";
+"Settings" = "Asetukset";
+"Print"    = "Tulosta";
+
+// Accessibility text
+"Previous page"		= "Edellinen sivu";
+"Next page"		= "Seuraava sivu";
+"Tap if matches"	= "Napauta jos täsmää";
+"Tap matching card" 	= "Valitse soveltuva kortti";
+"Already matched"	= "Pari jo löydetty";
+"Current text"		= "Nykyinen teksti";
+"Current picture"	= "Nykyinen kuva";
+
+// Text for on-screen keyboard map legend
+"More"			= "Muut";
+"Drag Card"		= "Siirrä kortti";
+"Tap Card"		= "Napauta korttia";
+"Page Navigation"	= "Navigointi sivuilla";
+"Animation Speed"	= "Animointien nopeus";
+"Switches" 		= "Ohjaimet";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Siirrä kohtia korttia %u";
+"Drag Left"   		= "Siirrä vasemmalle";
+"Drag Right"  		= "Siirrä oikealle";
+"Drag Up"     		= "Siirrä ylös";
+"Drag Down"   		= "Siirrä alas";
+"Drag Back"   		= "Siirrä takaisin";
+"Tap Card %u"  		= "Napauta korttia %u";
+"1 Card"      		= "1 kortti";
+"%u Cards"     		= "%u korttia";
+//"Play Sound"  	= "Toista ääni"; // defined above
+"Previous Page" 	= "Edellinen sivu";
+"Next Page"		= "Seuraava sivu";
+"Reload Page" 		= "Lataa sivu";
+"First Page"  		= "Ensimmäinen sivu";
+"Last Page"		= "Viimeinen sivu";
+"Home Screen"		= "Koti-valikko";
+"Terminate" 		= "Sammuta";
+"Keyboard Map"		= "Näppäimistökartta";
+"Padlock" 		= "Lukitus";
+"Speed Up"		= "Nopeuta";
+"Speed Down" 		= "Hidasta";
+"Volume Up"		= "Ääni kovemmalle";
+"Volume Down"		= "Ääni hiljemmalle";
+"Shuffle Off"		= "Sekoitus pois";
+"Shuffle Page"		= "Sekoita kortit sivulla";
+"Shuffle All"		= "Sekoita kaikki";
+"Auto Next"		= "Automaattinen siirtyminen";
+"Reward On"		= "Taputukset";
+"Reward Off"		= "Taputukset pois";
+"Capitals On"		= "Isot kirjaimet";
+"Capitals Off"		= "Pienet kirjaimet";
+"Large Text"		= "Suuri teksti";
+"Small Text"		= "Pieni teksti";
+"Switch %u"		= "Ohjain %u";
+
+// Other text
+"Unable to Print"	= "Tulostaminen ei onnistu";
+"Download" 		= "Lataa";
+"Download from Special iApps"  = "Lataa Special iApps";
+"Send to Printer"	= "Tulosta";
+"Email as %@" 		= "Sähköpostita muodossa %@"; // e.g. "PDF"
+"Exported Profile"	= "Siirretty profiili";
+"Exported Story"	= "Siirretty tarina";
+"Child Safety Gate"	= "Lapsilukko";
+"Story title: %@"	= "Tarinan nimi: %@";
+
+// Default words supplied with App resources
+"ball"		= "pallo";
+"book"		= "kirja";
+"dolly"		= "nukke";
+"car"		= "auto";
+"bird"		= "lintu";
+"dog"		= "koira";
+"cat"		= "kissa";
+"fish"		= "kala";
+"flower"	= "kukka";
+"keys"		= "avaimet";
+"teddy"		= "nalle";
+"cup"		= "kuppi";
+"brush"		= "harja";
+"coat"		= "takki";
+"shoes"		= "kengät";
+"hat"		= "pipo";
+"socks"		= "sukat";
+"duck"		= "ankka";
+"pig"		= "sika";
+"sheep"		= "lammas";
+"cow"		= "lehmä";
+"apple"		= "omena";
+"banana"	= "banaani";
+"biscuit"	= "keksi";
+"drink"		= "juoma";
+"bed"		= "sänky";
+"chair"		= "tuoli";
+"table"		= "pöytä";
+"bath"		= "kylpy";
+"eyes"		= "silmät";
+"mouth"		= "suu";
+"hair"		= "hiukset";
+"nose"		= "nenä";
+"spoon"		= "lusikka";
+"bag"		= "laukku";
+"phone"		= "puhelin";
+"bricks"	= "palikat";
+"eating"	= "syödä";
+"sleeping"	= "nukkua";
+"drinking"	= "juoda";
+"brushing"	= "harjata";
+"sitting"	= "istua";
+"washing"	= "pestä";
+"walking"	= "kävellä";
+"crying"	= "itkeä";
+"television"	= "televisio";
+"light"		= "lamppu";
+"balloon"	= "ilmapallo";
+"box"		= "laatikko";
+"bubbles"	= "kuplat";
+"big"		= "iso";
+"splashing"	= "loiskia";
+"little"	= "pieni";
+"garden"	= "piha";
+"star"		= "tähti";
+"house"		= "talo";
+"tree"		= "puu";
+"jumping"	= "hyppiä";
+"playing"	= "leikkiä";
+"running"	= "juosta";
+"kissing"	= "pussata";
+"clapping"	= "taputtaa";
+"reading"	= "lukea";
+"cutting"	= "leikata";
+"throwing"	= "heittää";
+"towel"		= "pyyhe";
+"soap"		= "saippua";
+"toothbrush"	= "hammasharja";
+"teeth"		= "hampaat";
+"bread"		= "leipä";
+"dinner"	= "ruoka";
+"juice"		= "mehu";
+"yogurt"	= "jugurtti";
+"chicken"	= "kana";
+"monkey"	= "apina";
+"rabbit"	= "jänis";
+"horse"		= "hevonen";
+"dress"		= "mekko";
+"jumper"	= "paita";
+"boots"		= "saappaat";
+"trousers"	= "housut";
+"foot"		= "jalka";
+"tummy"		= "maha";
+"hand"		= "käsi";
+"ear"		= "korva";
+"up"		= "ylös";
+"down"		= "alas";
+"swing"		= "keinu";
+"bike"		= "pyörä";
+"boat"		= "vene";
+"bus"		= "linja-auto";
+"aeroplane"	= "lentokone";
+"train"		= "juna";
+"wet"		= "märkä";
+"dirty"		= "likainen";
+"hot"		= "kuuma";
+"cold"		= "kylmä";

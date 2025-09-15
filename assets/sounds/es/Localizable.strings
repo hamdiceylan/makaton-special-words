@@ -1,0 +1,274 @@
+/*
+ * Special Words/es.lproj/Localizable.strings
+ *
+ * Copyright 2011-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Palabras Especiales";
+"Special Stories" = "Historias Especiales";
+ 
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"    = "Imágenes";
+"Match Words"	    = "Palabras";
+"Word to Picture"   = "Palabra Imagen";
+"Picture to Word"   = "Imagen Palabra";
+"Sound to Picture"  = "Sonido Imagen";
+"Sound to Word"	    = "Sonido Palabra";
+"Word List" 	    = "Lista";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Para leer la documentación en línea, pulse la Lista, y luego el botón de acción.";
+"The currently selected profile doesn't contain any words." = "El perfil seleccionado no contiene ninguna palabra.";
+"To operate padlock, press and hold for 3 seconds." = "Para cambiar el candado púlsalo durante 3 segundos.";
+
+// Text used in word details view
+"Word Details"      = "Detalles";
+"new word"          = "nueva palabra";
+"Choose Picture"	= "Elegir imagen";
+"Take Picture"		= "Hacer foto";
+"Record Sound"		= "Grabar sonido";
+"Play Sound"		= "Reproducir";
+"Stop Recording"	= "Detener";
+"Audio Error" = "Error de Audio";
+"Cannot record sound" = "No se puede grabar sonido";
+"Cannot play sound"   = "No se puede reproducir sonido";
+"Audio format not supported by device" = "Formato de audio no compatible con el dispositivo";
+"Could not initialize audio session" = "No se pudo iniciar la sesión de audio";
+"Could not activate audio session" = "No se puede activar la sesión de audio";
+"Could not set audio session category" = "No se pudo establecer la categoría sesión de audio";
+"Unable to convert file format" = "No se puede convertir el formato de archivo";
+
+// Text used in extra actions view
+"Extra Actions"                 = "Acciones";
+"View Online Documentation"		= "Documentación en línea";
+"Manage Profiles"		= "Gestionar los perfiles";
+"Export Word List"		= "Exportar una lista de palabras";
+"Import Word List"		= "Importar una lista de palabras";
+"Choose Format" 		= "Elegir formato de archivo";
+"Use Email"			= "Usar el correo electrónico";
+"Use Bluetooth or Wi-Fi"	= "Usar Bluetooth o Wi-Fi";
+"Cancel Export"			= "Cancelar la exportación";
+"Cancel Import"			= "Cancelar la importación";
+"Reset Contents and Settings"	= "Restablecer contenido y configuración";
+"This will delete all profiles and any words, photos and sounds you have added." = "Esto eliminará todos los perfiles y las palabras, fotos y sonidos que ha añadido.";
+"This will replace any words, photos and sounds you have added to this word list." = "Esto reemplazará las palabras, fotos y sonidos que ha añadido a esta lista de palabras.";
+"Type in '%@'"                  = "Escribir “%@”"; // Must fit on 1 line in alert
+"Cannot use Email"              = "No se puede utilizar el correo electrónico";
+"This device cannot currently send or receive email." = "Este dispositivo actualmente no puede enviar o recibir correo electrónico.";
+"Cannot Export Data"            = "No se puede exportar datos";
+"Cannot Import Data"            = "No se puede importar datos";
+"Editing has been disabled in Settings." = "« Edición » se ha desactivado en los ajustes.";
+"Use the Mail app to Import"    = "Utilizar la aplicación de correo para importar";
+"Tap on Special Words attachment in email message." = "Pulsar el archivo adjunto « Palabras Especiales » en el mensaje de correo electrónico.";
+"To import data, tap on attachment." = "Para importar datos, pulsar el archivo adjunto.";
+"Connection Request"            = "Solicitud de conexión";
+"Connect with %@?"              = "¿Conectar con %@?";
+"Connection Failed"             = "La Conexión ha fallado";
+"Connection with other device failed."  = "La conexión con otro dispositivo ha fallado.";
+"Copy to Special Stories"       = "Copiar en Historias Especiales";
+"Copy to ..."                   = "Copiar en ...";
+"Error Creating Directory"      = "Error al crear la carpeta";
+"Error Saving File"             = "Error al guardar el archivo";
+"Error Contacting Server"       = "Error de conexión con el servidor";
+"Unable to save image file"     = "No se puede guardar el archivo de imagen";
+"Unable to save sound file"     = "No se puede guardar el archivo de sonido";
+
+// Text used in documentation viewer
+"Documentation"    = "Documentación";
+"Online documentation not found" = "La documentación en línea no se ha encontrado";
+
+// Text used for profiles
+"Profile"          = "Perfil";
+"Profiles"         = "Perfiles";
+"Profile %u"       = "Perfil %u";
+"Choose Profile"   = "Elegir el perfil";
+"Choose Word List" = "Elegir la lista de palabras";
+"Default"          = "Defecto";
+"Empty"            = "Vacío";
+"Copy '%@'"        = "Copiar “%@”"; // quotes as used by Apple
+"Profile Name"     = "Nombre del perfil";
+"Profile name: %@" = "Nombre del perfil: %@";
+"Language"         = "Idioma";
+"Replace '%@'"     = "Reemplazar “%@”"; // quotes as used by Apple
+"Add new profile"  = "Agregar nuevo perfil";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Cancelar";
+"Delete"   = "Eliminar";
+"Connect"  = "Connectar";
+"Import"   = "Importar";
+"Replace"  = "Reemplazar";
+"Reset"    = "Restablecer";
+"Copy"     = "Copiar";
+"Open"     = "Abrir";
+"Close"    = "Cerrar";
+"Settings" = "Ajustes";
+"Print"    = "Imprimir";
+
+// Accessibility text
+"Previous page"		= "Página anterior";
+"Next page"		= "Página siguiente";
+"Tap if matches"	= "Pulsar, si coincide";
+"Tap matching card"     = "Pulsar la tarjeta que coincide";
+"Already matched"	= "Ya está en parejas";
+"Current text"		= "Texto actual";
+"Current picture"	= "Imagen actual";
+
+// Text for on-screen keyboard map legend
+"More"			= "Más";
+"Drag Card"		= "Arrastrar la tarjeta";
+"Tap Card"		= "Pulsar la tarjeta";
+"Page Navigation"	= "Navegación páginas";
+"Animation Speed"	= "Velocidad de animación";
+"Switches" 		= "Pulsadores";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Hacia tarjeta %u";
+"Drag Left"   		= "Hacia la izquierda";
+"Drag Right"  		= "Hacia la derecha";
+"Drag Up"     		= "Hacia arriba";
+"Drag Down"   		= "Hacia abajo";
+"Drag Back"   		= "Hacia atrás";
+"Tap Card %u"  		= "Pulsar tarjeta %u";
+"1 Card"      		= "1 tarjeta";
+"%u Cards"     		= "%u tarjetas";
+//"Play Sound"  	= "Reproducir";
+"Previous Page" 	= "Página anterior";
+"Next Page"		= "Página siguiente";
+"Reload Page" 		= "Actualizar página";
+"First Page"  		= "Primera página";
+"Last Page"		= "Última página";
+"Home Screen"		= "Pantalla inicio";
+"Terminate" 		= "Terminar";
+"Keyboard Map"		= "Mapa del teclado";
+"Padlock" 		= "Candado";
+"Speed Up"		= "Más rápido";
+"Speed Down" 		= "Más lento";
+"Volume Up"		= "Más fuerte";
+"Volume Down"		= "Más flojo";
+"Shuffle Off"		= "No mezclar";
+"Shuffle Page"		= "Mezclar página";
+"Shuffle All"		= "Mezclar todas";
+"Auto Next"		= "Avance automático";
+"Reward On"		= "Recompensar";
+"Reward Off"		= "No recompensar";
+"Capitals On"		= "Mayúsculas";
+"Capitals Off"		= "Minúsculas";
+"Large Text"		= "Texto grande";
+"Small Text"		= "Texto pequeño";
+"Switch %u"		= "Pulsador %u";
+
+// Other text
+"Unable to Print"	= "No se puede imprimir";
+"Download" 		= "Descargar";
+"Download from Special iApps" = "Descargar desde Special iApps";
+"Send to Printer"	= "Enviar a una impresora";
+"Email as %@"		= "Enviar email en formato %@"; // e.g. "PDF"
+"Exported Profile"	= "Perfil exportado";
+"Exported Story"	= "Historia exportada";
+"Picture Cards"		= "Tarjetas de imágenes";
+"Word Cards"		= "Tarjetas de palabras";
+"Assessment Form" 	= "Formulario de valoración";
+"Child Safety Gate"	= "Control parental";
+"Story title: %@"       = "El título de la historia: %@";
+
+// Default words supplied with App resources
+"ball"		= "la pelota";
+"book"		= "el libro";
+"dolly"		= "la muñeca";
+"car"		= "el coche";
+"bird"		= "el pájaro";
+"dog"		= "el perro";
+"cat"		= "el gato";
+"fish"		= "el pez";
+"flower"	= "la flor";
+"keys"		= "las llaves";
+"teddy"		= "el osito";
+"cup"		= "la taza";
+"brush"		= "el cepillo";
+"coat"		= "el abrigo";
+"shoes"		= "los zapatos";
+"hat"		= "el gorro";
+"socks"		= "los calcetines";
+"duck"		= "el pato";
+"pig"		= "el cerdo";
+"sheep"		= "la oveja";
+"cow"		= "la vaca";
+"apple"		= "la manzana";
+"banana"	= "el plátano";
+"biscuit"	= "la galleta";
+"drink"		= "la bebida";
+"bed"		= "la cama";
+"chair"		= "la silla";
+"table"		= "la mesa";
+"bath"		= "la bañera";
+"eyes"		= "los ojos";
+"mouth"		= "la boca";
+"hair"		= "el pelo";
+"nose"		= "la nariz";
+"spoon"		= "la cuchara";
+"bag"		= "la bolsa";
+"phone"		= "el teléfono";
+"bricks"	= "los cubos";
+"eating"	= "comer";
+"sleeping"	= "dormir";
+"drinking"	= "beber";
+"brushing"	= "cepillar";
+"sitting"	= "sentarse";
+"washing"	= "lavarse";
+"walking"	= "andar";
+"crying"	= "llorar";
+"television"	= "el televisor";
+"light"		= "la lámpara";
+"balloon"	= "el globo";
+"box"		= "la caja";
+"bubbles"	= "las burbujas";
+"big"		= "grande";
+"splashing"	= "salpicadura";
+"little"	= "pequeño";
+"garden"	= "el jardín";
+"star"		= "la estrella";
+"house"		= "la casa";
+"tree"		= "el árbol";
+"jumping"	= "saltar";
+"playing"	= "jugar";
+"running"	= "correr";
+"kissing"	= "besar";
+"clapping"	= "aplaudir";
+"reading"	= "leer";
+"cutting"	= "cortar";
+"throwing"	= "tirar";
+"towel"		= "la toalla";
+"soap"		= "el jabón";
+"toothbrush"	= "el cepillo de dientes";
+"teeth"		= "los dientes";
+"bread"		= "el pan";
+"dinner"	= "la cena";
+"juice"		= "el zumo";
+"yogurt"	= "el yogur";
+"chicken"	= "el pollo";
+"monkey"	= "el mono";
+"rabbit"	= "el conejo";
+"horse"		= "el caballo";
+"dress"		= "el vestido";
+"jumper"	= "el suéter";
+"boots"		= "las botas";
+"trousers"	= "los pantalones";
+"foot"		= "el pie";
+"tummy"		= "la barriga";
+"hand"		= "la mano";
+"ear"		= "la oreja";
+"up"		= "arriba";
+"down"		= "abajo";
+"swing"		= "el columpio";
+"bike"		= "la bicicleta";
+"boat"		= "el barco";
+"bus"		= "el autobús";
+"aeroplane"	= "el avión";
+"train"		= "el tren";
+"wet"		= "mojado";
+"dirty"		= "sucio";
+"hot"		= "caliente";
+"cold"		= "frío";

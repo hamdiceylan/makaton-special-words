@@ -1,0 +1,12 @@
+/*
+ * Special Words/uk.lproj/InfoPlist.strings
+ *
+ * Copyright 2014-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Особливі слова";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

@@ -1,0 +1,12 @@
+/*
+ * Special Words/it.lproj/InfoPlist.strings
+ *
+ * Copyright 2011-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Parole Speciali";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

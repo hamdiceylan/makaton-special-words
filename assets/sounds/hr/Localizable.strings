@@ -1,0 +1,232 @@
+/*
+ * Special Words/hr.lproj/Localizable.strings
+ *
+ * Copyright 2011-2018 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Posebne riječi";
+"Special Stories" = "Posebne priče";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"    = "Uparene slike";
+"Match Words"	    = "Uparene riječi";
+"Word to Picture"   = "Riječ sa slikom";
+"Picture to Word"   = "Slika s riječi";
+"Sound to Picture"  = "Zvuka sa slikom";
+"Sound to Word"	    = "Zvuka s riječi";
+"Word List"         = "Popis riječi";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Za pregled dokumentacije na internet odaberi Popis riječi a onda akcijsku tipku.";
+"The currently selected profile doesn't contain any words." = "Trenutačno odabrani profil ne sadrži nijednu riječ.";
+"Padlock" = "Lokot";
+"To operate padlock, press and hold for 3 seconds." = "Za otvaranje ili zatvaranje lokota, pritisnite i držite 3 sekunde.";
+
+// Text used in word details view
+"Word Details"      = "Detalji o riječi";
+"new word"          = "Nova riječ";
+"Choose Picture"    = "Odaberi sliku";
+"Take Picture"	    = "Makni sliku";
+"Record Sound"	    = "Snimi zvuk";
+"Play Sound"	    = "Reproduciraj zvuk";
+"Stop Recording"    = "Zaustavi snimanje";
+"Audio Error" = "Audio greška";
+"Cannot record sound" = "Ne može se snimiti zvuk";
+"Cannot play sound"   = "Ne može se reproducirati zvuk";
+"Audio format not supported by device" = "Nije podržan audio format";
+"Could not initialize audio session" = "Audio sesija ne može početi";
+"Could not activate audio session" = "Audio sesija se ne može aktivirati";
+"Could not set audio session category" = "Ne može se postaviti kategorija audio sesije";
+"Unable to convert file format" = "Nije moguće promijeniti format datoteke";
+
+// Text used in extra actions view
+// "Extra Actions"             = "Dodatne mogućnosti"; // too long
+"Extra Actions"             = "Mogućnosti";
+"View Online Documentation"	= "Dokumentacija na internetu";
+"Manage Profiles"           = "Upravljanje profilima";
+"Export Word List"          = "Izdvoji popis riječi";
+"Import Word List"          = "Uvedi popis riječi";
+"Choose Format"             = "Odaberite format";
+"Use Email"                 = "Koristi mail";
+"Use Bluetooth or Wi-Fi"	= "Koristi Bluetooth i Wi-Fi";
+"Cancel Export"             = "Odustani od izdvajanja";
+"Cancel Import"             = "Odustani od uvođenja";
+"Reset Contents and Settings" = "Reset sadržaja i postavki";
+"This will delete all profiles and any words, photos and sounds you have added." = "Ovo će izbrisati sve profile i sve riječi, slike i zvukove koje ste dodali.";
+"This will replace any words, photos and sounds you have added to this word list." = "Ovo će zamijeniti sve riječ, fotografije i zvukovi koje ste dodali na ovaj popis riječi.";
+"Type in '%@'"              = "Unesite „%@“"; // Must fit on 1 line in alert
+"Cannot use Email"          = "Mail se ne može koristiti";
+"This device cannot currently send or receive email." = "Ovaj uređaj trenutačno ne može slati ili primati mail.";
+"Cannot Export Data"        = "Nije moguće preuzimanje podataka";
+"Cannot Import Data"        = "Nije moguće uvođenje podataka";
+"Editing has been disabled in Settings." = "Uređivanje je onemogućeno u Postavkama.";
+"Use the Mail app to Import" = "Za uvoz koristi mail aplikaciju";
+"Tap on Special Words attachment in email message." = "Odaberi prilog Posebne riječi u elektroničkoj poruci.";
+"To import data, tap on attachment." = "Za preuzimanje, odaberi prilog.";
+"Connection Request"            = "Zahtjev za povezivanje";
+"Connect with %@?"              = "Povezivanje s %@?";
+"Connection Failed"             = "Povezivanje nije uspjelo";
+"Connection with other device failed." = "Povezivanje s drugim uređajem nije uspjelo.";
+"Copy to Special Stories"       = "Kopiraj u Posebne priče";
+"Copy to ..."                   = "Kopiraj u ...";
+"Error Creating Directory"      = "Greška pri kreiranju direktorija";
+"Error Saving File"             = "Greška pri spremanju datoteke";
+"Error Contacting Server"       = "Greška pri povezivanju s poslužiteljem";
+"Unable to save image file"     = "Nije moguće spremiti datoteku slike";
+"Unable to save sound file"     = "Nije moguće spremiti datoteku zvuka";
+
+// Text used in documentation viewer
+"Documentation" = "Dokumentacija";
+"Online documentation not found" = "Dokumentacija na internetu nije pronađena";
+
+// Text used for profiles
+"Profile"          = "Profil";
+"Profiles"         = "Profili";
+"Profile %u"       = "Profil %u";
+"Choose Profile"   = "Odaberi profil";
+"Choose Word List" = "Odaberi popis riječi";
+"Default"          = "Osnovni";
+"Empty"            = "Prazno";
+"Copy '%@'"        = "Kopiraj „%@“"; // single internally to avoid issues
+"Profile Name"     = "Naziv profila";
+"Profile name: %@" = "Naziv profila: %@";
+"Language"         = "Jezik";
+"Replace '%@'"     = "Zamijeni „%@“"; // single internally to avoid issues
+"Add new profile"  = "Dodaj novi profil";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Poništiti";
+"Delete"   = "Izbriši";
+"Connect"  = "Povezivanje";
+"Import"   = "Uvoz";
+"Replace"  = "Zamijeni";
+"Reset"    = "Resetiraj";
+"Copy"     = "Kopiraj";
+"Open"     = "Otvori";
+"Close"    = "Zatvori";
+"Settings" = "Postavke";
+"Print"    = "Ispis";
+
+// Accessibility text
+"Previous page"		= "Prethodna stranica";
+"Next page"             = "Sljedeća stranica";
+"Tap if matches"	= "Odaberi ako je upareno";
+"Tap matching card" 	= "Odaberi uparene kartice";
+"Already matched"	= "Već je upareno";
+"Current text"		= "Trenutačni tekst";
+"Current picture"	= "Trenutačna slika";
+
+// Other text
+"Unable to Print"	= "Nije moguće ispisati";
+"Download" 		= "Preuzmite";
+"Download from Special iApps"  = "Preuzmite s Special iApps";
+"Send to Printer"	= "Pošalji na printer";
+"Email as %@" 		= "%@ na mail"; // e.g. "PDF"
+"Exported Profile"	= "Izdvojena profil";
+"Exported Story"	= "Izdvojena priča";
+"Picture Cards"		= "Kartice sa slikama";
+"Word Cards"		= "Kartice s riječima";
+"Assessment Form"	= "Formular za procjenu";
+"Child Safety Gate"	= "Roditeljska zaštita";
+"Story title: %@"	= "Naziv priče: %@"; // %@ will be title of a story
+
+// Default words supplied with App resources
+"ball"		= "lopta";
+"book"		= "knjiga";
+"dolly"		= "lutka";
+"car"		= "auto";
+"bird"		= "ptica";
+"dog"		= "pas";
+"cat"		= "mačka";
+"fish"		= "riba";
+"flower"	= "cvijet";
+"keys"		= "ključevi";
+"teddy"		= "medo";
+"cup"		= "šalica";
+"brush"		= "četka";
+"coat"		= "kaput";
+"shoes"		= "cipele";
+"hat"		= "šešir";
+"socks"		= "čarape";
+"duck"		= "patka";
+"pig"		= "svinja";
+"sheep"		= "ovca";
+"cow"		= "krava";
+"apple"		= "jabuka";
+"banana"	= "banana";
+"biscuit"	= "keks";
+"drink"		= "piće";
+"bed"		= "krevet";
+"chair"		= "stolac";
+"table"		= "stol";
+"bath"		= "kada";
+"eyes"		= "oči";
+"mouth"		= "usta";
+"hair"		= "kosa";
+"nose"		= "nos";
+"spoon"		= "žlica";
+"bag"		= "torba";
+"phone"		= "telefon";
+"bricks"	= "cigle";
+"eating"	= "jesti";
+"sleeping"	= "spavati";
+"drinking"	= "piti";
+"brushing"	= "četkati";
+"sitting"	= "sjediti";
+"washing"	= "prati";
+"walking"	= "šetati";
+"crying"	= "plakati";
+"television"	= "televizija";
+"light"		= "svjetlo";
+"balloon"	= "balon";
+"box"		= "kutija";
+"bubbles"	= "mjehurići";
+"big"		= "velik";
+"splashing"	= "prskati";
+"little"	= "malen";
+"garden"	= "vrt";
+"star"		= "zvijezda";
+"house"		= "kuća";
+"tree"		= "drvo";
+"jumping"	= "skakati";
+"playing"	= "igrati se";
+"running"	= "trčati";
+"kissing"	= "ljubiti";
+"clapping"	= "pljeskati";
+"reading"	= "čitati";
+"cutting"	= "rezati";
+"throwing"	= "bacati";
+"towel"		= "ručnik";
+"soap"		= "sapun";
+"toothbrush"	= "četkica za zube";
+"teeth"		= "zubi";
+"bread"		= "kruh";
+"dinner"	= "večera";
+"juice"		= "sok";
+"yogurt"	= "jogurt";
+"chicken"	= "pile";
+"monkey"	= "majmun";
+"rabbit"	= "zec";
+"horse"		= "konj";
+"dress"		= "haljina";
+"jumper"	= "pulover";
+"boots"		= "čizme";
+"trousers"	= "hlače";
+"foot"		= "stopalo";
+"tummy"		= "trbuh";
+"hand"		= "ruka";
+"ear"		= "uho";
+"up"		= "gore";
+"down"		= "dolje";
+"swing"		= "ljuljačka";
+"bike"		= "bicikl";
+"boat"		= "čamac";
+"bus"		= "autobus";
+"aeroplane"	= "avion";
+"train"		= "vlak";
+"wet"		= "mokar";
+"dirty"		= "prljav";
+"hot"		= "vruć";
+"cold"		= "hladan";

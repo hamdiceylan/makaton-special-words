@@ -1,0 +1,12 @@
+/*
+ * Special Words/sq.lproj/InfoPlist.strings
+ *
+ * Copyright 2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Fjalë të Veçanta";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

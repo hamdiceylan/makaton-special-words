@@ -1,0 +1,275 @@
+/*
+ * Special Words/sv.lproj/Localizable.strings
+ *
+ * Copyright 2011-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Speciella Ord";
+"Special Stories" = "Speciella Berättelser";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Para ihop bilder";
+"Match Words"		= "Para ihop ord";
+"Word to Picture"	= "Ord till bilder";
+"Picture to Word"   	= "Bilder till ord";
+"Sound to Picture"	= "Ljud till bild";				
+"Sound to Word"   	= "Ljud till ord";	
+"Word List"		= "Ordlista";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "För att läsa online-dokumentationen, klicka på Ordlista, och sedan funktionsknapp.";
+"The currently selected profile doesn't contain any words." = "Den valda profilen innehåller inga ord.";
+"To operate padlock, press and hold for 3 seconds." = "För att använda hänglåset, tryck och håll nere i 3 sekunder.";
+
+// Text used in word details view
+"Word Details"      = "Ord detaljer";
+"new word"          = "nytt ord";
+"Choose Picture"    = "Välj bild";
+"Take Picture"	    = "Ta en bild";
+"Record Sound"	    = "Spela in ljud";
+"Play Sound"	    = "Spela upp ljud";
+"Stop Recording"    = "Stoppa inspelningen";
+"Audio Error" 	    = "Ljud fel";
+"Cannot record sound" = "Kan inte spela in ljud";
+"Cannot play sound"   = "Kan inte spela upp ljud";
+"Audio format not supported by device" = "Ljudformat som inte stöds av enhet";
+"Could not initialize audio session" = "Kunde inte initiera ljud session";
+"Could not activate audio session" = "Kunde inte aktivera ljud session";
+"Could not set audio session category" = "Kunde inte ställa in ljud session kategori";
+"Unable to convert file format" = "Det går inte att konvertera filformat";
+
+// Text used in extra actions view
+// "Extra Actions"                 = "Extra åtgärder"; // too long
+"Extra Actions"                 = "Åtgärder";
+"View Online Documentation"	= "Visa online-dokumentation";
+"Manage Profiles"		= "Hantera profiler";
+"Export Word List"		= "Exportera ordlista";
+"Import Word List"		= "Importera ordlista";
+"Choose Format"			= "Välj format";
+"Use Email"			= "Använd e-post";
+"Use Bluetooth or Wi-Fi"	= "Använd Bluetooth eller Wi-Fi";
+"Cancel Export"			= "Avbryta export";
+"Cancel Import"			= "Avbryta import";
+"Reset Contents and Settings"	= "Återställa innehåll och inställningar";
+"This will delete all profiles and any words, photos and sounds you have added." = "Detta kommer att radera alla profiler och varje ord, bilder och ljud du har lagt till.";
+"This will replace any words, photos and sounds you have added to this word list." = "Detta kommer att ersätta alla ord, bilder och ljud du har lagt till denna ordlista.";
+"Type in '%@'"                  = "Skriv in ”%@”"; // Must fit on 1 line in alert
+"Cannot use Email"              = "Kan inte använda e-post";
+"This device cannot currently send or receive email." = "Den här enheten kan för närvarande inte skicka eller ta emot e-post.";
+"Cannot Export Data"            = "Kan inte exportera data";
+"Cannot Import Data"            = "Kan inte importera data";
+"Editing has been disabled in Settings." = "Redigerar har inaktiverats i Inställningar.";
+"Use the Mail app to Import"    = "Använd Mail app för att importera";
+"Tap on Special Words attachment in email message." = "Klicka på Speciella Ord bilaga i e-postmeddelande.";
+"To import data, tap on attachment." = "Att importera data, tryck på bilaga.";
+"Connection Request"            = "Anslutningsbegäran";
+"Connect with %@?"              = "Anslut med %@?";
+"Connection Failed"             = "Anslutning misslyckades";
+"Connection with other device failed."  = "Anslutning till andra enheten misslyckades.";
+"Copy to Special Stories"       = "Kopia til Speciella Berättelser";
+"Copy to ..."                   = "Kopia til ...";
+"Error Creating Directory"      = "Fel vid skapande av katalog";
+"Error Saving File"             = "Fel vid sparande av fil";
+"Error Contacting Server"       = "Fel vid anslutning till servern";
+"Unable to save image file"     = "Kan inte spara bildfilen";
+"Unable to save sound file"     = "Kan inte spara ljudfilen";
+
+// Text used for profiles
+"Profile"          = "Profil";
+"Profiles"         = "Profiler";
+"Profile %u"       = "Profil %u";
+"Choose Profile"   = "Välj Profil";
+"Choose Word List" = "Välj ordlista";
+"Default"          = "Standard";
+"Empty"            = "Tom";
+"Copy '%@'"        = "Kopiera ”%@”"; // quotes as used by Apple
+"Profile Name"     = "Profilnamn";
+"Profile name: %@" = "Profilnamn: %@";
+"Language"         = "Språk";
+"Replace '%@'"     = "Ersätta ”%@”"; // quotes as used by Apple
+"Add new profile"  = "Lägga till ny profil";
+
+// Text used in documentation viewer
+"Documentation"    = "Dokumentation";
+"Online documentation not found" = "Online dokumentation hittades inte";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Avbryt";
+"Delete"   = "Radera";
+"Connect"  = "Kontakt";
+"Import"   = "Import";
+"Replace"  = "Ersätta";
+"Reset"    = "Återställ";
+"Copy"     = "Kopiera";
+"Open"     = "Öppna";
+"Close"    = "Stänga";
+"Settings" = "Inställningar";
+"Print"    = "Skriva ut";
+
+// Accessibility text
+"Previous page"		= "Föregående sida";
+"Next page"		= "Nästa sida";
+"Tap if matches"	= "Tryck om matcher";
+"Tap matching card"     = "Tryck matchande kort";
+"Already matched"	= "Redan matchats";
+"Current text"		= "Texten som visas";
+"Current picture"	= "Bilden som visas";
+
+// Text for on-screen keyboard map legend
+"More"			= "Mer";
+"Drag Card"		= "Dra kortet";
+"Tap Card"		= "Klicka på kortet";
+"Page Navigation"	= "Navigera mellan sidor";
+"Animation Speed"	= "Animeringshastighet";
+"Switches" 		= "Växlingsknappar";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Dra till kort %u";
+"Drag Left"   		= "Dra till vänster";
+"Drag Right"  		= "Dra till höger";
+"Drag Up"     		= "Dra uppåt";
+"Drag Down"   		= "Dra nedåt";
+"Drag Back"   		= "Dra tillbaka";
+"Tap Card %u"  		= "Klicka på kortet %u";
+"1 Card"      		= "1 kort";
+"%u Cards"     		= "%u kort";
+//"Play Sound"  	= "Spela upp ljud"; // defined above
+"Previous Page" 	= "Föregående sida";
+"Next Page"		= "Nästa sida";
+"Reload Page" 		= "Ladda sidan igen";
+"First Page"  		= "Första sidan";
+"Last Page"		= "Sista sidan";
+"Home Screen"		= "Hemskärmen";
+"Terminate" 		= "Stoppa";
+"Keyboard Map"		= "Tangentkarta";
+"Padlock" 		= "Hänglås";
+"Speed Up"		= "Snabbare";
+"Speed Down" 		= "Långsammare";
+"Volume Up"		= "Högre volym";
+"Volume Down"		= "Lägre volym";
+"Shuffle Off"		= "Blanda av";
+"Shuffle Page"		= "Blanda sidan";
+"Shuffle All"		= "Blanda alla";
+"Auto Next"		= "Auto nästa sida";
+"Reward On"		= "Belöning på";
+"Reward Off"		= "Belöning av";
+"Capitals On"		= "Stora bokstäver på";
+"Capitals Off"		= "Stora bokstäver av";
+"Large Text"		= "Stor text";
+"Small Text"		= "Liten text";
+"Switch %u"		= "Växlingsknapp %u";
+
+// Other text
+"Unable to Print"	= "Kan inte skriva ut";
+"Download" 		= "Ladda";
+"Download from Special iApps"  = "Ladda ner från Special iApps";
+"Send to Printer"	= "Skicka till skrivare";
+"Email as %@" 		= "Skicka e-post som %@";
+"Exported Profile"	= "Exporterad profil";
+"Exported Story"	= "Exporterad berättelse";
+"Picture Cards"		= "Bildkort";
+"Word Cards"		= "Ordkort";
+"Assessment Form"	= "Utvärderingsblankett";
+"Child Safety Gate"	= "Föräldrakontroll";
+"Story title: %@"	= "Titel på berättelse: %@";
+
+// Default words supplied with App resources
+"ball"		= "boll";
+"book"		= "bok";
+"dolly"		= "docka";
+"car"		= "bil";
+"bird"		= "fågel";
+"dog"		= "hund";
+"cat"		= "katt";
+"fish"		= "fisk";
+"flower"	= "blomma";
+"keys"		= "nycklar";
+"teddy"		= "nalle";
+"cup"		= "kopp";
+"brush"		= "borste";
+"coat"		= "jacka";
+"shoes"		= "skor";
+"hat"		= "hatt";
+"socks"		= "strumpor";
+"duck"		= "anka";
+"pig"		= "gris";
+"sheep"		= "får";
+"cow"		= "ko";
+"apple"		= "äpple";
+"banana"	= "banan";
+"biscuit"	= "kaka";
+"drink"		= "dryck";
+"bed"		= "säng";
+"chair"		= "stol";
+"table"		= "bord";
+"bath"		= "badkar";
+"eyes"		= "ögon";
+"mouth"		= "mun";
+"hair"		= "hår";
+"nose"		= "näsa";
+"spoon"		= "sked";
+"bag"		= "väska";
+"phone"		= "telefon";
+"bricks"	= "klossar";
+"eating"	= "äta";
+"sleeping"	= "sova";
+"drinking"	= "dricka";
+"brushing"	= "borsta";
+"sitting"	= "sitta";
+"washing"	= "tvätta";
+"walking"	= "gå";
+"crying"	= "gråta";
+"television"	= "TV";
+"light"		= "lampa";
+"balloon"	= "ballong";
+"box"		= "låda";
+"bubbles"	= "bubblor";
+"big"		= "stor";
+"splashing"	= "stänka";
+"little"	= "liten";
+"garden"	= "trädgård";
+"star"		= "stjärna";
+"house"		= "hus";
+"tree"		= "träd";
+"jumping"	= "hoppa";
+"playing"	= "spela";
+"running"	= "springa";
+"kissing"	= "pussa";
+"clapping"	= "klappa";
+"reading"	= "läsa";
+"cutting"	= "skära";
+"throwing"	= "kasta";
+"towel"		= "handduk";
+"soap"		= "tvål";
+"toothbrush"	= "tandborste";
+"teeth"		= "tänder";
+"bread"		= "bröd";
+"dinner"	= "middag";
+"juice"		= "juice";
+"yogurt"	= "yoghurt";
+"chicken"	= "kyckling";
+"monkey"	= "apa";
+"rabbit"	= "kanin";
+"horse"		= "häst";
+"dress"		= "klänning";
+"jumper"	= "tröja";
+"boots"		= "stövlar";
+"trousers"	= "byxor";
+"foot"		= "fot";
+"tummy"		= "mage";
+"hand"		= "hand";
+"ear"		= "öra";
+"up"		= "upp";
+"down"		= "ner";
+"swing"		= "gunga";
+"bike"		= "cykel";
+"boat"		= "båt";
+"bus"		= "buss";
+"aeroplane"	= "flygplan";
+"train"		= "tåg";
+"wet"		= "våt";
+"dirty"		= "smutsig";
+"hot"		= "varm";
+"cold"		= "kall";

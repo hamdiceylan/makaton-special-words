@@ -1,0 +1,12 @@
+/*
+ * Special Words/nl-BE.lproj/InfoPlist.strings
+ *
+ * Copyright 2011-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Speciale Woorden";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

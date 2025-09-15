@@ -1,0 +1,274 @@
+/*
+ * Special Words/tr.lproj/Localizable.strings
+ *
+ * Copyright 2011-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Özel Kelimeler";
+"Special Stories" = "Özel Öyküler";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"    = "Resimleri Eşleştir";
+"Match Words"	    = "Kelimeleri Eşleştir";
+"Word to Picture"   = "Kelimeyi Resme";
+"Picture to Word"   = "Resmi Kelimeye";
+"Sound to Picture"  = "Sesi Resme";
+"Sound to Word"	    = "Sesi Kelimeye";
+"Word List"         = "Kelime Listesi";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Çevrimiçi belgeleri okumak için Kelime Listesi’ni açınız ve Eylem düğmesine basınız.";
+"The currently selected profile doesn't contain any words." = "Şu anda seçilmiş olan profil herhangi bir kelime içermemektedir.";
+"To operate padlock, press and hold for 3 seconds." = "Kilidi çalıştırmak için 3 saniye basılı tutun.";
+
+// Text used in word details view
+"Word Details"    = "Kelime Detayları";
+"new word"        = "Yeni Kelime";
+"Choose Picture"  = "Resim Seç";
+"Take Picture"	  = "Resim Çek";
+"Record Sound"	  = "Ses Kaydet";
+"Play Sound"	  = "Ses Çal";
+"Stop Recording"  = "Kaydı Durdur";
+"Audio Error"	  = "İşitsel Hata";
+"Cannot record sound" = "Sesi kaydedemiyor";
+"Cannot play sound"   = "Sesi çalamıyor";
+"Audio format not supported by device" = "Ses formatı desteklenmiyor";
+"Could not initialize audio session"   = "Ses kullanım seansını hazırlayamadı";
+"Could not activate audio session"     = "Ses kullanım seansını başlatamadı";
+"Could not set audio session category" = "Ses kullanım kategorisi ayarlarını yapamadı";
+"Unable to convert file format" = "Dosya formatını çeviremedi";
+
+// Text used in extra actions view
+"Extra Actions"     = "Diğer eylemler";
+"View Online Documentation"	= "Çevrimiçi belgeleri gör";
+"Manage Profiles"	= "Profilleri yönet";
+"Export Word List"	= "Kelime listesini dışa aktar";
+"Import Word List"	= "Kelime listesini içe aktar";
+"Choose Format"		= "Format seçin";
+"Use Email"			= "Eposta kullan";
+"Use Bluetooth or Wi-Fi"	= "Bluetooth veya Wi-Fi kullan";
+"Cancel Export"		= "Dışa aktarımı iptal et";
+"Cancel Import"		= "İçe aktarımı iptal et";
+"Reset Contents and Settings"	= "İçerikleri ve ayarları sıfırla";
+"This will delete all profiles and any words, photos and sounds you have added." = "Bu eylem eklediğinizi bütün profilleri, kelime listelerini, fotoğrafları ve sesleri iptal edecek";
+"This will replace any words, photos and sounds you have added to this word list." = "Bu eylem bu profile eklediğiniz tüm kelimeleri değiştirecek";
+"Type in '%@'"                  = "“%@” gir"; // Must fit on 1 line in alert
+"Cannot use Email"              = "Eposta kullanılamıyor";
+"This device cannot currently send or receive email." = "Bu cihaz şu anda eposta gönderip alamıyor.";
+"Cannot Export Data"            = "Data gönderimi yapılamıyor";
+"Cannot Import Data"            = "Data alımı yapılamıyor";
+"Editing has been disabled in Settings." = "Ayarlar menüsünde düzeltme seçeneği kapalı";
+"Use the Mail app to Import"    = "İçe aktarım için Eposta uygulamasını kullan";
+"Tap on Special Words attachment in email message." = "Eposta mesajında Özel Kelimeler eklentisine dokun";
+"To import data, tap on attachment." = "Bilgiyi içe aktarmak için eklentiye dokunun";
+"Connection Request"            = "Bağlantı talep edildi";
+"Connect with %@?"              = "%@ bağlanıyor";
+"Connection Failed"             = "Bağlantı başarısız";
+"Connection with other device failed."  = "Diğer cihaz ile bağlantı başarısız";
+"Copy to Special Stories"       = "Şuraya Kopyala: Özel Öyküler";
+"Copy to ..."                   = "Şuraya Kopyala ...";
+"Error Creating Directory"      = "Klasör yaratma hatası";
+"Error Saving File"             = "Dosyayı kayıt hatası";
+"Error Contacting Server"       = "Bağlantı hatası";
+"Unable to save image file"     = "Resim dosyasını kaydedemiyor";
+"Unable to save sound file"     = "Ses dosyasını kaydedemiyor";
+
+// Text used in documentation viewer
+"Documentation"    = "Belgeler";
+"Online documentation not found" = "Çevrimiçi belgeler bulunamadı";
+
+// Text used for profiles
+"Profile"          = "Profil";
+"Profiles"         = "Profiller";
+"Profile %u"       = "Profil %u";
+"Choose Profile"   = "Profil Seç";
+"Choose Word List" = "Kelime Listesi Seç";
+"Default"          = "Varsayılan";
+"Empty"            = "Boş";
+"Copy '%@'"        = "“%@” Kopyala"; // quotes as used by Apple
+"Profile Name"     = "Profil Adı";
+"Profile name: %@" = "Profil Adı: %@"; 
+"Language"         = "Dil";
+"Replace '%@'"     = "“%@” Değiştir";
+"Add new profile"  = "Yeni Profil Ekle";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Vazgeç";
+"Delete"   = "Sil";
+"Connect"  = "Bağlan";
+"Import"   = "İçe aktar";
+"Replace"  = "Değiştir";
+"Reset"    = "Sıfırla";
+"Copy"     = "Kopyala";
+"Open"     = "Kapıyı";
+"Close"    = "Kapat";
+"Settings" = "Ayarlar";
+"Print"    = "Yazdır";
+
+// Accessibility text
+"Previous page"		= "Bir önceki sayfa";
+"Next page"         = "Bir sonraki sayfa";
+"Tap if matches"	= "Eşleşiyorsa tıkla";
+"Tap matching card" = "Eşleşen kartı tıkla";
+"Already matched"	= "Daha once eşleştirildi";
+"Current text"		= "Geçerli metin";
+"Current picture"	= "Geçerli resim";
+
+// Text for on-screen keyboard map legend
+"More"			= "Fazlası";
+"Drag Card"		= "Kartı Çek";
+"Tap Card"		= "Karta Dokun";
+"Page Navigation"	= "Sayfa Gezinimi";
+"Animation Speed"	= "Oynatma Hızı";
+"Switches" 		= "Switch'ler";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "%u. Karta Çek";
+"Drag Left"   		= "Sola Çek";
+"Drag Right"  		= "Sağa Çek";
+"Drag Up"     		= "Yukarı Çek";
+"Drag Down"   		= "Aşağı Çek";
+"Drag Back"   		= "Geri Çek";
+"Tap Card %u"  		= "%u. Karta Dokun";
+"1 Card"      		= "1 Kart";
+"%u Cards"     		= "%u Kart";
+//"Play Sound"  	= "Ses Çal"; // defined above
+"Previous Page" 	= "Bir Önceki Sayfa";
+"Next Page"		= "Bir Sonraki Sayfa";
+"Reload Page" 		= "Sayfayı Tekrar Yükle";
+"First Page"  		= "İlk Sayfa";
+"Last Page"		= "Son Sayfa";
+"Home Screen"		= "Ana Ekran";
+"Terminate" 		= "Sonlandır";
+"Keyboard Map"		= "Klavye Haritası";
+"Padlock" 		= "Kilit";
+"Speed Up"		= "Hızlandır";
+"Speed Down" 		= "Yavaşlat";
+"Volume Up"		= "Sesi Yükselt";
+"Volume Down"		= "Sesi Azalt";
+"Shuffle Off"		= "Karıştırmayı Kapat";
+"Shuffle Page"		= "Sayfayı Karıştır";
+"Shuffle All"		= "Hepsini Karıştır";
+"Auto Next"		= "Otomatik İlerleme";
+"Reward On"		= "Ödül Uygula";
+"Reward Off"		= "Ödül Kapat";
+"Capitals On"		= "Büyük Harf Açık";
+"Capitals Off"		= "Büyük Harf Kapalı";
+"Large Text"		= "Büyük Metin";
+"Small Text"		= "Küçük Metin";
+"Switch %u"		= "%u. Switch";
+
+// Other text
+"Unable to Print"	= "Yazdırılamıyor";
+"Download" 		= "Indirme";
+"Download from Special iApps"  = "Special iApps 'ten indirme";
+"Send to Printer"	= "Yazıcıya gönder";
+"Email as %@" 		= "%@ olarak eposta ile yolla"; // e.g. "PDF"
+"Exported Profile"	= "İçe aktarılmış profil";
+"Exported Story"	= "İçe aktarılan öykü";
+"Picture Cards"		= "Resim kartları";
+"Word Cards"		= "Kelime kartları";
+"Assessment Form"	= "Değerlendirme formu";
+"Child Safety Gate"	= "Ebeveyn Denetimi";
+"Story title: %@"	= "Öykü Başlığı: %@";
+
+// Default words supplied with App resources
+"ball"		= "top";
+"book"		= "kitap";
+"dolly"		= "bebek";
+"car"		= "araba";
+"bird"		= "kuş";
+"dog"		= "köpek";
+"cat"		= "kedi";
+"fish"		= "balık";
+"flower"	= "çiçek";
+"keys"		= "anahtar";
+"teddy"		= "ayıcık";
+"cup"		= "bardak";
+"brush"		= "fırça";
+"coat"		= "palto";
+"shoes"		= "ayakkabı";
+"hat"		= "şapka";
+"socks"		= "çorap";
+"duck"		= "ördek";
+"pig"		= "domuz";
+"sheep"		= "koyun";
+"cow"		= "inek";
+"apple"		= "elma";
+"banana"	= "muz";
+"biscuit"	= "bisküvi";
+"drink"		= "içecek";
+"bed"		= "yatak";
+"chair"		= "sandalye";
+"table"		= "masa";
+"bath"		= "banyo";
+"eyes"		= "gözler";
+"mouth"		= "ağız";
+"hair"		= "saç";
+"nose"		= "burun";
+"spoon"		= "kaşık";
+"bag"		= "çanta";
+"phone"		= "telefon";
+"bricks"	= "tuğla";
+"eating"	= "yemek yemek";
+"sleeping"	= "uyumak";
+"drinking"	= "içmek";
+"brushing"	= "saçını taramak";
+"sitting"	= "oturmak";
+"washing"	= "yıkamak";
+"walking"	= "yürümek";
+"crying"	= "ağlamak";
+"television"	= "televizyon";
+"light"		= "ışık";
+"balloon"	= "balon";
+"box"		= "kutu";
+"bubbles"	= "baloncuk";
+"big"		= "büyük";
+"splashing"	= "sıçratmak";
+"little"	= "küçük";
+"garden"	= "bahçe";
+"star"		= "yıldız";
+"house"		= "ev";
+"tree"		= "ağaç";
+"jumping"	= "zıplamak";
+"playing"	= "oyun oynamak";
+"running"	= "koşmak";
+"kissing"	= "öpmek";
+"clapping"	= "el çırpmak";
+"reading"	= "okumak";
+"cutting"	= "kesmek";
+"throwing"	= "fırlatmak";
+"towel"		= "havlu";
+"soap"		= "sabun";
+"toothbrush"	= "diş fırçası";
+"teeth"		= "dişler";
+"bread"		= "ekmek";
+"dinner"	= "akşam yemeği";
+"juice"		= "meyve suyu";
+"yogurt"	= "yoğurt";
+"chicken"	= "tavuk";
+"monkey"	= "maymun";
+"rabbit"	= "tavşan";
+"horse"		= "at";
+"dress"		= "elbise";
+"jumper"	= "kazak";
+"boots"		= "çizme";
+"trousers"	= "pantolon";
+"foot"		= "ayak";
+"tummy"		= "göbek";
+"hand"		= "el";
+"ear"		= "kulak";
+"up"		= "yukarı";
+"down"		= "aşağı";
+"swing"		= "salıncak";
+"bike"		= "bisiklet";
+"boat"		= "kayık";
+"bus"		= "otobüs";
+"aeroplane"	= "uçak";
+"train"		= "tren";
+"wet"		= "ıslak";
+"dirty"		= "kirli";
+"hot"		= "sıcak";
+"cold"		= "soğuk";

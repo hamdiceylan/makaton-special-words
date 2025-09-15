@@ -1,0 +1,283 @@
+/*
+ * Special Words/en-AU.lproj/Localizable.strings
+ *
+ * Copyright 2011-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Special Words";
+"Special Stories" = "Special Stories";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Match Pictures";
+"Match Words"		= "Match Words";
+"Word to Picture"	= "Word to Picture";
+"Picture to Word"   	= "Picture to Word";
+"Sound to Picture"	= "Sound to Picture";
+"Sound to Word"   	= "Sound to Word";
+"Word List" 		= "Word List";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "To read online documentation, tap Word List, and then the Action button.";
+"The currently selected profile doesn't contain any words." = "The currently selected profile doesn't contain any words.";
+"To operate padlock, press and hold for 3 seconds." = "To operate padlock, press and hold for 3 seconds.";
+
+// Text used in word details view
+"Word Details"      = "Word Details";
+"new word"          = "new word";
+"Choose Picture"	= "Choose Picture";
+"Take Picture"		= "Take Picture";
+"Record Sound"		= "Record Sound";
+"Play Sound"		= "Play Sound";
+"Stop Recording"	= "Stop Recording";
+"Audio Error" = "Audio Error";
+"Cannot record sound" = "Cannot record sound";
+"Cannot play sound"   = "Cannot play sound";
+"Audio format not supported by device" = "Audio format not supported by device";
+"Could not initialize audio session" = "Could not initialise audio session";
+"Could not activate audio session" = "Could not activate audio session";
+"Could not set audio session category" = "Could not set audio session category";
+"Unable to convert file format" = "Unable to convert file format";
+
+// Text used in extra actions view
+"Extra Actions"                 = "Extra Actions";
+"View Online Documentation"	= "View Online Documentation";
+"Manage Profiles"		= "Manage Profiles";
+"Export Word List"		= "Export Word List";
+"Import Word List"		= "Import Word List";
+"Choose Format" 		= "Choose Format";
+"Use Email"			= "Use Email";
+"Use Bluetooth or Wi-Fi"	= "Use Bluetooth or Wi-Fi";
+"Cancel Export"			= "Cancel Export";
+"Cancel Import"			= "Cancel Import";
+"Reset Contents and Settings"	= "Reset Contents and Settings";
+"This will delete all profiles and any words, photos and sounds you have added." = "This will delete all profiles and any words, photos and sounds you have added.";
+"This will replace any words, photos and sounds you have added to this word list." = "This will replace any words, photos and sounds you have added to this word list.";
+"Type in '%@'"                  = "Type in “%@”"; // Must fit on 1 line in alert
+"Cannot use Email"              = "Cannot use Email";
+"This device cannot currently send or receive email." = "This device cannot currently send or receive email.";
+"Cannot Export Data"            = "Cannot Export Data";
+"Cannot Import Data"            = "Cannot Import Data";
+"Editing has been disabled in Settings." = "Editing has been disabled in Settings.";
+"Use the Mail app to Import"    = "Use the Mail app to import";
+"Tap on Special Words attachment in email message." = "Tap on Special Words attachment in email message.";
+"To import data, tap on attachment." = "To import data, tap on attachment.";
+"Connection Request"            = "Connection Request";
+"Connect with %@?"              = "Connect with %@?";
+"Connection Failed"             = "Connection Failed";
+"Connection with other device failed."  = "Connection with other device failed.";
+"Copy to Special Stories"       = "Copy to Special Stories";
+"Copy to ..."                   = "Copy to ...";
+"Error Creating Directory"      = "Error Creating Directory";
+"Error Saving File"             = "Error Saving File";
+"Error Contacting Server"       = "Error Contacting Server";
+"Unable to save image file"     = "Unable to save image file";
+"Unable to save sound file"     = "Unable to save sound file";
+
+// Text used for selecting audio voices
+"Select a Voice" = "Select a Voice";
+"Male Voice" = "Male Voice";
+"Male" = "Male";
+"Female Voice" = "Female Voice";
+"Female" = "Female";
+"Child Voice" = "Child Voice";
+"Child" = "Child";
+
+// Text used in documentation viewer
+"Documentation"    = "Documentation";
+"Online documentation not found" = "Online documentation not found";
+
+// Text used for profiles
+"Profile"          = "Profile";
+"Profiles"         = "Profiles";
+"Profile %u"       = "Profile %u";
+"Choose Profile"   = "Choose Profile";
+"Choose Word List" = "Choose Word List";
+"Default"          = "Default";
+"Empty"            = "Empty";
+"Copy '%@'"        = "Copy “%@”"; // single internally to avoid issues
+"Profile Name"     = "Profile Name";
+"Profile name: %@" = "Profile name: %@";
+"Language"         = "Language";
+"Replace '%@'"     = "Replace “%@”"; // single internally to avoid issues
+"Add new profile"  = "Add new profile";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Cancel";
+"Delete"   = "Delete";
+"Connect"  = "Connect";
+"Import"   = "Import";
+"Replace"  = "Replace";
+"Reset"    = "Reset";
+"Copy"     = "Copy";
+"Open"     = "Open";
+"Close"    = "Close";
+"Settings" = "Settings";
+"Print"    = "Print";
+
+// Accessibility text
+"Previous page"		= "Previous page";
+"Next page"		= "Next page";
+"Tap if matches"	= "Tap if matches";
+"Tap matching card" 	= "Tap matching card";
+"Already matched"	= "Already matched";
+"Current text"		= "Current text";
+"Current picture"	= "Current picture";
+
+// Text for on-screen keyboard map legend
+"More"			= "More";
+"Drag Card"		= "Drag Card";
+"Tap Card"		= "Tap Card";
+"Page Navigation"	= "Page Navigation";
+"Animation Speed"	= "Animation Speed";
+"Switches" 		= "Switches";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Drag to Card %u";
+"Drag Left"   		= "Drag Left";
+"Drag Right"  		= "Drag Right";
+"Drag Up"     		= "Drag Up";
+"Drag Down"   		= "Drag Down";
+"Drag Back"   		= "Drag Back";
+"Tap Card %u"  		= "Tap Card %u";
+"1 Card"      		= "1 Card";
+"%u Cards"     		= "%u Cards";
+//"Play Sound"  	= "Play Sound"; // defined above
+"Previous Page" 	= "Previous Page";
+"Next Page"		= "Next Page";
+"Reload Page" 		= "Reload Page";
+"First Page"  		= "First Page";
+"Last Page"		= "Last Page";
+"Home Screen"		= "Home Screen";
+"Terminate" 		= "Terminate";
+"Keyboard Map"		= "Keyboard Map";
+"Padlock" 		= "Padlock";
+"Speed Up"		= "Speed Up";
+"Speed Down" 		= "Speed Down";
+"Volume Up"		= "Volume Up";
+"Volume Down"		= "Volume Down";
+"Shuffle Off"		= "Shuffle Off";
+"Shuffle Page"		= "Shuffle Page";
+"Shuffle All"		= "Shuffle All";
+"Auto Next"		= "Auto Next";
+"Reward On"		= "Reward On";
+"Reward Off"		= "Reward Off";
+"Capitals On"		= "Capitals On";
+"Capitals Off"		= "Capitals Off";
+"Large Text"		= "Large Text";
+"Small Text"		= "Small Text";
+"Switch %u"		= "Switch %u";
+
+// Other text
+"Unable to Print"	= "Unable to Print";
+"Download" 		= "Download";
+"Download from Special iApps"  = "Download from Special iApps";
+"Send to Printer"	= "Send to Printer";
+"Email as %@"		= "Email as %@"; // e.g. "PDF"
+"Exported Profile"	= "Exported Profile";
+"Exported Story"	= "Exported Story";
+"Picture Cards"		= "Picture Cards";
+"Word Cards"		= "Word Cards";
+"Assessment Form"	= "Assessment Form";
+"Child Safety Gate"	= "Child Safety Gate";
+"Story title: %@"       = "Story title: %@";
+
+// Default words supplied with App resources
+"ball"		= "ball";
+"book"		= "book";
+"dolly"		= "doll";
+"car"		= "car";
+"bird"		= "bird";
+"dog"		= "dog";
+"cat"		= "cat";
+"fish"		= "fish";
+"flower"	= "flower";
+"keys"		= "keys";
+"teddy"		= "teddy";
+"cup"		= "cup";
+"brush"		= "brush";
+"coat"		= "coat";
+"shoes"		= "shoes";
+"hat"		= "hat";
+"socks"		= "socks";
+"duck"		= "duck";
+"pig"		= "pig";
+"sheep"		= "sheep";
+"cow"		= "cow";
+"apple"		= "apple";
+"banana"	= "banana";
+"biscuit"	= "biscuit";
+"drink"		= "drink";
+"bed"		= "bed";
+"chair"		= "chair";
+"table"		= "table";
+"bath"		= "bath";
+"eyes"		= "eyes";
+"mouth"		= "mouth";
+"hair"		= "hair";
+"nose"		= "nose";
+"spoon"		= "spoon";
+"bag"		= "bag";
+"phone"		= "phone";
+"bricks"	= "bricks";
+"eating"	= "eating";
+"sleeping"	= "sleeping";
+"drinking"	= "drinking";
+"brushing"	= "brushing";
+"sitting"	= "sitting";
+"washing"	= "washing";
+"walking"	= "walking";
+"crying"	= "crying";
+"television"	= "television";
+"light"		= "light";
+"balloon"	= "balloon";
+"box"		= "box";
+"bubbles"	= "bubbles";
+"big"		= "big";
+"splashing"	= "splashing";
+"little"	= "little";
+"garden"	= "garden";
+"star"		= "star";
+"house"		= "house";
+"tree"		= "tree";
+"jumping"	= "jumping";
+"playing"	= "playing";
+"running"	= "running";
+"kissing"	= "kissing";
+"clapping"	= "clapping";
+"reading"	= "reading";
+"cutting"	= "cutting";
+"throwing"	= "throwing";
+"towel"		= "towel";
+"soap"		= "soap";
+"toothbrush"	= "toothbrush";
+"teeth"		= "teeth";
+"bread"		= "bread";
+"dinner"	= "dinner";
+"juice"		= "juice";
+"yogurt"	= "yogurt";
+"chicken"	= "chicken";
+"monkey"	= "monkey";
+"rabbit"	= "rabbit";
+"horse"		= "horse";
+"dress"		= "dress";
+"jumper"	= "jumper";
+"boots"		= "boots";
+"trousers"	= "pants";
+"foot"		= "foot";
+"tummy"		= "tummy";
+"hand"		= "hand";
+"ear"		= "ear";
+"up"		= "up";
+"down"		= "down";
+"swing"		= "swing";
+"bike"		= "bike";
+"boat"		= "boat";
+"bus"		= "bus";
+"aeroplane"	= "aeroplane";
+"train"		= "train";
+"wet"		= "wet";
+"dirty"		= "dirty";
+"hot"		= "hot";
+"cold"		= "cold";

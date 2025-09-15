@@ -1,0 +1,12 @@
+/*
+ * Special Words/bg.lproj/InfoPlist.strings
+ *
+ * Copyright 2013-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Специални думи";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

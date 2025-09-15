@@ -1,0 +1,274 @@
+/*
+ * Special Words/uk.lproj/Localizable.strings
+ *
+ * Copyright 2014-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Особливі слова";
+"Special Stories" = "Особливі історії";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Підбір малюнків";
+"Match Words"		= "Підбір слів";
+"Word to Picture"	= "Слово-малюнок";
+"Picture to Word"   	= "Малюнок-слово";
+"Sound to Picture"	= "Звук-малюнок";
+"Sound to Word"		= "Звук-слово";
+"Word List"		= "Список";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Для того, щоб подивитися онлайн-документацію, натисніть Список слів, а потім кнопку Екстра дій.";
+"The currently selected profile doesn't contain any words." = "Обраний профіль не містить жодного слова."; 
+"To operate padlock, press and hold for 3 seconds." = "Щоб заблокувати екран, натисніть та тримайте 3 секунди.";
+
+// Text used in word details view
+"Word Details"      	= "Деталі слова";
+"new word"          	= "нове слово";
+"Choose Picture"	= "Вибрати фото";
+"Take Picture"		= "Зробити фото";
+"Record Sound"		= "Записати звук";
+"Play Sound"		= "Відтворити звук";
+"Stop Recording"	= "Зупинити запис";
+"Audio Error" 		= "Помилка звуку";
+"Cannot record sound" 	= "Неможливо записати звук";
+"Cannot play sound"   	= "Неможливо відтворити звук";
+"Audio format not supported by device" 	= "Формат аудіо не підтримується";
+"Could not initialize audio session" 	= "Неможливо ініціалізувати аудіо-сесію";
+"Could not activate audio session" 	= "Неможливо активувати аудіо-сесію";
+"Could not set audio session category" 	= "Неможливо задати категорію аудіо-сесії";
+"Unable to convert file format" 	= "Неможливо конвертувати формат файла";
+
+// Text used in extra actions view
+"Extra Actions"           	= "Додаткові дії";
+"View Online Documentation"	= "Онлайн-документація";
+"Manage Profiles"		= "Управління профілями";
+"Export Word List"		= "Експортувати список слів";
+"Import Word List"		= "Імпортувати список слів";
+"Choose Format"			= "Оберіть формат";
+"Use Email"			= "Використати Email";
+"Use Bluetooth or Wi-Fi"	= "Використати Bluetooth або Wi-Fi";
+"Cancel Export"			= "Відмінити експорт";
+"Cancel Import"			= "Відмінити імпорт";
+"Reset Contents and Settings"	= "Скинути контент та параметри";
+"This will delete all profiles and any words, photos and sounds you have added." = "Ця дія видалить всі профілі та всі слова, фото та звуки, які ви додали.";
+"This will replace any words, photos and sounds you have added to this word list." = "Ця дія замінить будь які слова, фото та звуки, які ви додали до списку слів.";
+"Type in '%@'"              	= "Надрукувати «%@»"; // '%@' will be translation of word 'Reset' from below 
+"Cannot use Email"          	= "Неможливо використати Email";
+"This device cannot currently send or receive email." = "На даний момент цей пристрій не може надсилати або отримувати email.";
+"Cannot Export Data"            = "Експорт даних неможливий";
+"Cannot Import Data"            = "Імпорт даних неможливий";
+"Editing has been disabled in Settings." = "Редагування відключено в додатку Параметри.";
+"Use the Mail app to Import"    = "Використовуйте додаток Пошта для імпорту даних";
+"Tap on Special Words attachment in email message." = "Натисніть на прикріплений до листа файл Особливі слова.";
+"To import data, tap on attachment." = "Для імпорту даних відкрийте вкладення.";
+"Connection Request"            = "Запит підключення";
+"Connect with %@?"              = "З’єднатися з %@";
+"Connection Failed"             = "Підключення перервано";
+"Connection with other device failed."  = "Підключення до іншого пристрою перервано.";
+"Copy to Special Stories"       = "Скопіювати до Особливі історії";
+"Copy to ..."                   = "Скопіювати до ...";
+"Error Creating Directory"      = "Помилка при створенні директорії";
+"Error Saving File"             = "Помилка збереження файлу";
+"Error Contacting Server"       = "Помилка з’єднання із сервером";
+"Unable to save image file"     = "Неможливо зберегти зображення";
+"Unable to save sound file"     = "Неможливо зберегти аудіо файл";
+
+// Text used in documentation viewer
+"Documentation"    = "Документація";
+"Online documentation not found" = "Онлайн документацію не знайдено";
+
+// Text used for profiles
+"Profile"          = "Профіль";
+"Profiles"         = "Профілі";
+"Profile %u"       = "Профіль %u";
+"Choose Profile"   = "Вибрати профіль";
+"Choose Word List" = "Вибрати список слів";
+"Default"          = "За замовчуванням";
+"Empty"            = "Порожній";
+"Copy '%@'"        = "Копія «%@»";
+"Profile Name"     = "Ім’я профіля";
+"Profile name: %@" = "Ім’я профіля: %@";
+"Language"         = "Мова";
+"Replace '%@'"     = "Замінити «%@»";
+"Add new profile"  = "Додати новий профіль";
+
+// Text used for various buttons
+"OK"       = "Так";
+"Cancel"   = "Скасувати";
+"Delete"   = "Видалити";
+"Connect"  = "Підключити";
+"Import"   = "Імпорт";
+"Replace"  = "Замінити";
+"Reset"    = "Скинути";
+"Copy"     = "Копіювати";
+"Open"     = "Відкрити";
+"Close"    = "Закрити";
+"Settings" = "Параметри";
+"Print"    = "Роздрукувати";
+
+// Accessibility text
+"Previous page"		= "Попередня сторінка";
+"Next page"		= "Наступна сторінка";
+"Tap if matches"	= "Натисніть якщо підходить";
+"Tap matching card" 	= "Натисніть на відповідну картку";
+"Already matched"	= "Вже порівняно";
+"Current text"		= "Даний текст";
+"Current picture"	= "Дане зображення";
+
+// Text for on-screen keyboard map legend
+"More"			= "Більше";
+"Drag Card"		= "Тягнути карту";
+"Tap Card"		= "Натиснути на карту";
+"Page Navigation"	= "Навігація сторінок";
+"Animation Speed"	= "Швидкість анімації";
+"Switches" 		= "Перемикачі";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Тягнути на %uу карту";
+"Drag Left"   		= "Тягнути вліво";
+"Drag Right"  		= "Тягнути вправо";
+"Drag Up"     		= "Тягнути вверх";
+"Drag Down"   		= "Тягнути вниз";
+"Drag Back"   		= "Тягнути назад";
+"Tap Card %u"  		= "натиснути на %uу карту";
+"1 Card"      		= "Одна картка";
+"%u Cards"     		= "%u картки";
+//"Play Sound"  	= "Відтворити звук";
+"Previous Page" 	= "Попередня сторінка";
+"Next Page"		= "Наступна сторінка";
+"Reload Page" 		= "Перезавантажити сторінку";
+"First Page"  		= "Перша сторінка";
+"Last Page"		= "Останя сторінка";
+"Home Screen"		= "Початковий екран";
+"Terminate" 		= "Примусово зупинити";
+"Keyboard Map"		= "Мапа клавіатури";
+"Padlock" 		= "Заблокувати екран";
+"Speed Up"		= "Швидше";
+"Speed Down" 		= "Повільніше";
+"Volume Up"		= "Голосніше";
+"Volume Down"		= "Тихіше";
+"Shuffle Off"		= "Лишити карти";
+"Shuffle Page"		= "Перемішати картки на сторінці";
+"Shuffle All"		= "Перемішати всі карти";
+"Auto Next"		= "Автоматично переключати сторінки";
+"Reward On"		= "Оплескии включені";
+"Reward Off"		= "Оплескии виключені";
+"Capitals On"		= "Великі літери включені";
+"Capitals Off"		= "Великі літери виключені";
+"Large Text"		= "Великий шрифт";
+"Small Text"		= "Невеликий шрифт";
+"Switch %u"		= "Перемикач %uий";
+
+// Other text
+"Unable to Print"	= "Неможливо надрукувати";
+"Download" 		= "Завантажити";
+"Download from Special iApps"  = "Завантажити зі Special iApps";
+"Send to Printer"	= "Надіслати на принтер";
+"Email as %@"		= "Відправити e-mail як %@"; // e.g. Email as PDF
+"Exported Profile"	= "Експортований профіль";
+"Exported Story"	= "Експортована історія";
+"Picture Cards"		= "Картки з малюнками";
+"Word Cards"		= "Картки зі словами";
+"Assessment Form"	= "Оцінки";
+"Child Safety Gate"	= "Батьківський контроль";
+"Story title: %@"	= "Назва історії: %@";
+
+// Default words supplied with App resources
+"ball"		= "м’яч";
+"book"		= "книга";
+"dolly"		= "лялька";	// was "ляля";
+"car"		= "машина";
+"bird"		= "пташка";
+"dog"		= "пес";	// was "собака"
+"cat"		= "кіт";	// was "киця";
+"fish"		= "риба";
+"flower"	= "квітка";
+"keys"		= "ключі";
+"teddy"		= "ведмедик";
+"cup"		= "чашка";
+"brush"		= "щітка";
+"coat"		= "пальто";	// was "куртка"
+"shoes"		= "взуття";
+"hat"		= "шапка";
+"socks"		= "шкарпетки";
+"duck"		= "качка";
+"pig"		= "свинка";
+"sheep"		= "вівця";
+"cow"		= "корова";
+"apple"		= "яблуко";
+"banana"	= "банан";
+"biscuit"	= "печиво";
+"drink"		= "напій";
+"bed"		= "ліжко";
+"chair"		= "стілець";
+"table"		= "стіл";
+"bath"		= "ванна";
+"eyes"		= "очі";
+"mouth"		= "рот";
+"hair"		= "волосся";
+"nose"		= "ніс";
+"spoon"		= "ложка";
+"bag"		= "сумка";
+"phone"		= "телефон";
+"bricks"	= "кубики";
+"eating"	= "їсть";
+"sleeping"	= "спить";
+"drinking"	= "п’є";
+"brushing"	= "розчісує";
+"sitting"	= "сидить";
+"washing"	= "миє";
+"walking"	= "іде";
+"crying"	= "плаче";
+"television"	= "телевізор";
+"light"		= "лампа";
+"balloon"	= "кулька";
+"box"		= "коробка";
+"bubbles"	= "бульбашки";
+"big"		= "великий";
+"splashing"	= "бризкає";
+"little"	= "маленький";
+"garden"	= "двір";	// was "сад"
+"star"		= "зірка";
+"house"		= "дім";
+"tree"		= "дерево";
+"jumping"	= "стрибає";
+"playing"	= "грає";
+"running"	= "біжить";
+"kissing"	= "цілує";
+"clapping"	= "плескає";	// was "хлопає"
+"reading"	= "читає";
+"cutting"	= "ріже";
+"throwing"	= "кидає";
+"towel"		= "рушник";
+"soap"		= "мило";
+"toothbrush"	= "зубна щітка";
+"teeth"		= "зуби";
+"bread"		= "хліб";
+"dinner"	= "обід";
+"juice"		= "сік";
+"yogurt"	= "йогурт";
+"chicken"	= "півень";
+"monkey"	= "мавпа";
+"rabbit"	= "кролик";
+"horse"		= "кінь";
+"dress"		= "сукня";
+"jumper"	= "светр";
+"boots"		= "чоботи";
+"trousers"	= "штани";
+"foot"		= "нога";
+"tummy"		= "живіт";
+"hand"		= "рука";
+"ear"		= "вухо";
+"up"		= "вгору";
+"down"		= "вниз";
+"swing"		= "гойдалка";
+"bike"		= "велосипед";
+"boat"		= "човен";
+"bus"		= "автобус";
+"aeroplane"	= "літак";
+"train"		= "потяг";
+"wet"		= "мокро";
+"dirty"		= "брудний";	// was "брудні"
+"hot"		= "жарко";	// was "гарячий"
+"cold"		= "холодно";

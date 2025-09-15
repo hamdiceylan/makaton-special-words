@@ -1,0 +1,12 @@
+/*
+ * Special Words/tr.lproj/InfoPlist.strings
+ *
+ * Copyright 2011-2021 Special iApps. All rights reserved.
+ */
+
+CFBundleDisplayName               = "Özel Kelimeler";
+NSCameraUsageDescription          = "";
+NSLocalNetworkUsageDescription    = "";
+NSMicrophoneUsageDescription      = "";
+NSPhotoLibraryUsageDescription    = "";
+NSPhotoLibraryAddUsageDescription = "";

@@ -1,0 +1,275 @@
+/*
+ * Special Words/ru.lproj/Localizable.strings
+ *
+ * Copyright 2017-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Особенные слова";
+"Special Stories" = "Особенные истории";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Подбор рисун.";
+"Match Words"		= "Подбор слов";
+"Word to Picture"	= "Слово-рисунок";
+"Picture to Word"   	= "Рисунок-слово";
+"Sound to Picture"	= "Звук-рисунок";
+"Sound to Word"		= "Звук-слово";
+"Word List"		= "Список слов";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Чтобы прочесть онлайн документацию, нажмите «Список слов», а затем кнопку Дополнительные действия.";
+"The currently selected profile doesn't contain any words." = "Выбранный профиль не содержит ни одного слова.";
+"To operate padlock, press and hold for 3 seconds." = "Чтобы заблокировать экран, нажмите и держите 3 секунды.";
+
+// Text used in word details view
+"Word Details"      	= "Детали слова";
+"new word"          	= "Новое слово";
+"Choose Picture"	= "Выбрать фото";
+"Take Picture"		= "Сделать фото";
+"Record Sound"		= "Записать звук";
+"Play Sound"		= "Воспроизвести звук";
+"Stop Recording"	= "Остановить запись";
+"Audio Error" 		= "Аудио ошибка";
+"Cannot record sound" 	= "Невозможно записать звук";
+"Cannot play sound"   	= "Невозможно воспроизвести звук";
+"Audio format not supported by device" 	= "Аудио-формат не поддерживается";
+"Could not initialize audio session" 	= "Невозможно инициализировать аудио-сессию";
+"Could not activate audio session" 	= "Невозможно активировать аудио-сессию";
+"Could not set audio session category" 	= "Невозможно задать категорию аудио-сессии";
+"Unable to convert file format" 	= "Невозможно конвертировать формат файла";
+
+// Text used in extra actions view
+//"Extra Actions"           	= "Дополнительные действия"; // too long
+"Extra Actions"           	= "Действия";
+"View Online Documentation"	= "Онлайн документации";
+"Manage Profiles"		= "Управление профилями";
+"Export Word List"		= "Экспорт списка слов";
+"Import Word List"		= "Импорт списка слов";
+"Choose Format"			= "Выберите формат";
+"Use Email"			= "Использовать e-mail";
+"Use Bluetooth or Wi-Fi"	= "Использовать Bluetooth или Wi-Fi";
+"Cancel Export"			= "Отменить экспорт";
+"Cancel Import"			= "Отменить импорт";
+"Reset Contents and Settings"	= "Сбросить контент и параметры";
+"This will delete all profiles and any words, photos and sounds you have added." = "Это действие отменит все профили и все слова, фото и звуки, которые вы добавили.";
+"This will replace any words, photos and sounds you have added to this word list." = "Это действие заменит все слова, фото и звуки, которые вы добавили к этому списку слов.";
+"Type in '%@'"              		= "Напечатать «%@»"; // %@ will be e.g. "Reset"
+"Cannot use Email"          		= "Невозможно использовать e-mail";
+"This device cannot currently send or receive email." = "В данный момент устройство не может отправлять или получать e-mail.";
+"Cannot Export Data"            	= "Экспорт данных невозможен";
+"Cannot Import Data"            	= "Импорт данных невозможен";
+"Editing has been disabled in Settings." = "Редактирование отключено в Настройках.";
+"Use the Mail app to Import"    	= "Использовать приложение Почта для импорта";
+"Tap on Special Words attachment in email message." = "Нажать на вложение Особенные слова в e-mail сообщении.";
+"To import data, tap on attachment." = "Для импорта данных откройте вложение.";
+"Connection Request"            	= "Запрос подключения";
+"Connect with %@?"              	= "Подключить к %@"; // %@ will be e.g. "Colin's iPad"
+"Connection Failed"             	= "Подключение прервано";
+"Connection with other device failed."  = "Подключение к другому устройству прервано.";
+"Copy to Special Stories"       	= "Копировать в Особенные истории";
+"Copy to ..."                  		= "Копировать в...";
+"Error Creating Directory"		= "Ошибка при создании директории";
+"Error Saving File"             	= "Ошибка сохранения файла";
+"Error Contacting Server"		= "Ошибка соединения с сервером";
+"Unable to save image file"     	= "Невозможно сохранить изображение";
+"Unable to save sound file"     	= "Невозможно сохранить аудиофайл";
+
+// Text used in documentation viewer
+"Documentation"    = "Документация";
+"Online documentation not found" = "Онлайн документация не найдена";
+
+// Text used for profiles
+"Profile"          	= "Профиль";
+"Profiles"         	= "Профили";
+"Profile %u"       	= "Профиль %u";
+"Choose Profile"   	= "Выбрать профиль";
+"Choose Word List" 	= "Выбрать список слов";
+"Default"          	= "По умолчанию"; // e.g. the default (standard) list of words or the default language
+"Empty"            	= "Нет записей"; // i.e. a list with no words in it yet
+"Copy '%@'"        	= "Копировать «%@»"; // %@ will be one of the card words, e.g. "dog"
+"Profile Name"     	= "Имя профиля";
+"Profile name: %@" 	= "Имя профиля: %@";
+"Language"         	= "Язык";
+"Replace '%@'"     	= "Заменить «%@»"; // %@ will be the name of a profile
+"Add new profile"  	= "Добавить новый профиль";
+
+// Text used for various buttons
+"OK"       	= "Да";
+"Cancel"   	= "Отменить";
+"Delete"   	= "Удалить";
+"Connect"  	= "Подключить"; // to connect to another device using e.g. Bluetooth
+"Import"   	= "Импорт";
+"Replace"  	= "Заменить";
+"Reset"    	= "Сброс";
+"Copy"     	= "Копировать";
+"Open"    	= "Открыть";
+"Close"    	= "Закрыть";
+"Settings" 	= "Настройки";
+"Print"		= "Напечатать";
+
+// Accessibility text
+"Previous page"		= "Предыдущая страница";
+"Next page"		= "Следующая страница";
+"Tap if matches"	= "Нажать, если соответствует"; // i.e. tap this card if it matches the other one
+"Tap matching card" 	= "Нажать на соответствующую карту";
+"Already matched"	= "Уже подобрано";
+"Current text"		= "Текущий текст";
+"Current picture"	= "Текущее изображение";
+
+// Text for on-screen keyboard map legend
+"More"			= "Ещё"; // e.g. for button that will show more options
+"Drag Card"		= "Потянуть карту";
+"Tap Card"		= "Нажать карту";
+"Page Navigation"	= "Навигация страниц"; // e.g. moving to next or previous page
+"Animation Speed"	= "Скорость анимации";
+"Switches" 		= "Переключатели";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Потянуть к карте %u";
+"Drag Left"   		= "Потянуть влево";
+"Drag Right"  		= "Потянуть вправо";
+"Drag Up"     		= "Потянуть вверх";
+"Drag Down"   		= "Потянуть вниз";
+"Drag Back"   		= "Потянуть назад";
+"Tap Card %u"  		= "Нажать карту %u";
+"1 Card"      		= "1 карта";
+"%u Cards"     		= "%u карты"; // %u will be 2, 3 or 4
+//"Play Sound"  	= "Воспроизвести звук";
+"Previous Page" 	= "Предыдущая страница";
+"Next Page"		= "Следующая страница";
+"Reload Page" 		= "Перезагрузить страницу";
+"First Page"  		= "Первая страница";
+"Last Page"		= "Последняя страница";
+"Home Screen"		= "Начальный экран";
+"Terminate" 		= "Остановить"; // i.e. quit this app
+"Keyboard Map"		= "Карта клавиатуры";
+"Padlock" 		= "Блокировка экрана"; // noun, not verb
+"Speed Up"		= "Ускорить"; // i.e. make animations faster
+"Speed Down" 		= "Замедлить";
+"Volume Up"		= "Громче"; // i.e. make sound louder
+"Volume Down"		= "Тише";
+"Shuffle Off"		= "Не тасовать"; // don't shuffle the cards
+"Shuffle Page"		= "Перетасовать страницу"; // shuffle cards within each page
+"Shuffle All"		= "Перетасовать все"; // shuffle all of the cards
+"Auto Next"		= "Автоматическое переключение страниц"; // automatically advance to next page (on or off)
+"Reward On"		= "Включить аплодисменты";
+"Reward Off"		= "Отключить аплодисменты";
+"Capitals On"		= "Заглавные буквы включены";
+"Capitals Off"		= "Заглавные буквы выключены";
+"Large Text"		= "Крупный текст";
+"Small Text"		= "Маленький текст";
+"Switch %u"		= "%u-й переключатель"; // %u will be 1 or 2, to identify which to press
+
+// Other text
+"Unable to Print"	= "Невозможно напечатать";
+"Download" 		= "Загрузить";
+"Download from Special iApps"  = "Загрузить из Special iApps";
+"Send to Printer"	= "Отправить на принтер";
+"Email as %@"		= "Отправить e-mail как %@"; // e.g. Email as PDF
+"Exported Profile"	= "Экспортированный профиль";
+"Exported Story"	= "Экспортированная история";
+"Picture Cards"		= "Карточки с рисунками";
+"Word Cards"		= "Карточки со словами";
+"Assessment Form"	= "Оценки";
+"Child Safety Gate"	= "Родительский контроль";
+"Story title: %@"	= "Название истории: %@";
+
+// Default words supplied with App resources
+"ball"		= "мяч";
+"book"		= "книга";
+"dolly"		= "кукла";
+"car"		= "машина";
+"bird"		= "птица";
+"dog"		= "собака";
+"cat"		= "кот";
+"fish"		= "рыба";
+"flower"	= "цветок";
+"keys"		= "ключи";
+"teddy"		= "мишка";
+"cup"		= "чашка";
+"brush"		= "щётка";
+"coat"		= "пальто";
+"shoes"		= "обувь";
+"hat"		= "шапка";
+"socks"		= "носки";
+"duck"		= "утка";
+"pig"		= "свинья";
+"sheep"		= "овца";
+"cow"		= "корова";
+"apple"		= "яблоко";
+"banana"	= "банан";
+"biscuit"	= "печенье";
+"drink"		= "напиток";
+"bed"		= "кровать";
+"chair"		= "стул";
+"table"		= "стол";
+"bath"		= "ванна";
+"eyes"		= "глаза";
+"mouth"		= "рот";
+"hair"		= "волосы";
+"nose"		= "нос";
+"spoon"		= "ложка";
+"bag"		= "сумка";
+"phone"		= "телефон";
+"bricks"	= "кубики";
+"eating"	= "ест";
+"sleeping"	= "спит";
+"drinking"	= "пьёт";
+"brushing"	= "расчёсывает";
+"sitting"	= "сидит";
+"washing"	= "моет";
+"walking"	= "идёт";
+"crying"	= "плачет";
+"television"	= "телевизор";
+"light"		= "лампа";
+"balloon"	= "шар";
+"box"		= "коробка";
+"bubbles"	= "пузыри";
+"big"		= "большой";
+"splashing"	= "брызгает";
+"little"	= "маленький";
+"garden"	= "двор";
+"star"		= "звезда";
+"house"		= "дом";
+"tree"		= "дерево";
+"jumping"	= "прыгает";
+"playing"	= "играет";
+"running"	= "бежит";
+"kissing"	= "целует";
+"clapping"	= "хлопает";
+"reading"	= "читает";
+"cutting"	= "режет";
+"throwing"	= "бросает";
+"towel"		= "полотенце";
+"soap"		= "мыло";
+"toothbrush"	= "зубная щётка";
+"teeth"		= "зубы";
+"bread"		= "хлеб";
+"dinner"	= "обед";
+"juice"		= "сок";
+"yogurt"	= "йогурт";
+"chicken"	= "петух";
+"monkey"	= "обезьяна";
+"rabbit"	= "кролик";
+"horse"		= "конь";
+"dress"		= "платье";
+"jumper"	= "свитер";
+"boots"		= "сапоги";
+"trousers"	= "штаны";
+"foot"		= "нога";
+"tummy"		= "живот";
+"hand"		= "рука";
+"ear"		= "ухо";
+"up"		= "вверх";
+"down"		= "вниз";
+"swing"		= "качели";
+"bike"		= "велосипед";
+"boat"		= "кораблик";
+"bus"		= "автобус";
+"aeroplane"	= "самолёт";
+"train"		= "поезд";
+"wet"		= "мокро";
+"dirty"		= "грязный";
+"hot"		= "жарко";
+"cold"		= "холодно";

@@ -1,0 +1,277 @@
+/*
+ * Special Words/ro.lproj/Localizable.strings
+ *
+ * Copyright 2016-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Cuvinte speciale";
+"Special Stories" = "Povestiri speciale";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Potriviți imaginile";
+"Match Words"		= "Potriviți cuvintele";
+"Word to Picture"	= "Cuvânt cu imagine";
+"Picture to Word"   	= "Imagine cu cuvânt";
+"Sound to Picture"	= "Sunet cu imagine";
+"Sound to Word"   	= "Sunet cu cuvânt";
+"Word List" 		= "Lista de cuvinte";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Pentru a citi documentația în modul online, atingeți Lista de cuvinte și selectați butonul Acțiune.";
+"The currently selected profile doesn't contain any words." = "Profilul actual selectat nu conține niciun cuvânt.";
+
+// Text used in word details view
+"Word Details"      	= "Detaliile cuvântului";
+"new word"          	= "Cuvânt nou";
+"Choose Picture"	= "Alegeți o poză";
+"Take Picture"		= "Faceți o poză";
+"Record Sound"		= "Înregistraţi sunet";
+"Play Sound"		= "Redaţi sunet";
+"Stop Recording"	= "Opriţi înregistrarea";
+"Audio Error" 		= "Eroare sunet";
+"Cannot record sound" 	= "Sunetul nu poate fi înregistrat";
+"Cannot play sound"   	= "Sunetul nu poate fi redat";
+"Audio format not supported by device" 	= "Formatul fișierului audio nu este suportat de dispozitiv";
+"Could not initialize audio session" 	= "Sesiunea audio nu poate fi inițializată";
+"Could not activate audio session" 	= "Sesiunea audio nu poate fi activată";
+"Could not set audio session category" 	= "Categoria de sesiune audio nu poate fi stabilită";
+"Unable to convert file format" 	= "Formatul de fișier nu poate fi convertit";
+
+// Text used in extra actions view
+"Extra Actions"             	= "Acțiuni suplimentare";
+"View Online Documentation"	= "Vizualizați documentația on-line";
+"Manage Profiles"		= "Gestionați profilurile";
+"Export Word List"		= "Exportați lista de cuvinte";
+"Import Word List"		= "Importați lista de cuvinte";
+"Choose Format"			= "Alegeți formatul";
+"Use Email"			= "Utilizați e-mail";
+"Use Bluetooth or Wi-Fi"	= "Utilizați Bluetooth sau Wi-fi";
+"Cancel Export"			= "Anulați exportul";
+"Cancel Import"			= "Anulați importul";
+"Reset Contents and Settings"	= "Resetați conținutul și configurările";
+"This will delete all profiles and any words, photos and sounds you have added." = "Această acțiune va șterge toate profilurile și toate cuvintele, imaginile și sunetele pe care le-ați adăugat.";
+"This will replace any words, photos and sounds you have added to this word list." = "Această acțiune va înlocui toate cuvintele, imaginile și sunetele pe care le-ați adăugat la această listă de cuvinte.";
+"Type in '%@'"                  = "Tastează „%@”"; // %@ will be e.g. "Reset"
+"Cannot use Email"              = "Nu poate fi utilizat e-mailul";
+"This device cannot currently send or receive email." = "În acest moment, dispozitivul nu poate trimite sau primi un e-mail.";
+"Cannot Export Data"            = "Datele nu pot fi exportate";
+"Cannot Import Data"            = "Datele nu pot fi importate";
+"Editing has been disabled in Settings." = "Editarea a fost dezactivată în configurări.";
+"Use the Mail app to Import"    = "Pentru a importa, utilizează aplicația pentru e-mail";
+"Tap on Special Words attachment in email message." = "Selectează fișierul Cuvinte speciale din mesajul e-mail.";
+"To import data, tap on attachment." = "Pentru a importa datele, selectați fișierul atașat.";
+"Connection Request"            = "Se solicită conexiune";
+"Connect with %@?"              = "Conectare cu %@?"; // %@ will be e.g. "Colin's iPad"
+"Connection Failed"             = "Conexiune eșuată";
+"Connection with other device failed."  = "Conexiunea cu alt dispozitiv a eșuat.";
+"Copy to Special Stories"       = "Copiați în Povestiri speciale";
+"Copy to ..."                   = "Copiați în ...";
+"Error Creating Directory"      = "Eroare la crearea directorului";
+"Error Saving File"             = "Eroare la salvarea fișierului";
+"Error Contacting Server"       = "Eroare la contactarea serverului";
+"Unable to save image file"     = "Imposibil de salvat fișierul de imagine";
+"Unable to save sound file"     = "Imposibil de salvat fișierul de sunet";
+
+// Text used for selecting audio voices
+"Select a Voice" = "Selectează o voce";
+"Male Voice" 	= "Voce de bărbat";
+"Male" 		= "Bărbat";
+"Female Voice" 	= "Voce de femeie";
+"Female" 	= "Femeie";
+
+// Text used in documentation viewer
+"Documentation"    = "Documentație";
+"Online documentation not found" = "Documentația on-line nu a fost găsită";
+
+// Text used for profiles
+"Profile"          = "Profil";
+"Profiles"         = "Profiluri";
+"Profile %u"       = "Profil %u";
+"Choose Profile"   = "Alegeți un profil";
+"Choose Word List" = "Alegeți lista de cuvinte";
+"Default"          = "Implicit";
+"Empty"            = "Gol";
+"Copy '%@'"        = "Copiați „%@”"; // %@ will be one of the card words, e.g. "dog"
+"Profile Name"     = "Numele profilului";
+"Profile name: %@" = "Numele profilului: %@";
+"Language"         = "Limbă"; 
+"Replace '%@'"     = "Înlocuiți „%@”"; // %@ will be the name of a profile
+"Add new profile"  = "Adăugați un nou profil";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Anulați";
+"Delete"   = "Ștergeți";
+"Connect"  = "Conectați"; // to connect to another device using e.g. Bluetooth
+"Import"   = "Importați";
+"Replace"  = "Înlocuiți";
+"Reset"    = "Resetați";
+"Copy"     = "Copiați";
+"Open"     = "Deschideți";
+"Close"    = "Închideți";
+"Settings" = "Configurări";
+"Print"    = "Printaţi";
+
+// Accessibility text
+"Previous page"		= "Pagina anterioară";
+"Next page"		= "Pagina următoare";
+"Tap if matches"	= "Atingeți dacă se potrivește"; // i.e. tap this card if it matches the other one
+"Tap matching card" 	= "Atingeți cardul potrivit";
+"Already matched"	= "Deja potrivit";
+"Current text"		= "Textul curent";
+"Current picture"	= "Imaginea curentă";
+
+// Text for on-screen keyboard map legend
+"More"			= "Altele"; // as used by Apple
+"Drag Card"		= "Trageți cardul";
+"Tap Card"		= "Atingeți cardul";
+"Page Navigation"	= "Navigarea în pagini"; // e.g. moving to next or previous page
+"Animation Speed"	= "Viteza de animație";
+"Switches" 		= "Comutatoare"; // as used by physically disabled people to control a computer
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Trageți spre cardul %u";
+"Drag Left"   		= "Trageți spre stânga";
+"Drag Right"  		= "Trageți spre dreapta";
+"Drag Up"     		= "Trageți în sus";
+"Drag Down"   		= "Trageți în jos";
+"Drag Back"   		= "Trageți în spate";
+"Tap Card %u"  		= "Atingeți cardul %u";
+"1 Card"      		= "1 card";
+"%u Cards"     		= "%u carduri"; // %u will be 2, 3 or 4
+//"Play Sound"  	= "Redați sunet";
+"Previous Page" 	= "Pagina anterioară";
+"Next Page"		= "Pagina următoare";
+"Reload Page" 		= "Reîncarcați pagina";
+"First Page"  		= "Prima pagină";
+"Last Page"		= "Ultima pagină";
+"Home Screen"		= "Ecranul de start";
+"Terminate" 		= "Închideți aplicația"; // i.e. quit this app
+"Keyboard Map"		= "Harta tastaturii";
+"Padlock" 		= "Lacăt"; // noun, not verb
+"Speed Up"		= "Măriți viteza"; // i.e. make animations faster
+"Speed Down" 		= "Reduceți viteza";
+"Volume Up"		= "Măriți volumul"; // i.e. make sound louder
+"Volume Down"		= "Reduceți volumul";
+"Shuffle Off"		= "Opriți amestecarea cardurilor"; // don't shuffle the cards
+"Shuffle Page"		= "Amestecați cardurile din pagină"; // shuffle cards within each page
+"Shuffle All"		= "Amestecați toate cardurile"; // shuffle all of the cards
+"Auto Next"		= "Avans automat la pagina următoare"; // automatically advance to next page (on or off)
+"Reward On"		= "Activare recompensă";
+"Reward Off"		= "Dezactivare recompensă";
+"Capitals On"		= "Activare majuscule";
+"Capitals Off"		= "Dezactivare majuscule";
+"Large Text"		= "Text mărit";
+"Small Text"		= "Text redus";
+"Switch %u"		= "Comutator %u"; // %u will be 1 or 2, to identify which to press
+
+// Other text
+"Unable to Print"	= "Nu pot imprimare";
+"Download" 		= "Descărcați";
+"Download from Special iApps"  = "Descărcați de Special iApps";
+"Send to Printer"	= "Trimiteţi către imprimantă";
+"Email as %@" 		= "E-mail ca %@"; // e.g. Email as PDF
+"Exported Profile"	= "Profil exportat";
+"Exported Story"	= "Povestire exportată";
+"Child Safety Gate"	= "Control parental";
+"Story title: %@"	= "Titlul povestirii: %@";
+
+// Default words supplied with App resources
+"ball"		= "minge";
+"book"		= "carte";
+"dolly"		= "păpușă";
+"car"		= "mașină";
+"bird"		= "pasăre";
+"dog"		= "câine";
+"cat"		= "pisică";
+"fish"		= "pește";
+"flower"	= "floare";
+"keys"		= "chei";
+"teddy"		= "ursuleț";
+"cup"		= "cană";
+"brush"		= "perie";
+"coat"		= "haină";
+"shoes"		= "pantofi";
+"hat"		= "căciulă";
+"socks"		= "ciorapi";
+"duck"		= "rață";
+"pig"		= "porc";
+"sheep"		= "oaie";
+"cow"		= "vacă";
+"apple"		= "măr";
+"banana"	= "banană";
+"biscuit"	= "biscuit";
+"drink"		= "băutură";
+"bed"		= "pat";
+"chair"		= "scaun";
+"table"		= "masă";
+"bath"		= "cadă";
+"eyes"		= "ochi";
+"mouth"		= "gură";
+"hair"		= "păr";
+"nose"		= "nas";
+"spoon"		= "lingură";
+"bag"		= "pungă";
+"phone"		= "telefon";
+"bricks"	= "cuburi";
+"eating"	= "a mânca";
+"sleeping"	= "a dormi";
+"drinking"	= "a bea";
+"brushing"	= "a se pieptăna";
+"sitting"	= "a ședea";
+"washing"	= "a se spăla";
+"walking"	= "a merge";
+"crying"	= "a plânge";
+"television"	= "televizor";
+"light"		= "lampă";
+"balloon"	= "balon";
+"box"		= "cutie";
+"bubbles"	= "bule";
+"big"		= "mare";
+"splashing"	= "a se bălăci";
+"little"	= "mic";
+"garden"	= "grădină";
+"star"		= "stea";
+"house"		= "casă";
+"tree"		= "copac";
+"jumping"	= "a sări";
+"playing"	= "a se juca";
+"running"	= "a alerga";
+"kissing"	= "a săruta";
+"clapping"	= "a aplauda";
+"reading"	= "a citi";
+"cutting"	= "a tăia";
+"throwing"	= "a arunca";
+"towel"		= "prosop";
+"soap"		= "săpun";
+"toothbrush"	= "periuță de dinți";
+"teeth"		= "dinți";
+"bread"		= "pâine";
+"dinner"	= "mâncare";
+"juice"		= "suc";
+"yogurt"	= "iaurt";
+"chicken"	= "pui";
+"monkey"	= "maimuță";
+"rabbit"	= "iepure";
+"horse"		= "cal";
+"dress"		= "rochie";
+"jumper"	= "bluză";
+"boots"		= "cizme";
+"trousers"	= "pantaloni";
+"foot"		= "picior";
+"tummy"		= "burtică";
+"hand"		= "mână";
+"ear"		= "ureche";
+"up"		= "în sus";
+"down"		= "în jos";
+"swing"		= "leagăn";
+"bike"		= "bicicletă";
+"boat"		= "barcă";
+"bus"		= "autobuz";
+"aeroplane"	= "avion";
+"train"		= "tren";
+"wet"		= "ud";
+"dirty"		= "murdar";
+"hot"		= "cald";
+"cold"		= "rece";

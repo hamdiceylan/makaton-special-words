@@ -1,0 +1,275 @@
+/*
+ * Special Words/ca.lproj/Localizable.strings
+ *
+ * Copyright 2011-2019 Special iApps. All rights reserved.
+ */
+
+// The name of this and other apps
+"Special Words"   = "Paraules Especials";
+"Special Stories" = "Històries Especials";
+
+// Text for tab bar items, loaded programmatically in main delegate x 2
+"Match Pictures"	= "Imatges";
+"Match Words"		= "Paraules";
+"Word to Picture"	= "Paraula Imatge";
+"Picture to Word"   	= "Imatge Paraula";
+"Sound to Picture"  	= "So Imatge";
+"Sound to Word"	    	= "So Paraula";
+"Word List"		= "Llista";
+
+// Text used for help popups
+"To read online documentation, tap Word List, and then the Action button." = "Per llegir la documentació en línia, prem “Llista”, i després el botó d'acció.";
+"The currently selected profile doesn't contain any words." = "El perfil seleccionat no conté cap paraula.";
+"To operate padlock, press and hold for 3 seconds." = "Per canviar el cadenat prem-lo durant 3 segons.";
+
+// Text used in word details view
+"Word Details"      = "Detalls";
+"new word"          = "nova paraula";
+"Choose Picture"	= "Escollir una imatge";
+"Take Picture"		= "Fer una foto";
+"Record Sound"		= "Enregistrar so";
+"Play Sound"		= "Reproduir so";
+"Stop Recording"	= "Aturar la gravació";
+"Audio Error" = "Error d'àudio";
+"Cannot record sound" = "No es pot enregistrar so";
+"Cannot play sound"   = "No es pot reproduir so";
+"Audio format not supported by device" = "Format d'àudio no compatible amb el dispositiu";
+"Could not initialize audio session" = "No es pot inicialitzar la sessió d'àudio";
+"Could not activate audio session" = "No es pot activar la sessió d'àudio";
+"Could not set audio session category" = "No es pot establir la categoria de sessió d'àudio";
+"Unable to convert file format" = "No es pot convertir el format de l'arxiu";
+
+// Text used in extra actions view
+// "Extra Actions"                 = "Accions extres"; // too long
+"Extra Actions"                 = "Accions";
+"View Online Documentation"		= "Documentació en línia";
+"Manage Profiles"		= "Gestionar els perfils";
+"Export Word List"		= "Exportar una llista de paraules";
+"Import Word List"		= "Importar una llista de paraules";
+"Choose Format" 		= "Escollir un format d'arxiu";
+"Use Email"			= "Utilitzar el correu electrònic";
+"Use Bluetooth or Wi-Fi"	= "Utilitzar Bluetooth o Wi-Fi";
+"Cancel Export"			= "Cancel·lar l'exportació";
+"Cancel Import"			= "Cancel·lar la importació";
+"Reset Contents and Settings"	= "Reinciar el contingut i la configuració";
+"This will delete all profiles and any words, photos and sounds you have added." = "Això eliminarà tots els perfils i les paraules, fotos i sons que has afegit.";
+"This will replace any words, photos and sounds you have added to this word list." = "Això reemplaçarà qualsevol paraula, foto i so que hagis afegit a aquesta llista de paraules.";
+"Type in '%@'"                  = "Escriu “%@”";  // Must fit on 1 line in alert
+"Cannot use Email"              = "No es pot utilitzar el correu electrònic";
+"This device cannot currently send or receive email." = "Aquest dispositiu actualment no pot enviar o rebre correu electrònic.";
+"Cannot Export Data"            = "No es pot exportar dades";
+"Cannot Import Data"            = "No es pot importar dades";
+"Editing has been disabled in Settings." = "L’edició ha estat desactivada a la configuració.";
+"Use the Mail app to Import"    = "Utilitza l'aplicació mail per a importar";
+"Tap on Special Words attachment in email message." = "Prem l’adjunt “Paraules Especials” en el missatge de correu electrònic.";
+"To import data, tap on attachment." = "Per importar dades, premi l'arxiu adjunt.";
+"Connection Request"            = "Sol·licitud de conexió";
+"Connect with %@?"              = "Connectar amb %@?";
+"Connection Failed"             = "La Connexió ha fallat";
+"Connection with other device failed."  = "La connexió amb l'altre dispositiu ha fallat.";
+"Copy to Special Stories"       = "Copiar a Històries Especials";
+"Copy to ..."                   = "Copiar a ...";
+"Error Creating Directory"      = "Error per crear la carpeta";
+"Error Saving File"             = "Error per desar l'arxiu";
+"Error Contacting Server"       = "Error de connexió amb el servidor";
+"Unable to save image file"     = "No es pot desar l'arxiu d'imatge";
+"Unable to save sound file"     = "No es pot desar l'arxiu de so";
+
+// Text used for profiles
+"Profile"          = "Perfil";
+"Profiles"         = "Perfils";
+"Profile %u"       = "Perfil %u";
+"Choose Profile"   = "Escollir el perfil";
+"Choose Word List" = "Escollir la llista de paraules";
+"Default"          = "Defecte";
+"Empty"            = "Buit";
+"Copy '%@'"        = "Copiar “%@”"; // quotes as used by Apple
+"Profile Name"     = "Nom del perfil";
+"Profile name: %@" = "Nom del perfil: %@";
+"Language"         = "Idioma";
+"Replace '%@'"     = "Reemplaçar “%@”"; // quotes as used by Apple
+"Add new profile"  = "Afegir nou perfil";
+
+// Text used in documentation viewer
+"Documentation"    = "Documentació";
+"Online documentation not found" = "La documentació en línia no es troba";
+
+// Text used for various buttons
+"OK"       = "OK";
+"Cancel"   = "Cancel·lar";
+"Delete"   = "Eliminar";
+"Connect"  = "Connectar";
+"Import"   = "Importar";
+"Replace"  = "Reemplaçar";
+"Reset"    = "Reiniciar";
+"Copy"     = "Copiar";
+"Open"     = "Obrir";
+"Close"    = "Tancar";
+"Settings" = "Configuració";
+"Print"    = "Imprimir";
+
+// Accessibility text
+"Previous page"		= "La pàgina anterior";
+"Next page"		= "La pàgina següent";
+"Tap if matches"	= "Prem, si coincideix";
+"Tap matching card"     = "Prem la targeta amb la que s’emparelli";
+"Already matched"	= "Aquesta targeta ja ha fet parella";
+"Current text"		= "El text actual";
+"Current picture"	= "La imatge actual";
+
+// Text for on-screen keyboard map legend
+"More"			= "Més";
+"Drag Card"		= "Arrossegar la targeta";
+"Tap Card"		= "Prem la targeta";
+"Page Navigation"	= "Navegació pàgines";
+"Animation Speed"	= "Velocitat d’animació";
+"Switches" 		= "Polsadors";
+
+// Help text for individual keyboard keys
+"Drag to Card %u"	= "Cap a targeta %u";
+"Drag Left"   		= "Cap a l’esquerra";
+"Drag Right"  		= "Cap a la dreta";
+"Drag Up"     		= "Cap amunt";
+"Drag Down"   		= "Cap avall";
+"Drag Back"   		= "Cap enrere";
+"Tap Card %u"  		= "Prem targeta %u";
+"1 Card"      		= "1 targeta";
+"%u Cards"     		= "%u targetes";
+//"Play Sound"  	= "Reproduir";
+"Previous Page" 	= "Pàgina anterior";
+"Next Page"		= "Pàgina següent";
+"Reload Page" 		= "Actualitzar pàgina";
+"First Page"  		= "Primera pàgina";
+"Last Page"		= "Última pàgina";
+"Home Screen"		= "Pantalla d’inici";
+"Terminate" 		= "Acabar";
+"Keyboard Map"		= "Mapa del teclat";
+"Padlock" 		= "Cadenat";
+"Speed Up"		= "Més ràpid";
+"Speed Down" 		= "Més poc a poc";
+"Volume Up"		= "Més fort";
+"Volume Down"		= "Més fluix";
+"Shuffle Off"		= "No barrejar";
+"Shuffle Page"		= "Barrejar pàgina";
+"Shuffle All"		= "Barrejar totes";
+"Auto Next"		= "Avanç automàtic";
+"Reward On"		= "Recompensar";
+"Reward Off"		= "No recompensar";
+"Capitals On"		= "Majúscules";
+"Capitals Off"		= "Minúscules";
+"Large Text"		= "Text gran";
+"Small Text"		= "Text petit";
+"Switch %u"		= "Polsador %u";
+
+// Other text
+"Unable to Print"	= "No es pot imprimir";
+"Download"		= "Descarregar";
+"Download from Special iApps" = "Descarregar des de Special iApps";
+"Send to Printer"	= "Enviar a una impressora";
+"Email as %@"		= "Enviar per e-mail en format %@"; // e.g. "PDF"
+"Exported Profile"	= "Perfil exportat";
+"Exported Story"	= "Història exportada";
+"Picture Cards"		= "Targetes d’imatges";
+"Word Cards"	      	= "Targetes de paraules";
+"Assessment Form" 	= "Formulari de valoració";
+"Child Safety Gate"	= "Control parental";
+"Story title: %@"	= "El títol de la història %@";
+
+// Default words supplied with App resources
+"ball"		= "la pilota";
+"book"		= "el llibre";
+"dolly"		= "la nina";
+"car"		= "el cotxe";
+"bird"		= "l’ocell";
+"dog"		= "el gos";
+"cat"		= "el gat";
+"fish"		= "el peix";
+"flower"	= "la flor";
+"keys"		= "les claus";
+"teddy"		= "l’ós de peluix";
+"cup"		= "la tassa";
+"brush"		= "el raspall";
+"coat"		= "l’abric";
+"shoes"		= "les sabates";
+"hat"		= "el barret";
+"socks"		= "els mitjons";
+"duck"		= "l’ànec";
+"pig"		= "el porc";
+"sheep"		= "l’ovella";
+"cow"		= "la vaca";
+"apple"		= "la poma";
+"banana"	= "el plàtan";
+"biscuit"	= "la galeta";
+"drink"		= "la beguda";
+"bed"		= "el llit";
+"chair"		= "la cadira";
+"table"		= "la taula";
+"bath"		= "la banyera";
+"eyes"		= "els ulls";
+"mouth"		= "la boca";
+"hair"		= "els cabells";
+"nose"		= "el nas";
+"spoon"		= "la cullera";
+"bag"		= "la bossa";
+"phone"		= "el telèfon";
+"bricks"	= "els blocs";
+"eating"	= "menjar";
+"sleeping"	= "dormir";
+"drinking"	= "beure";
+"brushing"	= "raspallar-se";
+"sitting"	= "asseure's";
+"washing"	= "rentar-se";
+"walking"	= "caminar";
+"crying"	= "plorar";
+"television"	= "la televisió";
+"light"		= "el llum";
+"balloon"	= "el globus";
+"box"		= "la caixa";
+"bubbles"	= "les bombolles";
+"big"		= "gran";
+"splashing"	= "esquitxar";
+"little"	= "petit";
+"garden"	= "el jardí";
+"star"		= "l’estrella";
+"house"		= "la casa";
+"tree"		= "l’arbre";
+"jumping"	= "saltar";
+"playing"	= "jugar";
+"running"	= "córrer";
+"kissing"	= "fer un petó";
+"clapping"	= "aplaudir";
+"reading"	= "llegir";
+"cutting"	= "tallar";
+"throwing"	= "llençar";
+"towel"		= "la tovallola";
+"soap"		= "el sabó";
+"toothbrush"	= "el raspall de dents";
+"teeth"		= "les dents";
+"bread"		= "el pa";
+"dinner"	= "el sopar";
+"juice"		= "el suc";
+"yogurt"	= "el iogurt";
+"chicken"	= "la gallina";
+"monkey"	= "el mico";
+"rabbit"	= "el conill";
+"horse"		= "el cavall";
+"dress"		= "el vestit";
+"jumper"	= "el jersei";
+"boots"		= "les botes";
+"trousers"	= "els pantalons";
+"foot"		= "el peu";
+"tummy"		= "la panxa";
+"hand"		= "la mà";
+"ear"		= "l'orella";
+"up"		= "amunt";
+"down"		= "a baix";
+"swing"		= "el gronxador";
+"bike"		= "la bicicleta";
+"boat"		= "el vaixell";
+"bus"		= "l'autobús";
+"aeroplane"	= "l'avió";
+"train"		= "el tren";
+"wet"		= "mullat";
+"dirty"		= "brut";
+"hot"		= "calent";
+"cold"		= "fred";
