@@ -276,7 +276,7 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
               tintColor: item.color,
               paddingHorizontal: 5,
               resizeMode: 'contain',
-              height: isTablet() ? '100%' : undefined, // Tablet'te tam height
+              height: isTablet() ? '100%' : '50%', // Tablet'te tam height
             }
           ]} 
         />
