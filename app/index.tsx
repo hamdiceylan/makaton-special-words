@@ -154,7 +154,9 @@ export default function Home() {
   const normalRows = rows - 1; // Son row hariç
   const totalVerticalGap = Math.max(0, ROW_GAP * normalRows);
   // Landscape modunda last row height'ı daha küçük yap
-  const lastRowRatio = isLandscapeMode ? 2.3 : LAST_ROW_WIDTH_RATIO; // Landscape'de daha küçük ratio
+  const lastRowRatio = isLandscapeMode ? 
+    (isTabletDevice ? 2.3 : 4) : // Tablet landscape: 2.3, Phone landscape: 4
+    LAST_ROW_WIDTH_RATIO; // Portrait mode
   const lastRowHeight = cellW / lastRowRatio;
   const availableHeightForNormalRows = layout.h - lastRowHeight - totalVerticalGap;
   const rowH = normalRows > 0 ? availableHeightForNormalRows / normalRows : 0;
