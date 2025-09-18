@@ -1,6 +1,7 @@
 import { SFProText } from '@/src/theme/typography';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Platform, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Device & Orientation detection
@@ -113,11 +114,13 @@ type Item = {
   title: string;
   color: string;
   image: keyof typeof CARD_IMAGES;
+  route: string;
 };
 interface CardItemProps {
   item: Item;
   isSpecial?: boolean;
   cardHeight?: number;
+  onPress?: () => void;
 }
 
 export default function Home() {
@@ -138,13 +141,13 @@ export default function Home() {
   const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
 
   const items: Item[] = [
-    { title: 'Match Pictures',  color: '#279095', image: 'match-pictures' },
-    { title: 'Match Words',     color: '#9893CA', image: 'match-words' },
-    { title: 'Word to Picture', color: '#954D27', image: 'word-to-picture' },
-    { title: 'Picture to Word', color: '#273F95', image: 'picture-to-word' },
-    { title: 'Sound to Picture',color: '#952769', image: 'sound-to-picture' },
-    { title: 'Sound to Word',   color: '#4C9527', image: 'sound-to-word' },
-    { title: 'Word list',       color: '#6675AA', image: 'word-list' },
+    { title: 'Match Pictures',  color: '#279095', image: 'match-pictures', route: '/match-pictures' },
+    { title: 'Match Words',     color: '#9893CA', image: 'match-words', route: '/match-words' },
+    { title: 'Word to Picture', color: '#954D27', image: 'word-to-picture', route: '/word-to-picture' },
+    { title: 'Picture to Word', color: '#273F95', image: 'picture-to-word', route: '/picture-to-word' },
+    { title: 'Sound to Picture',color: '#952769', image: 'sound-to-picture', route: '/sound-to-picture' },
+    { title: 'Sound to Word',   color: '#4C9527', image: 'sound-to-word', route: '/sound-to-word' },
+    { title: 'Word list',       color: '#6675AA', image: 'word-list', route: '/word-list' },
   ];
 
   const usableW = layout.w - LEFT - RIGHT - (COL_GAP * (COLUMNS - 1));
@@ -162,6 +165,10 @@ export default function Home() {
   const rowH = normalRows > 0 ? availableHeightForNormalRows / normalRows : 0;
 
   const isOdd = items.length % COLUMNS === 1;
+
+  const handleCardPress = (route: string) => {
+    router.push(route as any);
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
@@ -183,7 +190,12 @@ export default function Home() {
 
           const commonInner = (
             <View style={styles.card}>
-              <CardItem item={it} isSpecial={stretchFull} cardHeight={height} />
+              <CardItem 
+                item={it} 
+                isSpecial={stretchFull} 
+                cardHeight={height} 
+                onPress={() => handleCardPress(it.route)}
+              />
             </View>
           );
 
@@ -238,11 +250,15 @@ export default function Home() {
 }
 
 /** Kart içeriği */
-function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
+function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
   if (isSpecial) {
     // özel row: sol renkli ikon kutusu + sağda siyah text
     return (
-      <View style={styles.specialRow}>
+      <Pressable 
+        style={styles.specialRow} 
+        onPress={onPress}
+        android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
+      >
         <View style={[
           styles.specialIconBox, 
           { 
@@ -256,13 +272,17 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
           />
         </View>
         <SFProText weight="semibold" style={[styles.specialText, { fontSize: isTablet() ? 40 : 24 }]}>{item.title}</SFProText>
-      </View>
+      </Pressable>
     );
   }
 
   // normal kart - tek composite image
   return (
-    <View style={styles.fill}>
+    <Pressable 
+      style={styles.fill} 
+      onPress={onPress}
+      android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
+    >
       <View style={[
         styles.iconRow,
         { flex: 1 }, // Her durumda flex
@@ -293,7 +313,7 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
       ]}>
         <SFProText weight="semibold" style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]} numberOfLines={1}>{item.title}</SFProText>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

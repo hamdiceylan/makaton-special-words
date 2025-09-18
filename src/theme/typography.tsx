@@ -1,10 +1,11 @@
 import { Text, TextProps } from 'react-native';
 
-type FontWeight = 'normal' | 'medium' | 'semibold' | 'bold' | 'heavy' | 'black';
+type FontWeight = 'regular' | 'normal' | 'medium' | 'semibold' | 'bold' | 'heavy' | 'black';
 
 // Jost font family mapping
 const jostFontFamilyMap: Record<FontWeight, string> = {
-  normal: 'Jost-Regular',
+  regular: 'Jost-Regular',
+  normal: 'Jost-Regular', // Alias for regular
   medium: 'Jost-Medium',
   semibold: 'Jost-SemiBold',
   bold: 'Jost-Bold',
@@ -14,7 +15,8 @@ const jostFontFamilyMap: Record<FontWeight, string> = {
 
 // SF Pro font family mapping
 const sfProFontFamilyMap: Record<FontWeight, string> = {
-  normal: 'SF-Pro-Display-Regular',
+  regular: 'SF-Pro-Display-Regular',
+  normal: 'SF-Pro-Display-Regular', // Alias for regular
   medium: 'SF-Pro-Display-Medium',
   semibold: 'SF-Pro-Display-Semibold',
   bold: 'SF-Pro-Display-Bold',
@@ -26,11 +28,11 @@ const sfProFontFamilyMap: Record<FontWeight, string> = {
 const fontFamilyMap = jostFontFamilyMap;
 
 // Helper functions to get font family based on weight
-export const getJostFontFamily = (weight: FontWeight = 'normal') => jostFontFamilyMap[weight];
-export const getSFProFontFamily = (weight: FontWeight = 'normal') => sfProFontFamilyMap[weight];
+export const getJostFontFamily = (weight: FontWeight = 'regular') => jostFontFamilyMap[weight];
+export const getSFProFontFamily = (weight: FontWeight = 'regular') => sfProFontFamilyMap[weight];
 
 // Legacy helper function (Jost için backward compatibility)
-export const getFontFamily = (weight: FontWeight = 'normal') => getJostFontFamily(weight);
+export const getFontFamily = (weight: FontWeight = 'regular') => getJostFontFamily(weight);
 
 // Base Text component that always uses Jost
 export function BaseText(props: TextProps) {
@@ -38,7 +40,7 @@ export function BaseText(props: TextProps) {
     <Text
       {...props}
       style={[
-        { fontFamily: fontFamilyMap.normal },
+        { fontFamily: fontFamilyMap.regular },
         props.style,
       ]}
     />
@@ -46,7 +48,7 @@ export function BaseText(props: TextProps) {
 }
 
 // Jost Text component with weight prop
-export function JostText({ style, weight = 'normal', ...props }: TextProps & { weight?: FontWeight }) {
+export function JostText({ style, weight = 'regular', ...props }: TextProps & { weight?: FontWeight }) {
   return (
     <BaseText
       {...props}
@@ -58,16 +60,13 @@ export function JostText({ style, weight = 'normal', ...props }: TextProps & { w
   );
 }
 
-// Legacy alias for backward compatibility
-export const ThemedText = JostText;
-
 // SF Pro Base Text component
 export function SFProBaseText(props: TextProps) {
   return (
     <Text
       {...props}
       style={[
-        { fontFamily: sfProFontFamilyMap.normal },
+        { fontFamily: sfProFontFamilyMap.regular },
         props.style,
       ]}
     />
@@ -75,7 +74,7 @@ export function SFProBaseText(props: TextProps) {
 }
 
 // SF Pro Themed Text component with weight prop
-export function SFProText({ style, weight = 'normal', ...props }: TextProps & { weight?: FontWeight }) {
+export function SFProText({ style, weight = 'regular', ...props }: TextProps & { weight?: FontWeight }) {
   return (
     <SFProBaseText
       {...props}
