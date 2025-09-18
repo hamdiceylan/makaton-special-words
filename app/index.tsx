@@ -1,16 +1,103 @@
 import { ThemedText } from '@/src/theme/typography';
-import React, { useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const LEFT = 15;
-const RIGHT = 18;
-const COL_GAP = 17;
-const ROW_GAP = 30;
-const COLUMNS = 2;
+// Device & Orientation detection
+const isTablet = () => {
+  const { width, height } = Dimensions.get('window');
+  const minDimension = Math.min(width, height);
+  
+  // iPad threshold: 744px (iPad Mini dahil), Android tablet threshold: 600px
+  return Platform.OS === 'ios' ? 
+    minDimension >= 744 : 
+    minDimension >= 600;
+};
+
+const isLandscape = (width: number, height: number) => width > height;
+
+// Grid configuration based on device and orientation
+const getGridConfig = (screenWidth: number, screenHeight: number) => {
+  const tablet = isTablet();
+  const landscape = isLandscape(screenWidth, screenHeight);
+  
+  if (landscape) {
+    if (tablet) {
+      // Tablet Landscape - screenWidth kullanmalıyız (en geniş boyut)
+      const SQUARE_RATIO = 309 / 1400; // 0.221 - Square width / device width oranı
+      const GAP_RATIO = 100 / 1400;    // 0.071 - Gap / device width oranı
+      const ROW_GAP_RATIO = 75 / 1024; // 0.073 - Row gap / device height oranı
+      
+      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Device width'e oransal square
+      const squareSize = Math.max(240, calculatedSquareSize); // Min 240
+      const gapSize = screenWidth * GAP_RATIO;       // Device width'e oransal gap
+      const rowGapSize = screenHeight * ROW_GAP_RATIO; // Device height'e oransal row gap
+      const leftMargin = (screenWidth - (3 * squareSize + 2 * gapSize)) / 2; // 3 column için 2 gap
+      
+      return {
+        LEFT: leftMargin,
+        RIGHT: leftMargin,
+        COL_GAP: gapSize,   // Oransal gap
+        ROW_GAP: rowGapSize, // Oransal row gap
+        COLUMNS: 3,         // 3 columns in landscape
+        SQUARE_SIZE: squareSize, // Oransal square size
+      };
+    } else {
+      // Phone Landscape - screenWidth kullan (daha geniş boyut)
+      const usableWidth = screenWidth - 40; // Left + Right margins
+      const gapTotal = 2 * 20; // 3 column için 2 gap
+      const squareSize = (usableWidth - gapTotal) / 3;
+      
+      return {
+        LEFT: 20,
+        RIGHT: 20,
+        COL_GAP: 20,
+        ROW_GAP: 30,
+        COLUMNS: 3,
+        SQUARE_SIZE: squareSize,
+      };
+    }
+  } else {
+    // Portrait Mode
+    if (tablet) {
+      // Tablet Portrait - Device width'e oransal grid sistemi
+      const SQUARE_RATIO = 309 / 1024; // 0.302 - Square width / device width oranı
+      const GAP_RATIO = 100 / 1024;    // 0.098 - Gap / device width oranı
+      
+      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Device width'e oransal square
+      const squareSize = Math.max(240, calculatedSquareSize); // Min 260
+      const gapSize = screenWidth * GAP_RATIO;       // Device width'e oransal gap
+      const leftMargin = (screenWidth - (2 * squareSize + gapSize)) / 2; // Center için margin
+      
+      return {
+        LEFT: leftMargin,
+        RIGHT: leftMargin,
+        COL_GAP: gapSize,   // Oransal gap
+        ROW_GAP: 60,        // Fixed row gap
+        COLUMNS: 2,         // Always 2 columns in portrait
+        SQUARE_SIZE: squareSize, // Oransal square size
+      };
+    } else {
+      // Phone Portrait - Normal grid
+      const usableWidth = screenWidth - 15 - 18; // Left + Right margins
+      const gapTotal = 17; // 2 column için 1 gap
+      const squareSize = (usableWidth - gapTotal) / 2;
+      
+      return {
+        LEFT: 15,
+        RIGHT: 18,
+        COL_GAP: 17,
+        ROW_GAP: 30,
+        COLUMNS: 2,
+        SQUARE_SIZE: squareSize,
+      };
+    }
+  }
+};
 const LAST_ROW_WIDTH_RATIO = 2; // Square width / 2
 const RADIUS = 15;
-const TEXT_BAR_RATIO = 48 / 152; // ≈ 0.316 (%32)
+const TEXT_BAR_RATIO = 48 / 152; // ≈ 0.316 (%32) - Phone için
+const TABLET_TEXT_BAR_RATIO = 56 / 276; // ≈ 0.203 (%20.3) - Tablet için
 
 // Asset mapping - composite images
 const CARD_IMAGES = {
@@ -35,6 +122,20 @@ interface CardItemProps {
 
 export default function Home() {
   const [layout, setLayout] = useState({ w: 0, h: 0 });
+  const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
+  
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setScreenDimensions(window);
+    });
+    return () => subscription?.remove();
+  }, []);
+  
+  const gridConfig = getGridConfig(screenDimensions.width, screenDimensions.height);
+  const { LEFT, RIGHT, COL_GAP, ROW_GAP, COLUMNS, SQUARE_SIZE } = gridConfig;
+  
+  const isTabletDevice = isTablet();
+  const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
 
   const items: Item[] = [
     { title: 'Match Pictures',  color: '#279095', image: 'match-pictures' },
@@ -46,13 +147,15 @@ export default function Home() {
     { title: 'Word list',       color: '#6675AA', image: 'word-list' },
   ];
 
-  const usableW = layout.w - LEFT - RIGHT - COL_GAP;
-  const cellW = usableW / COLUMNS;
+  const usableW = layout.w - LEFT - RIGHT - (COL_GAP * (COLUMNS - 1));
+  const cellW = SQUARE_SIZE || usableW / COLUMNS;
 
   const rows = Math.ceil(items.length / COLUMNS);
   const normalRows = rows - 1; // Son row hariç
   const totalVerticalGap = Math.max(0, ROW_GAP * normalRows);
-  const lastRowHeight = cellW / LAST_ROW_WIDTH_RATIO; // Square width / 2
+  // Landscape modunda last row height'ı daha küçük yap
+  const lastRowRatio = isLandscapeMode ? 2.3 : LAST_ROW_WIDTH_RATIO; // Landscape'de daha küçük ratio
+  const lastRowHeight = cellW / lastRowRatio;
   const availableHeightForNormalRows = layout.h - lastRowHeight - totalVerticalGap;
   const rowH = normalRows > 0 ? availableHeightForNormalRows / normalRows : 0;
 
@@ -83,6 +186,10 @@ export default function Home() {
           );
 
           if (stretchFull) {
+            // Landscape modunda max width sınırlaması
+            const maxWidth = isLandscapeMode ? 716 : undefined;
+            const useMaxWidth = maxWidth && (screenDimensions.width - LEFT - RIGHT) > maxWidth;
+            
             return (
               <View
                 key={i}
@@ -91,8 +198,9 @@ export default function Home() {
                   {
                     position: 'absolute',
                     bottom: 0,
-                    left: LEFT,
-                    right: RIGHT,
+                    left: useMaxWidth ? (screenDimensions.width - maxWidth) / 2 : LEFT,
+                    right: useMaxWidth ? (screenDimensions.width - maxWidth) / 2 : RIGHT,
+                    maxWidth: maxWidth,
                     height,
                   },
                 ]}
@@ -113,7 +221,7 @@ export default function Home() {
                   height,
                   width: cellW,
                   marginLeft: colIndex === 0 ? LEFT : COL_GAP,
-                  marginRight: colIndex === 1 ? RIGHT : 0,
+                  marginRight: colIndex === COLUMNS - 1 ? RIGHT : 0,
                   marginBottom: mb,
                 },
               ]}
@@ -133,13 +241,19 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
     // özel row: sol renkli ikon kutusu + sağda siyah text
     return (
       <View style={styles.specialRow}>
-        <View style={[styles.specialIconBox, { backgroundColor: item.color }]}>
+        <View style={[
+          styles.specialIconBox, 
+          { 
+            backgroundColor: item.color,
+            width: isTablet() ? 149 : 104,
+          }
+        ]}>
           <Image 
             source={CARD_IMAGES[item.image]} 
             style={styles.specialIcon} 
           />
         </View>
-        <ThemedText weight="semibold" style={[styles.specialText, { fontSize: 24 }]}>{item.title}</ThemedText>
+        <ThemedText weight="semibold" style={[styles.specialText, { fontSize: isTablet() ? 40 : 24 }]}>{item.title}</ThemedText>
       </View>
     );
   }
@@ -147,12 +261,21 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
   // normal kart - tek composite image
   return (
     <View style={styles.fill}>
-      <View style={styles.iconRow}>
+      <View style={[
+        styles.iconRow,
+        { flex: 1 }, // Her durumda flex
+        isTablet() && { height: '100%' } // Tablet'te tam height
+      ]}>
         <Image 
           source={CARD_IMAGES[item.image]} 
           style={[
             styles.cardIcon, 
-            { tintColor: item.color }
+            { 
+              tintColor: item.color,
+              paddingHorizontal: 5,
+              resizeMode: 'contain',
+              height: isTablet() ? '100%' : undefined, // Tablet'te tam height
+            }
           ]} 
         />
       </View>
@@ -161,10 +284,12 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
         styles.textContainer, 
         { 
           backgroundColor: item.color,
-          height: cardHeight ? cardHeight * TEXT_BAR_RATIO : 42
+          height: cardHeight ? 
+            (isTablet() ? cardHeight * TABLET_TEXT_BAR_RATIO : cardHeight * TEXT_BAR_RATIO) : 
+            42
         }
       ]}>
-        <ThemedText weight="semibold" style={[styles.text, { fontSize: 18 }]} numberOfLines={1}>{item.title}</ThemedText>
+        <ThemedText weight="semibold" style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]} numberOfLines={1}>{item.title}</ThemedText>
       </View>
     </View>
   );
@@ -203,8 +328,7 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: '100%',
     flex: 1,
-    resizeMode: 'contain',
-    paddingHorizontal: 5,
+    resizeMode: 'stretch', // iPad'de tam boyut kullan
   },
   
   textContainer: {
@@ -224,7 +348,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   specialIconBox: {
-    width: 104,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -238,7 +361,9 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   specialText: {
-    marginLeft: 48,
     color: '#000',
+    textAlign: 'center',
+    flex: 1,
+    marginLeft: -60,
   },
 });
