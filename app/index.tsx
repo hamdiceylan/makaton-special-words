@@ -1,4 +1,4 @@
-import { ThemedText } from '@/src/theme/typography';
+import { SFProText } from '@/src/theme/typography';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -255,7 +255,7 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
             style={styles.specialIcon} 
           />
         </View>
-        <ThemedText weight="semibold" style={[styles.specialText, { fontSize: isTablet() ? 40 : 24 }]}>{item.title}</ThemedText>
+        <SFProText weight="semibold" style={[styles.specialText, { fontSize: isTablet() ? 40 : 24 }]}>{item.title}</SFProText>
       </View>
     );
   }
@@ -291,7 +291,7 @@ function CardItem({ item, isSpecial, cardHeight }: CardItemProps) {
             42
         }
       ]}>
-        <ThemedText weight="semibold" style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]} numberOfLines={1}>{item.title}</ThemedText>
+        <SFProText weight="semibold" style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]} numberOfLines={1}>{item.title}</SFProText>
       </View>
     </View>
   );

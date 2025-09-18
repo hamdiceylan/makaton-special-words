@@ -2,14 +2,25 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Pressable } from 'react-native';
-import { ThemedText } from '../src/theme/typography';
+import { JostText } from '../src/theme/typography';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    'Jost-Regular': require('../assets/fonts/Jost-Regular.ttf'),
-    'Jost-Medium': require('../assets/fonts/Jost-Medium.ttf'),
-    'Jost-SemiBold': require('../assets/fonts/Jost-SemiBold.ttf'),
-    'Jost-Bold': require('../assets/fonts/Jost-Bold.ttf'),
+    // Jost fonts
+    'Jost-Regular': require('../assets/fonts/Jost/Jost-Regular.ttf'),
+    'Jost-Medium': require('../assets/fonts/Jost/Jost-Medium.ttf'),
+    'Jost-SemiBold': require('../assets/fonts/Jost/Jost-SemiBold.ttf'),
+    'Jost-Bold': require('../assets/fonts/Jost/Jost-Bold.ttf'),
+    'Jost-ExtraBold': require('../assets/fonts/Jost/Jost-ExtraBold.ttf'),
+    'Jost-Black': require('../assets/fonts/Jost/Jost-Black.ttf'),
+    
+    // SF Pro fonts
+    'SF-Pro-Display-Regular': require('../assets/fonts/SF-pro/SF-Pro-Display-Regular.otf'),
+    'SF-Pro-Display-Medium': require('../assets/fonts/SF-pro/SF-Pro-Display-Medium.otf'),
+    'SF-Pro-Display-Semibold': require('../assets/fonts/SF-pro/SF-Pro-Display-Semibold.otf'),
+    'SF-Pro-Display-Bold': require('../assets/fonts/SF-pro/SF-Pro-Display-Bold.otf'),
+    'SF-Pro-Display-Heavy': require('../assets/fonts/SF-pro/SF-Pro-Display-Heavy.otf'),
+    'SF-Pro-Display-Black': require('../assets/fonts/SF-pro/SF-Pro-Display-Black.otf'),
   });
 
   if (!fontsLoaded) {
@@ -30,7 +41,7 @@ export default function RootLayout() {
             headerShadowVisible: false,
             headerTintColor: '#000',
             headerLeft: () => (
-              <ThemedText 
+              <JostText 
                 weight="semibold"
                 style={{ 
                   fontSize: 18,
@@ -38,7 +49,7 @@ export default function RootLayout() {
                 }}
               >
                 Special Words
-              </ThemedText>
+              </JostText>
             ),
             headerRight: () => (
               <Pressable 
