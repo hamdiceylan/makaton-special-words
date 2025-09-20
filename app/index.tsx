@@ -282,7 +282,7 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
             styles.cardIcon, 
             { 
               tintColor: item.color,
-              paddingHorizontal: 5,
+              paddingHorizontal: isTablet() ? 15 : 5,
               resizeMode: 'contain',
               height: isTablet() ? '100%' : '50%', // Tablet'te tam height
             }
