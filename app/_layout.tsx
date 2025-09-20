@@ -30,35 +30,41 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="auto" />
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: '#FBFBFE' }, // tüm ekranlar için varsayılan
+          headerShadowVisible: false,
+          headerTintColor: '#000',
+          headerTitleStyle: {
+            fontFamily: 'SF-Pro-Display-Semibold',
+            fontSize: 18,
+            color: '#000',
+          },
+        }}
+      >
         <Stack.Screen
           name="index"
           options={{
             title: '',
-            headerStyle: {
-              backgroundColor: '#4134BF05',
-            },
-            headerShadowVisible: false,
-            headerTintColor: '#000',
             headerLeft: () => (
-              <JostText 
+              <JostText
                 weight="semibold"
-                style={{ 
+                style={{
                   fontSize: 18,
-                  color: '#000'
+                  color: '#000',
                 }}
               >
                 Special Words
               </JostText>
             ),
             headerRight: () => (
-              <Pressable 
+              <Pressable
                 onPress={() => {}}
                 style={({ pressed }) => ({
-                  opacity: pressed ? 0.5 : 1
+                  opacity: pressed ? 0.5 : 1,
                 })}
               >
-                <Image 
+                <Image
                   source={require('../assets/images/settings-icon.png')}
                   style={{ width: 24, height: 24 }}
                 />
@@ -66,69 +72,26 @@ export default function RootLayout() {
             ),
           }}
         />
-        <Stack.Screen
-          name="match-pictures"
-          options={{
-            title: 'Match Pictures',
-            headerStyle: { backgroundColor: '#279095' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="match-words"
-          options={{
-            title: 'Match Words',
-            headerStyle: { backgroundColor: '#9893CA' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="word-to-picture"
-          options={{
-            title: 'Word to Picture',
-            headerStyle: { backgroundColor: '#954D27' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="picture-to-word"
-          options={{
-            title: 'Picture to Word',
-            headerStyle: { backgroundColor: '#273F95' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="sound-to-picture"
-          options={{
-            title: 'Sound to Picture',
-            headerStyle: { backgroundColor: '#952769' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="sound-to-word"
-          options={{
-            title: 'Sound to Word',
-            headerStyle: { backgroundColor: '#4C9527' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="word-list"
-          options={{
-            title: 'Word List',
-            headerStyle: { backgroundColor: '#6675AA' },
-            headerTintColor: '#FFFFFF',
-            headerTitleStyle: { fontFamily: 'SF-Pro-Display-Semibold', fontSize: 18 },
-          }}
-        />
+  
+        <Stack.Screen name="match-pictures" options={{ title: 'Match Pictures' }} />
+        <Stack.Screen name="match-words" options={{ title: 'Match Words' }} />
+        <Stack.Screen name="word-to-picture" options={{ title: 'Word to Picture' }} />
+        <Stack.Screen name="picture-to-word" options={{ title: 'Picture to Word' }} />
+        <Stack.Screen name="sound-to-picture" options={{ title: 'Sound to Picture' }} />
+        <Stack.Screen name="sound-to-word" options={{ title: 'Sound to Word' }} />
+  
+         <Stack.Screen
+           name="word-list"
+           options={{
+             title: 'Word List',
+             headerTintColor: '#4664CD', // buton/back rengi
+             headerTitleStyle: {
+               fontFamily: 'SF-Pro-Display-Semibold',
+               fontSize: 15,
+               color: '#000', // title rengi siyah
+             },
+           }}
+         />
       </Stack>
     </>
   );

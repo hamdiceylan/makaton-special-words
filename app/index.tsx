@@ -1,21 +1,9 @@
 import { SFProText } from '@/src/theme/typography';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-// Device & Orientation detection
-const isTablet = () => {
-  const { width, height } = Dimensions.get('window');
-  const minDimension = Math.min(width, height);
-  
-  // iPad threshold: 744px (iPad Mini dahil), Android tablet threshold: 600px
-  return Platform.OS === 'ios' ? 
-    minDimension >= 744 : 
-    minDimension >= 600;
-};
-
-const isLandscape = (width: number, height: number) => width > height;
+import { isLandscape, isTablet } from '../src/utils/device';
 
 // Grid configuration based on device and orientation
 const getGridConfig = (screenWidth: number, screenHeight: number) => {
