@@ -1,44 +1,45 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { SFProText } from '../src/theme/typography';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function MatchWordsScreen() {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <SFProText weight="bold" style={styles.title}>
-          Match Words
-        </SFProText>
-        <SFProText weight="regular" style={styles.subtitle}>
-          Coming Soon...
-        </SFProText>
+    <View style={styles.container}>
+      {/* Üst View */}
+      <View style={styles.top}>
+        <View style={styles.square} />
       </View>
-    </SafeAreaView>
+
+      {/* Alt View */}
+      <View style={styles.bottom}>
+        <Text style={styles.bottomText}>Toolbar / Controls</Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#9893CA',
+    flex: 1, // VStack gibi, tüm ekran
   },
-  content: {
+  top: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    backgroundColor: 'blue', // mavi
   },
-  title: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    marginBottom: 16,
-    textAlign: 'center',
+  square: {
+    width: 120,
+    height: 120,
+    backgroundColor: 'white', // kare
   },
-  subtitle: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    opacity: 0.8,
-    textAlign: 'center',
+  bottom: {
+    height: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'red', // kırmızı
+  },
+  bottomText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });
