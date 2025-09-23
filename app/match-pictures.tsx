@@ -31,6 +31,11 @@ interface GameState {
   matchCard: GameCard;
   staticCards: GameCard[];
   isAnimating: boolean;
+  activeSet: GameCard[]; // current 4 words as fixed set
+  targetOrder: number[]; // shuffled indices [0..3]
+  currentIndex: number;  // pointer into targetOrder
+  revealedMap: { [key: string]: boolean }; // image/text key -> revealed
+  currentGroupStart: number; // starting index of current 4-word group
 }
 
 export default function MatchPicturesScreen() {
@@ -39,11 +44,17 @@ export default function MatchPicturesScreen() {
     matchCard: { id: '', image: '', text: '', isMatched: false },
     staticCards: [],
     isAnimating: false,
+    activeSet: [],
+    targetOrder: [],
+    currentIndex: 0,
+    revealedMap: {},
+    currentGroupStart: 0,
   });
 
   const [cardPosition] = useState(new Animated.ValueXY());
   const [cardScale] = useState(new Animated.Value(1));
   const [flipAnimation] = useState(new Animated.Value(0));
+  const [cardOpacity] = useState(new Animated.Value(1));
   const [showWord, setShowWord] = useState(false);
 
   // Oyun alanı (containerView) ölçüleri
@@ -56,39 +67,81 @@ export default function MatchPicturesScreen() {
     initializeGame();
   }, []);
 
-  const initializeGame = () => {
-    const availableWords = words.slice(0, Math.min(words.length, 50));
-    const shuffled = [...availableWords].sort(() => Math.random() - 0.5);
+  const initializeGame = (startIndex: number = 0) => {
+    // Get current group of 4 words starting from startIndex
+    const endIndex = Math.min(startIndex + 4, words.length);
+    const currentGroup = words.slice(startIndex, endIndex);
+    
+    // If we don't have enough words left, reset to beginning
+    if (currentGroup.length === 0) {
+      return initializeGame(0);
+    }
 
-    const selectedWords = shuffled.slice(0, 4);
-    const matchWordIndex = Math.floor(Math.random() * 4);
-    const matchWord = selectedWords[matchWordIndex];
-
-    const newStaticCards: GameCard[] = selectedWords.map((word, index) => ({
-      id: `static-${index}`,
-      image: word.image,
-      text: word.text,
+    const staticCards: GameCard[] = currentGroup.map((w, i) => ({
+      id: `static-${i}`,
+      image: w.image,
+      text: w.text,
       isMatched: false,
     }));
 
-    const newMatchCard: GameCard = {
-      id: 'match',
-      image: matchWord.image,
-      text: matchWord.text,
-      isMatched: false,
-    };
+    // Target order only among the current static cards (no reshuffle of positions)
+    const indices = staticCards.map((_, i) => i);
+    const targetOrder = [...indices].sort(() => Math.random() - 0.5);
 
+    // Set static once
     setGameState(prev => ({
       ...prev,
-      matchCard: newMatchCard,
-      staticCards: newStaticCards,
-      isAnimating: false,
+      activeSet: staticCards,
+      staticCards,
+      targetOrder,
+      currentIndex: 0,
+      revealedMap: {},
+      currentGroupStart: startIndex,
     }));
 
+    // Initialize first center match card
+    setTimeout(() => {
+      setupRound(staticCards, targetOrder, 0);
+    }, 0);
+  };
+
+  const setupRound = (activeSet: GameCard[], targetOrder: number[], currentIndex: number) => {
+    if (activeSet.length === 0 || targetOrder.length === 0) return;
+    const targetIdx = targetOrder[currentIndex];
+    const target = activeSet[targetIdx];
+
+    // Reset transforms FIRST to ensure proper positioning
     cardPosition.setValue({ x: 0, y: 0 });
     cardScale.setValue(1);
     flipAnimation.setValue(0);
+    cardOpacity.setValue(0);
     setShowWord(false);
+
+    const newMatchCard: GameCard = {
+      id: 'match',
+      image: target.image,
+      text: target.text,
+      isMatched: false,
+    };
+
+    // Small delay to ensure smooth transition
+    setTimeout(() => {
+      setGameState(prev => ({
+        ...prev,
+        matchCard: newMatchCard,
+        isAnimating: false,
+        activeSet, // unchanged fixed static set
+        targetOrder,
+        currentIndex,
+      }));
+      
+      // Fade in the new card
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }, 50);
   };
 
   // Container ölçüleri alınmadan hesap yapmayalım
@@ -96,6 +149,7 @@ export default function MatchPicturesScreen() {
 
   const PADDING = 24;
   const OFFSET_Y = 86;
+  const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
     // Tüm statik kartlar containerView içinde konumlanır (2x2 grid)
@@ -125,7 +179,7 @@ export default function MatchPicturesScreen() {
     onPanResponderGrant: () => {
       Animated.spring(cardScale, {
         toValue: 1.1,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start();
     },
 
@@ -177,6 +231,15 @@ export default function MatchPicturesScreen() {
 
     if (!target) return;
 
+    // Mark matched static card as revealed and persist in revealedMap
+    setGameState(prev => {
+      const updatedStatics = prev.staticCards.map((c, i) => (
+        i === matchedIndex ? { ...c, isMatched: true } : c
+      ));
+      const nextRevealed = { ...prev.revealedMap, [matchedCard.image]: true };
+      return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
+    });
+
     Animated.parallel([
       Animated.timing(cardPosition, {
         toValue: {
@@ -189,7 +252,7 @@ export default function MatchPicturesScreen() {
       Animated.timing(cardScale, {
         toValue: 1,
         duration: 300,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     ]).start(() => {
       performFlipAnimation();
@@ -199,13 +262,30 @@ export default function MatchPicturesScreen() {
   const performFlipAnimation = () => {
     Animated.timing(flipAnimation, {
       toValue: 1,
-      duration: 600,
-      useNativeDriver: false,
+      duration: 1000,
+      useNativeDriver: true,
     }).start(() => {
       setShowWord(true);
+      // After a short delay, advance through the first 5 targets
       setTimeout(() => {
-        nextLevel();
-      }, 2000);
+        // Hide the card temporarily before advancing
+        Animated.timing(cardOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }).start(() => {
+          setGameState(prev => ({ 
+            ...prev, 
+            matchCard: { ...prev.matchCard, image: '', text: '' },
+            isAnimating: true 
+          }));
+          
+          // Small delay to ensure card is hidden before resetting position
+          setTimeout(() => {
+            advanceOrFinish();
+          }, 100);
+        });
+      }, 1200);
     });
   };
 
@@ -221,26 +301,27 @@ export default function MatchPicturesScreen() {
         toValue: 1,
         tension: 100,
         friction: 8,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     ]).start();
   };
 
-  const nextLevel = () => {
-    setGameState(prev => ({
-      ...prev,
-      level: prev.level + 1,
-      isAnimating: false,
-    }));
+  const advanceOrFinish = () => {
+    const { activeSet, targetOrder, currentIndex, currentGroupStart } = gameState;
+    if (!activeSet || activeSet.length === 0) return;
 
-    cardPosition.setValue({ x: 0, y: 0 });
-    cardScale.setValue(1);
-    flipAnimation.setValue(0);
-    setShowWord(false);
-
-    setTimeout(() => {
-      initializeGame();
-    }, 500);
+    const hasNext = currentIndex + 1 < targetOrder.length;
+    if (hasNext) {
+      // Proceed to next target in current group
+      setupRound(activeSet, targetOrder, currentIndex + 1);
+      setGameState(prev => ({ ...prev, level: prev.level + 1 }));
+    } else {
+      // Completed current group; move to next 4-word group
+      const nextGroupStart = currentGroupStart + 4;
+      setTimeout(() => {
+        initializeGame(nextGroupStart);
+      }, 400);
+    }
   };
 
   const renderStaticCard = (card: GameCard, index: number) => {
@@ -261,31 +342,34 @@ export default function MatchPicturesScreen() {
           },
         ]}
       >
-        {WORD_IMAGES[card.image] && (
-          <Image
-            source={WORD_IMAGES[card.image]}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+        {card.isMatched ? (
+          <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
+            <SFProText weight="semibold" style={styles.cardText}>
+              {card.text}
+            </SFProText>
+          </View>
+        ) : (
+          WORD_IMAGES[card.image] && (
+            <Image
+              source={WORD_IMAGES[card.image]}
+              style={styles.cardImage}
+              resizeMode="cover"
+            />
+          )
         )}
       </View>
     );
   };
 
   const renderMatchCard = () => {
-    const rotateY = flipAnimation.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: ['0deg', '90deg', '0deg'],
+    const frontRotateY = flipAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '180deg'],
     });
 
-    const frontOpacity = flipAnimation.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [1, 0, 0],
-    });
-
-    const backOpacity = flipAnimation.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [0, 0, 1],
+    const backRotateY = flipAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['180deg', '360deg'],
     });
 
     return (
@@ -301,13 +385,11 @@ export default function MatchPicturesScreen() {
             transform: [
               { translateX: cardPosition.x },
               { translateY: cardPosition.y },
-              { scale: cardScale },
-              { rotateY },
             ],
           },
         ]}
         onLayout={(e) => {
-          // matchCard’ın container içindeki merkezi:
+          // matchCard'ın container içindeki merkezi:
           const layout = e.nativeEvent.layout;
           initialPosition.current = {
             x: layout.x + CARD_WIDTH / 2,
@@ -315,22 +397,44 @@ export default function MatchPicturesScreen() {
           };
         }}
       >
-        {/* Front side - Image */}
-        <Animated.View style={[styles.cardSide, { opacity: frontOpacity }]}>
-          {WORD_IMAGES[gameState.matchCard.image] && (
-            <Image
-              source={WORD_IMAGES[gameState.matchCard.image]}
-              style={styles.cardImage}
-              resizeMode="cover"
-            />
-          )}
-        </Animated.View>
+        <Animated.View
+          style={{
+            width: '100%',
+            height: '100%',
+            transform: [{ scale: cardScale }],
+            opacity: cardOpacity,
+          }}
+        >
+          {/* Front side - Image */}
+          <Animated.View
+            style={[
+              styles.cardSide,
+              { transform: [{ perspective: PERSPECTIVE }, { rotateY: frontRotateY }] },
+            ]}
+            pointerEvents="none"
+          >
+            {WORD_IMAGES[gameState.matchCard.image] && (
+              <Image
+                source={WORD_IMAGES[gameState.matchCard.image]}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            )}
+          </Animated.View>
 
-        {/* Back side - Word text */}
-        <Animated.View style={[styles.cardSide, styles.cardBack, { opacity: backOpacity }]}>
-          <SFProText weight="bold" style={styles.cardText}>
-            {gameState.matchCard.text}
-          </SFProText>
+          {/* Back side - Word text */}
+          <Animated.View
+            style={[
+              styles.cardSide,
+              styles.cardBack,
+              { transform: [{ perspective: PERSPECTIVE }, { rotateY: backRotateY }] },
+            ]}
+            pointerEvents="none"
+          >
+            <SFProText weight="bold" style={styles.cardText}>
+              {gameState.matchCard.text}
+            </SFProText>
+          </Animated.View>
         </Animated.View>
       </Animated.View>
     );
@@ -349,7 +453,7 @@ export default function MatchPicturesScreen() {
         {/* Statik kartlar */}
         {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
         {/* Ortadaki matchCard */}
-        {canLayout && gameState.matchCard.image && renderMatchCard()}
+        {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
       </View>
 
       {/* Alt (VStack’in ikinci view’i): 90 sabit yükseklik */}
@@ -389,7 +493,8 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: '#B1D8F2',
     shadowColor: '#000',
-    backfaceVisibility: 'hidden',
+    overflow: 'hidden',
+    zIndex: 2,
   },
 
   staticCard: {
@@ -407,7 +512,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+    borderRadius: 6,
     overflow: 'hidden',
     backfaceVisibility: 'hidden',
   },
@@ -421,11 +526,11 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 0,
+    borderRadius: 6,
   },
 
   cardText: {
-    fontSize: 16,
+    fontSize: 24,
     color: '#000',
     textAlign: 'center',
     textTransform: 'capitalize',
