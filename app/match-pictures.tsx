@@ -5,10 +5,12 @@ import {
   Image,
   PanResponder,
   StyleSheet,
+  TouchableOpacity,
   View
 } from 'react-native';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
+import { initializeAudio, playWordSound } from '../src/utils/soundUtils';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -64,7 +66,11 @@ export default function MatchPicturesScreen() {
   const initialPosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
-    initializeGame();
+    const setupAudio = async () => {
+      await initializeAudio();
+      initializeGame();
+    };
+    setupAudio();
   }, []);
 
   const initializeGame = (startIndex: number = 0) => {
@@ -135,12 +141,17 @@ export default function MatchPicturesScreen() {
         currentIndex,
       }));
       
-      // Fade in the new card
+      // Fade in the new card and play its sound
       Animated.timing(cardOpacity, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        // Play the word sound after card appears
+        if (newMatchCard.image) {
+          playWordSound(newMatchCard.image);
+        }
+      });
     }, 50);
   };
 
@@ -171,7 +182,7 @@ export default function MatchPicturesScreen() {
     ];
   };
 
-  // Drag & drop
+  // Drag & drop with tap detection
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
@@ -191,7 +202,32 @@ export default function MatchPicturesScreen() {
     onPanResponderRelease: (event, gestureState) => {
       if (gameState.isAnimating) return;
 
-      // Bırakılan nokta = başlangıç merkez + delta
+      // Check if it's a tap (minimal movement) or a drag
+      const isTab = Math.abs(gestureState.dx) < 10 && Math.abs(gestureState.dy) < 10;
+      
+      if (isTab) {
+        // It's a tap - play sound and return card to center
+        if (gameState.matchCard.image) {
+          playWordSound(gameState.matchCard.image);
+        }
+        Animated.parallel([
+          Animated.spring(cardPosition, {
+            toValue: { x: 0, y: 0 },
+            tension: 100,
+            friction: 8,
+            useNativeDriver: false,
+          }),
+          Animated.spring(cardScale, {
+            toValue: 1,
+            tension: 100,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+        ]).start();
+        return;
+      }
+
+      // It's a drag - check for matches
       const dropPosition = {
         x: initialPosition.current.x + gestureState.dx,
         y: initialPosition.current.y + gestureState.dy,
@@ -255,6 +291,10 @@ export default function MatchPicturesScreen() {
         useNativeDriver: true,
       }),
     ]).start(() => {
+      // Play the matched word sound for successful match
+      if (gameState.matchCard.image) {
+        playWordSound(gameState.matchCard.image);
+      }
       performFlipAnimation();
     });
   };
@@ -262,7 +302,7 @@ export default function MatchPicturesScreen() {
   const performFlipAnimation = () => {
     Animated.timing(flipAnimation, {
       toValue: 1,
-      duration: 1000,
+      duration: 2000,
       useNativeDriver: true,
     }).start(() => {
       setShowWord(true);
@@ -330,8 +370,15 @@ export default function MatchPicturesScreen() {
 
     if (!p) return null;
 
+    const handleCardTap = () => {
+      // Play the word sound when card is tapped
+      if (card.image) {
+        playWordSound(card.image);
+      }
+    };
+
     return (
-      <View
+      <TouchableOpacity
         key={card.id}
         style={[
           styles.staticCard,
@@ -341,6 +388,8 @@ export default function MatchPicturesScreen() {
             top: p.y - CARD_HEIGHT / 2,
           },
         ]}
+        onPress={handleCardTap}
+        activeOpacity={0.8}
       >
         {card.isMatched ? (
           <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
@@ -357,7 +406,7 @@ export default function MatchPicturesScreen() {
             />
           )
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
