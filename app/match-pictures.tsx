@@ -615,7 +615,7 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            <SFProText weight="bold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
+            <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
               {gameState.matchCard.text}
             </SFProText>
           </Animated.View>
