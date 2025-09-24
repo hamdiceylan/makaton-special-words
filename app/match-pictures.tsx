@@ -152,6 +152,7 @@ export default function MatchPicturesScreen() {
   const [flipAnimation] = useState(new Animated.Value(0));
   const [cardOpacity] = useState(new Animated.Value(1));
   const [showWord, setShowWord] = useState(false);
+  const [canShowText, setCanShowText] = useState(false);
 
   // Game area (containerView) dimensions
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -223,6 +224,7 @@ export default function MatchPicturesScreen() {
     flipAnimation.setValue(0);
     cardOpacity.setValue(0);
     setShowWord(false);
+    setCanShowText(false);
 
     const newMatchCard: GameCard = {
       id: 'match',
@@ -398,14 +400,7 @@ export default function MatchPicturesScreen() {
 
     if (!target) return;
 
-    // Mark matched static card as revealed and persist in revealedMap
-    setGameState(prev => {
-      const updatedStatics = prev.staticCards.map((c, i) => (
-        i === matchedIndex ? { ...c, isMatched: true } : c
-      ));
-      const nextRevealed = { ...prev.revealedMap, [matchedCard.image]: true };
-      return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
-    });
+    // Delay revealing text on the static card until the flip starts
 
     Animated.parallel([
       Animated.timing(cardPosition, {
@@ -426,11 +421,24 @@ export default function MatchPicturesScreen() {
       if (gameState.matchCard.image) {
         playWordSound(gameState.matchCard.image);
       }
+
+      // Now mark the static card as matched (show its text) right before flip
+      setGameState(prev => {
+        const updatedStatics = prev.staticCards.map((c, i) => (
+          i === matchedIndex ? { ...c, isMatched: true } : c
+        ));
+        const nextRevealed = { ...prev.revealedMap, [matchedCard.image]: true };
+        return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
+      });
+
       performFlipAnimation();
     });
   };
 
   const performFlipAnimation = () => {
+    // Enable text visibility right before starting the flip
+    setCanShowText(true);
+    
     Animated.timing(flipAnimation, {
       toValue: 1,
       duration: 2000,
@@ -615,9 +623,11 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
-              {gameState.matchCard.text}
-            </SFProText>
+            {canShowText && (
+              <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
+                {gameState.matchCard.text}
+              </SFProText>
+            )}
           </Animated.View>
         </Animated.View>
       </Animated.View>
@@ -634,9 +644,9 @@ export default function MatchPicturesScreen() {
           setContainerSize({ width, height });
         }}
       >
-        {/* Statik kartlar */}
+        {/* Static cards */}
         {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
-        {/* Ortadaki matchCard */}
+        {/* Middle matchCard */}
         {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
       </View>
 
