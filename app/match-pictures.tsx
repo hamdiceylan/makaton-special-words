@@ -13,8 +13,20 @@ import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { initializeAudio, playWordSound } from '../src/utils/soundUtils';
 
-// Alt bar sabit yükseklik
-const TOOLBAR_HEIGHT = 90;
+// Responsive toolbar height - landscape modda device height ile orantılı
+const getToolbarHeight = (screenWidth: number, screenHeight: number) => {
+  const landscape = isLandscape(screenWidth, screenHeight);
+  
+  if (landscape) {
+    // Landscape modda device height ile orantılı (1024 height için 90px base)
+    const responsiveHeight = screenHeight * (90 / 1024);
+    // Min 70, max 90 arasında sınırla
+    return Math.min(90, Math.max(70, responsiveHeight));
+  } else {
+    // Portrait modda sabit 90
+    return 90;
+  }
+};
 
 // Layout configuration based on device and orientation
 const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
@@ -24,11 +36,29 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
   if (landscape) {
     if (tablet) {
       // Tablet Landscape
+      const cardWidth = screenWidth * (300 / 1400);
+      let padding = 150;
+      
+      // OFFSET_Y'yi de device height ile orantılı yap (landscape için 1024 base height)
+      const baseOffsetY = screenHeight * (34 / 1024); // 1024 height için 34 oran
+      
+      // Kartlar arası minimum boşluk kontrolü (landscape 2 kart yan yana)
+      // Mevcut padding ile kartlar arası boşluk hesapla
+      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
+      const minGapBetweenCards = 50; // Minimum kartlar arası boşluk
+      
+      if (currentGap < minGapBetweenCards) {
+        // Gap 50'den küçükse, padding'i küçülterek gap'i 50'ye çıkar
+        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
+        padding = Math.max(20, requiredPadding); // Minimum 20px padding
+      }
+      // Gap 50'den büyükse padding 150 olarak kalır
+      
       return {
-        CARD_WIDTH: screenWidth * (300 / 1400), // Daha büyük kartlar
-        CARD_ASPECT_RATIO: 230 / 300, // Biraz daha yüksek kartlar
-        PADDING: 150,
-        OFFSET_Y: 34,
+        CARD_WIDTH: cardWidth,
+        CARD_ASPECT_RATIO: 230 / 300,
+        PADDING: padding,
+        OFFSET_Y: baseOffsetY,
         CARD_TEXT_SIZE: 50,
       };
     } else {
@@ -45,11 +75,29 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
     // Portrait Mode
     if (tablet) {
       // Tablet Portrait
+      const cardWidth = screenWidth * (300 / 1024);
+      let padding = 120;
+      
+      // OFFSET_Y'yi de device height ile orantılı yap
+      const baseOffsetY = screenHeight * (198 / 1400); // 1400 height için 198 oran
+      
+      // Kartlar arası minimum boşluk kontrolü (portrait 2 kart yan yana)
+      // Mevcut padding ile kartlar arası boşluk hesapla
+      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
+      const minGapBetweenCards = 140; // Minimum kartlar arası boşluk
+      
+      if (currentGap < minGapBetweenCards) {
+        // Gap 140'dan küçükse, padding'i küçülterek gap'i 140'a çıkar
+        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
+        padding = Math.max(20, requiredPadding); // Minimum 20px padding
+      }
+      // Gap 140'dan büyükse padding 120 olarak kalır
+      
       return {
-        CARD_WIDTH: screenWidth * (300 / 1024), // Daha büyük kartlar
-        CARD_ASPECT_RATIO: 230 / 300, // Biraz daha yüksek kartlar
-        PADDING: 120,
-        OFFSET_Y: 198,
+        CARD_WIDTH: cardWidth,
+        CARD_ASPECT_RATIO: 230 / 300,
+        PADDING: padding,
+        OFFSET_Y: baseOffsetY,
         CARD_TEXT_SIZE: 50,
       };
     } else {
@@ -213,8 +261,36 @@ export default function MatchPicturesScreen() {
 
   // Get responsive layout configuration
   const layoutConfig = getLayoutConfig(screenDimensions.width, screenDimensions.height);
-  const { CARD_WIDTH, CARD_ASPECT_RATIO, PADDING, OFFSET_Y, CARD_TEXT_SIZE } = layoutConfig;
+  let { CARD_WIDTH, CARD_ASPECT_RATIO, PADDING, OFFSET_Y, CARD_TEXT_SIZE } = layoutConfig;
   const CARD_HEIGHT = CARD_WIDTH * CARD_ASPECT_RATIO; // Responsive aspect ratio
+  
+  // Get responsive toolbar height
+  const TOOLBAR_HEIGHT = getToolbarHeight(screenDimensions.width, screenDimensions.height);
+  
+  // Landscape modlarda dikey sığma kontrolü
+  const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
+  if (isLandscapeMode && canLayout) {
+    const H = containerSize.height;
+    
+    // Gerçek kart pozisyonlarını kontrol et
+    // Üst kartların merkezi: H/2 - CARD_HEIGHT - OFFSET_Y
+    // Üst kartların üst sınırı: merkez - CARD_HEIGHT/2
+    const topCardCenter = H / 2 - CARD_HEIGHT - OFFSET_Y;
+    const topCardTop = topCardCenter - CARD_HEIGHT / 2;
+    
+    // Alt kartların merkezi: H/2 + CARD_HEIGHT + OFFSET_Y  
+    // Alt kartların alt sınırı: merkez + CARD_HEIGHT/2
+    const bottomCardCenter = H / 2 + CARD_HEIGHT + OFFSET_Y;
+    const bottomCardBottom = bottomCardCenter + CARD_HEIGHT / 2;
+    
+    if (topCardTop < 0 || bottomCardBottom > H) {
+      // Sadece gerçekten taşıyorsa OFFSET_Y'yi düzelt
+      const maxOffsetY = ((H - 3 * CARD_HEIGHT) / 2) - 10;
+      OFFSET_Y = Math.max(0, maxOffsetY);
+    }
+    // Eğer taşmıyorsa orijinal OFFSET_Y değerini koru
+  }
+  
   const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
@@ -564,8 +640,8 @@ export default function MatchPicturesScreen() {
         {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
       </View>
 
-      {/* Alt (VStack’in ikinci view’i): 90 sabit yükseklik */}
-      <View style={styles.bottomBar}>
+      {/* Alt (VStack'in ikinci view'i): Responsive yükseklik */}
+      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
         {/* buraya toolbar/controls gelebilir */}
       </View>
     </View>
@@ -586,9 +662,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
-  // Alt sabit 90
+  // Alt responsive toolbar
   bottomBar: {
-    height: TOOLBAR_HEIGHT,
     backgroundColor: '#F3F3F3',
   },
 
