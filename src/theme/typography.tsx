@@ -24,14 +24,14 @@ const sfProFontFamilyMap: Record<FontWeight, string> = {
   black: 'SF-Pro-Display-Black',
 };
 
-// Legacy font family map (Jost için backward compatibility)
+// Legacy font family map (for Jost backward compatibility)
 const fontFamilyMap = jostFontFamilyMap;
 
 // Helper functions to get font family based on weight
 export const getJostFontFamily = (weight: FontWeight = 'regular') => jostFontFamilyMap[weight];
 export const getSFProFontFamily = (weight: FontWeight = 'regular') => sfProFontFamilyMap[weight];
 
-// Legacy helper function (Jost için backward compatibility)
+// Legacy helper function (for Jost backward compatibility)
 export const getFontFamily = (weight: FontWeight = 'regular') => getJostFontFamily(weight);
 
 // Base Text component that always uses Jost

@@ -32,7 +32,7 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#FBFBFE' }, // tüm ekranlar için varsayılan
+          headerStyle: { backgroundColor: '#FBFBFE' }, // default for all screens
           headerShadowVisible: false,
           headerTintColor: '#000',
           headerTitleStyle: {
@@ -84,11 +84,11 @@ export default function RootLayout() {
            name="word-list"
            options={{
              title: 'Word List',
-             headerTintColor: '#4664CD', // buton/back rengi
+             headerTintColor: '#4664CD', // button/back color
              headerTitleStyle: {
                fontFamily: 'SF-Pro-Display-Semibold',
                fontSize: 15,
-               color: '#000', // title rengi siyah
+               color: '#000', // title color black
              },
            }}
          />

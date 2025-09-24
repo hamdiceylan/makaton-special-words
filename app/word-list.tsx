@@ -40,20 +40,20 @@ export default function WordListScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
-  // Header button fonksiyonları
+  // Header button functions
   const handleAddWord = () => {
-    Alert.alert('Add Word', 'Yeni kelime ekleme fonksiyonu');
+    Alert.alert('Add Word', 'Add new word function');
   };
 
   const handleEditMode = () => {
-    Alert.alert('Edit Mode', 'Düzenleme modu fonksiyonu');
+    Alert.alert('Edit Mode', 'Edit mode function');
   };
 
   const handleSettings = () => {
-    Alert.alert('Settings', 'Liste ayarları fonksiyonu');
+    Alert.alert('Settings', 'List settings function');
   };
 
-  // Navigation options'a fonksiyonları ekle
+  // Add functions to navigation options
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (

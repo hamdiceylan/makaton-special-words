@@ -12,29 +12,29 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
   
   if (landscape) {
     if (tablet) {
-      // Tablet Landscape - screenWidth kullanmalıyız (en geniş boyut)
-      const SQUARE_RATIO = 309 / 1400; // 0.221 - Square width / device width oranı
-      const GAP_RATIO = 100 / 1400;    // 0.071 - Gap / device width oranı
-      const ROW_GAP_RATIO = 75 / 1024; // 0.073 - Row gap / device height oranı
+      // Tablet Landscape - we should use screenWidth (widest dimension)
+      const SQUARE_RATIO = 309 / 1400; // 0.221 - Square width / device width ratio
+      const GAP_RATIO = 100 / 1400;    // 0.071 - Gap / device width ratio
+      const ROW_GAP_RATIO = 75 / 1024; // 0.073 - Row gap / device height ratio
       
-      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Device width'e oransal square
+      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Square proportional to device width
       const squareSize = Math.max(240, calculatedSquareSize); // Min 240
-      const gapSize = screenWidth * GAP_RATIO;       // Device width'e oransal gap
-      const rowGapSize = screenHeight * ROW_GAP_RATIO; // Device height'e oransal row gap
-      const leftMargin = (screenWidth - (3 * squareSize + 2 * gapSize)) / 2; // 3 column için 2 gap
+      const gapSize = screenWidth * GAP_RATIO;       // Gap proportional to device width
+      const rowGapSize = screenHeight * ROW_GAP_RATIO; // Row gap proportional to device height
+      const leftMargin = (screenWidth - (3 * squareSize + 2 * gapSize)) / 2; // 2 gaps for 3 columns
       
       return {
         LEFT: leftMargin,
         RIGHT: leftMargin,
-        COL_GAP: gapSize,   // Oransal gap
-        ROW_GAP: rowGapSize, // Oransal row gap
+        COL_GAP: gapSize,   // Proportional gap
+        ROW_GAP: rowGapSize, // Proportional row gap
         COLUMNS: 3,         // 3 columns in landscape
-        SQUARE_SIZE: squareSize, // Oransal square size
+        SQUARE_SIZE: squareSize, // Proportional square size
       };
     } else {
-      // Phone Landscape - screenWidth kullan (daha geniş boyut)
+      // Phone Landscape - use screenWidth (wider dimension)
       const usableWidth = screenWidth - 40; // Left + Right margins
-      const gapTotal = 2 * 20; // 3 column için 2 gap
+      const gapTotal = 2 * 20; // 2 gaps for 3 columns
       const squareSize = (usableWidth - gapTotal) / 3;
       
       return {
@@ -49,32 +49,32 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
   } else {
     // Portrait Mode
     if (tablet) {
-      // Tablet Portrait - Height'a göre card boyutu belirleme
-      const CARD_HEIGHT_RATIO = 276 / 1400; // Card height / device height oranı (1400 base height)
-      const CARD_ASPECT_RATIO = 309 / 276; // Width / Height oranı
-      const GAP_RATIO = 100 / 1024;    // 0.098 - Gap / device width oranı
+      // Tablet Portrait - Determine card size based on height
+      const CARD_HEIGHT_RATIO = 276 / 1400; // Card height / device height ratio (1400 base height)
+      const CARD_ASPECT_RATIO = 309 / 276; // Width / Height ratio
+      const GAP_RATIO = 100 / 1024;    // 0.098 - Gap / device width ratio
       
-      // Önce height'ı hesapla
-      const cardHeight = screenHeight * CARD_HEIGHT_RATIO; // Device height'e oransal card height
-      // Sonra height'a göre width'i 309/276 oranında hesapla
-      const cardWidth = cardHeight * CARD_ASPECT_RATIO; // Height'a göre width
-      const squareSize = Math.max(240, Math.max(cardWidth, cardHeight)); // Min 240, width/height'tan büyük olan
+      // First calculate height
+      const cardHeight = screenHeight * CARD_HEIGHT_RATIO; // Card height proportional to device height
+      // Then calculate width based on height with 309/276 ratio
+      const cardWidth = cardHeight * CARD_ASPECT_RATIO; // Width based on height
+      const squareSize = Math.max(240, Math.max(cardWidth, cardHeight)); // Min 240, whichever is larger between width/height
       
-      const gapSize = screenWidth * GAP_RATIO;       // Device width'e oransal gap
-      const leftMargin = (screenWidth - (2 * squareSize + gapSize)) / 2; // Center için margin
+      const gapSize = screenWidth * GAP_RATIO;       // Gap proportional to device width
+      const leftMargin = (screenWidth - (2 * squareSize + gapSize)) / 2; // Margin for centering
       
       return {
         LEFT: leftMargin,
         RIGHT: leftMargin,
-        COL_GAP: gapSize,   // Oransal gap
+        COL_GAP: gapSize,   // Proportional gap
         ROW_GAP: 60,        // Fixed row gap
         COLUMNS: 2,         // Always 2 columns in portrait
-        SQUARE_SIZE: squareSize, // Width ve height'tan büyük olan
+        SQUARE_SIZE: squareSize, // Whichever is larger between width and height
       };
     } else {
       // Phone Portrait - Normal grid
       const usableWidth = screenWidth - 15 - 18; // Left + Right margins
-      const gapTotal = 17; // 2 column için 1 gap
+      const gapTotal = 17; // 1 gap for 2 columns
       const squareSize = (usableWidth - gapTotal) / 2;
       
       return {
@@ -90,8 +90,8 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
 };
 const LAST_ROW_WIDTH_RATIO = 2; // Square width / 2
 const RADIUS = 15;
-const TEXT_BAR_RATIO = 48 / 152; // ≈ 0.316 (%32) - Phone için
-const TABLET_TEXT_BAR_RATIO = 56 / 276; // ≈ 0.203 (%20.3) - Tablet için
+const TEXT_BAR_RATIO = 48 / 152; // ≈ 0.316 (%32) - For phone
+const TABLET_TEXT_BAR_RATIO = 56 / 276; // ≈ 0.203 (%20.3) - For tablet
 
 // Asset mapping - composite images
 const CARD_IMAGES = {
@@ -147,9 +147,9 @@ export default function Home() {
   const cellW = SQUARE_SIZE || usableW / COLUMNS;
 
   const rows = Math.ceil(items.length / COLUMNS);
-  const normalRows = rows - 1; // Son row hariç
+  const normalRows = rows - 1; // Excluding last row
   const totalVerticalGap = Math.max(0, ROW_GAP * normalRows);
-  // Landscape modunda last row height'ı daha küçük yap
+  // Make last row height smaller in landscape mode
   const lastRowRatio = isLandscapeMode ? 
     (isTabletDevice ? 2.3 : 4) : // Tablet landscape: 2.3, Phone landscape: 4
     LAST_ROW_WIDTH_RATIO; // Portrait mode
@@ -193,7 +193,7 @@ export default function Home() {
           );
 
           if (stretchFull) {
-            // Landscape modunda max width sınırlaması
+            // Max width limitation in landscape mode
             const maxWidth = isLandscapeMode ? 716 : undefined;
             const useMaxWidth = maxWidth && (screenDimensions.width - LEFT - RIGHT) > maxWidth;
             
@@ -245,7 +245,7 @@ export default function Home() {
 /** Kart içeriği */
 function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
   if (isSpecial) {
-    // özel row: sol renkli ikon kutusu + sağda siyah text
+    // special row: left colored icon box + black text on right
     return (
       <Pressable 
         style={styles.specialRow} 
@@ -269,7 +269,7 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
     );
   }
 
-  // normal kart - tek composite image
+  // normal card - single composite image
   return (
     <Pressable 
       style={styles.fill} 
@@ -339,11 +339,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   
-  // Tam responsive composite image
+  // Fully responsive composite image
   cardIcon: {
     width: '100%',
     flex: 1,
-    resizeMode: 'stretch', // iPad'de tam boyut kullan
+    resizeMode: 'stretch', // Use full size on iPad
   },
   
   textContainer: {
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
-  // Özel son row stilleri
+  // Special last row styles
   specialRow: {
     flex: 1,
     flexDirection: 'row',

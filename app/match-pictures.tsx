@@ -13,17 +13,17 @@ import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { initializeAudio, playWordSound } from '../src/utils/soundUtils';
 
-// Responsive toolbar height - landscape modda device height ile orantılı
+// Responsive toolbar height - proportional to device height in landscape mode
 const getToolbarHeight = (screenWidth: number, screenHeight: number) => {
   const landscape = isLandscape(screenWidth, screenHeight);
   
   if (landscape) {
-    // Landscape modda device height ile orantılı (1024 height için 90px base)
+    // Proportional to device height in landscape mode (90px base for 1024 height)
     const responsiveHeight = screenHeight * (90 / 1024);
-    // Min 70, max 90 arasında sınırla
+    // Limit between min 70, max 90
     return Math.min(90, Math.max(70, responsiveHeight));
   } else {
-    // Portrait modda sabit 90
+    // Fixed 90 in portrait mode
     return 90;
   }
 };
@@ -39,20 +39,20 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
       const cardWidth = screenHeight * (300 / 1024);
       let padding = 150;
       
-      // OFFSET_Y'yi de device height ile orantılı yap (landscape için 1024 base height)
-      const baseOffsetY = screenHeight * (34 / 1024); // 1024 height için 34 oran
+      // Make OFFSET_Y proportional to device height too (1024 base height for landscape)
+      const baseOffsetY = screenHeight * (34 / 1024); // 34 ratio for 1024 height
       
-      // Kartlar arası minimum boşluk kontrolü (landscape 2 kart yan yana)
-      // Mevcut padding ile kartlar arası boşluk hesapla
+      // Minimum gap control between cards (landscape 2 cards side by side)
+      // Calculate gap between cards with current padding
       const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 50; // Minimum kartlar arası boşluk
+      const minGapBetweenCards = 50; // Minimum gap between cards
       
       if (currentGap < minGapBetweenCards) {
-        // Gap 50'den küçükse, padding'i küçülterek gap'i 50'ye çıkar
+        // If gap is less than 50, reduce padding to increase gap to 50
         const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
         padding = Math.max(20, requiredPadding); // Minimum 20px padding
       }
-      // Gap 50'den büyükse padding 150 olarak kalır
+      // If gap is greater than 50, padding remains 150
       
       return {
         CARD_WIDTH: cardWidth,
@@ -64,8 +64,8 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
     } else {
       // Phone Landscape  
       return {
-        CARD_WIDTH: screenHeight * (130 / 390), // Height bazlı hesaplama
-        CARD_ASPECT_RATIO: 90 / 130, // Daha yassı kartlar (landscape için optimal)
+        CARD_WIDTH: screenHeight * (130 / 390), // Height-based calculation
+        CARD_ASPECT_RATIO: 90 / 130, // Flatter cards (optimal for landscape)
         PADDING: 50,
         OFFSET_Y: -15,
         CARD_TEXT_SIZE: 22,
@@ -78,20 +78,20 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
       const cardWidth = screenWidth * (300 / 1024);
       let padding = 120;
       
-      // OFFSET_Y'yi de device height ile orantılı yap
-      const baseOffsetY = screenHeight * (198 / 1400); // 1400 height için 198 oran
+      // Make OFFSET_Y proportional to device height too
+      const baseOffsetY = screenHeight * (198 / 1400); // 198 ratio for 1400 height
       
-      // Kartlar arası minimum boşluk kontrolü (portrait 2 kart yan yana)
-      // Mevcut padding ile kartlar arası boşluk hesapla
+      // Minimum gap control between cards (portrait 2 cards side by side)
+      // Calculate gap between cards with current padding
       const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 140; // Minimum kartlar arası boşluk
+      const minGapBetweenCards = 140; // Minimum gap between cards
       
       if (currentGap < minGapBetweenCards) {
-        // Gap 140'dan küçükse, padding'i küçülterek gap'i 140'a çıkar
+        // If gap is less than 140, reduce padding to increase gap to 140
         const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
         padding = Math.max(20, requiredPadding); // Minimum 20px padding
       }
-      // Gap 140'dan büyükse padding 120 olarak kalır
+      // If gap is greater than 140, padding remains 120
       
       return {
         CARD_WIDTH: cardWidth,
@@ -101,9 +101,9 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
         CARD_TEXT_SIZE: 50,
       };
     } else {
-      // Phone Portrait - Mevcut tasarım
+      // Phone Portrait - Current design
       return {
-        CARD_WIDTH: screenWidth * (130 / 390), // 390 → 130 ölçek
+        CARD_WIDTH: screenWidth * (130 / 390), // 390 → 130 scale
         CARD_ASPECT_RATIO: 100 / 130, // Orijinal aspect ratio
         PADDING: 24,
         OFFSET_Y: 86,
@@ -153,10 +153,10 @@ export default function MatchPicturesScreen() {
   const [cardOpacity] = useState(new Animated.Value(1));
   const [showWord, setShowWord] = useState(false);
 
-  // Oyun alanı (containerView) ölçüleri
+  // Game area (containerView) dimensions
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
-  // matchCard’ın container içindeki ilk merkez koordinatı (center)
+  // matchCard's initial center coordinates within container (center)
   const initialPosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -256,7 +256,7 @@ export default function MatchPicturesScreen() {
     }, 50);
   };
 
-  // Container ölçüleri alınmadan hesap yapmayalım
+  // Don't calculate until container dimensions are obtained
   const canLayout = containerSize.width > 0 && containerSize.height > 0;
 
   // Get responsive layout configuration
@@ -267,38 +267,38 @@ export default function MatchPicturesScreen() {
   // Get responsive toolbar height
   const TOOLBAR_HEIGHT = getToolbarHeight(screenDimensions.width, screenDimensions.height);
   
-  // Landscape modlarda dikey sığma kontrolü
+  // Vertical fit control in landscape modes
   const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
   if (isLandscapeMode && canLayout) {
     const H = containerSize.height;
     
-    // Gerçek kart pozisyonlarını kontrol et
-    // Üst kartların merkezi: H/2 - CARD_HEIGHT - OFFSET_Y
-    // Üst kartların üst sınırı: merkez - CARD_HEIGHT/2
+    // Check actual card positions
+    // Top cards center: H/2 - CARD_HEIGHT - OFFSET_Y
+    // Top cards upper boundary: center - CARD_HEIGHT/2
     const topCardCenter = H / 2 - CARD_HEIGHT - OFFSET_Y;
     const topCardTop = topCardCenter - CARD_HEIGHT / 2;
     
-    // Alt kartların merkezi: H/2 + CARD_HEIGHT + OFFSET_Y  
-    // Alt kartların alt sınırı: merkez + CARD_HEIGHT/2
+    // Bottom cards center: H/2 + CARD_HEIGHT + OFFSET_Y  
+    // Bottom cards lower boundary: center + CARD_HEIGHT/2
     const bottomCardCenter = H / 2 + CARD_HEIGHT + OFFSET_Y;
     const bottomCardBottom = bottomCardCenter + CARD_HEIGHT / 2;
     
     if (topCardTop < 0 || bottomCardBottom > H) {
-      // Sadece gerçekten taşıyorsa OFFSET_Y'yi düzelt
+      // Only adjust OFFSET_Y if it really overflows
       const maxOffsetY = ((H - 3 * CARD_HEIGHT) / 2) - 10;
       OFFSET_Y = Math.max(0, maxOffsetY);
     }
-    // Eğer taşmıyorsa orijinal OFFSET_Y değerini koru
+    // Keep original OFFSET_Y value if it doesn't overflow
   }
   
   const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
-    // Tüm statik kartlar containerView içinde konumlanır (2x2 grid)
+    // All static cards are positioned within containerView (2x2 grid)
     const W = containerSize.width;
     const H = containerSize.height;
 
-    // güvenlik
+    // safety check
     if (W === 0 || H === 0) return [];
 
     return [
@@ -514,7 +514,7 @@ export default function MatchPicturesScreen() {
         style={[
           styles.staticCard,
           {
-            // center tabanlı konum → left/top = center - half size
+            // center-based position → left/top = center - half size
             left: p.x - CARD_WIDTH / 2,
             top: p.y - CARD_HEIGHT / 2,
             width: CARD_WIDTH,
@@ -573,7 +573,7 @@ export default function MatchPicturesScreen() {
           },
         ]}
         onLayout={(e) => {
-          // matchCard'ın container içindeki merkezi:
+          // matchCard's center within container:
           const layout = e.nativeEvent.layout;
           initialPosition.current = {
             x: layout.x + CARD_WIDTH / 2,
@@ -626,7 +626,7 @@ export default function MatchPicturesScreen() {
 
   return (
     <View style={styles.screen}>
-      {/* Üst (VStack’in ilk view’i): Oyun alanı containerView */}
+      {/* Top (VStack's first view): Game area containerView */}
       <View
         style={styles.containerView}
         onLayout={(e) => {
@@ -640,29 +640,29 @@ export default function MatchPicturesScreen() {
         {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
       </View>
 
-      {/* Alt (VStack'in ikinci view'i): Responsive yükseklik */}
+      {/* Bottom (VStack's second view): Responsive height */}
       <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
-        {/* buraya toolbar/controls gelebilir */}
+        {/* toolbar/controls can go here */}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Tüm ekran, safe area ignore
+  // Full screen, ignore safe area
   screen: {
     flex: 1,
     backgroundColor: '#279095',
   },
 
-  // Üst alan (oyun alanı, containerView)
+  // Top area (game area, containerView)
   containerView: {
     flex: 1,
     position: 'relative',
     backgroundColor: '#fff',
   },
 
-  // Alt responsive toolbar
+  // Bottom responsive toolbar
   bottomBar: {
     backgroundColor: '#F3F3F3',
   },
