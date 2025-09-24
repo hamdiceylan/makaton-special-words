@@ -10,16 +10,60 @@ import {
 } from 'react-native';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
+import { isLandscape, isTablet } from '../src/utils/device';
 import { initializeAudio, playWordSound } from '../src/utils/soundUtils';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Alt bar sabit yükseklik
 const TOOLBAR_HEIGHT = 90;
 
-// Kart boyutları (istersen container genişliğine göre dinamikleştirebiliriz)
-const CARD_WIDTH = SCREEN_WIDTH * (130 / 390); // 390 → 130 ölçek
-const CARD_HEIGHT = CARD_WIDTH * (100 / 130);
+// Layout configuration based on device and orientation
+const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
+  const tablet = isTablet();
+  const landscape = isLandscape(screenWidth, screenHeight);
+  
+  if (landscape) {
+    if (tablet) {
+      // Tablet Landscape
+      return {
+        CARD_WIDTH: screenWidth * (300 / 1400), // Daha büyük kartlar
+        CARD_ASPECT_RATIO: 230 / 300, // Biraz daha yüksek kartlar
+        PADDING: 150,
+        OFFSET_Y: 34,
+        CARD_TEXT_SIZE: 50,
+      };
+    } else {
+      // Phone Landscape  
+      return {
+        CARD_WIDTH: screenHeight * (130 / 390), // Height bazlı hesaplama
+        CARD_ASPECT_RATIO: 90 / 130, // Daha yassı kartlar (landscape için optimal)
+        PADDING: 50,
+        OFFSET_Y: -15,
+        CARD_TEXT_SIZE: 22,
+      };
+    }
+  } else {
+    // Portrait Mode
+    if (tablet) {
+      // Tablet Portrait
+      return {
+        CARD_WIDTH: screenWidth * (300 / 1024), // Daha büyük kartlar
+        CARD_ASPECT_RATIO: 230 / 300, // Biraz daha yüksek kartlar
+        PADDING: 120,
+        OFFSET_Y: 198,
+        CARD_TEXT_SIZE: 50,
+      };
+    } else {
+      // Phone Portrait - Mevcut tasarım
+      return {
+        CARD_WIDTH: screenWidth * (130 / 390), // 390 → 130 ölçek
+        CARD_ASPECT_RATIO: 100 / 130, // Orijinal aspect ratio
+        PADDING: 24,
+        OFFSET_Y: 86,
+        CARD_TEXT_SIZE: 24,
+      };
+    }
+  }
+};
 
 interface GameCard {
   id: string;
@@ -53,6 +97,8 @@ export default function MatchPicturesScreen() {
     currentGroupStart: 0,
   });
 
+  const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
+
   const [cardPosition] = useState(new Animated.ValueXY());
   const [cardScale] = useState(new Animated.Value(1));
   const [flipAnimation] = useState(new Animated.Value(0));
@@ -71,6 +117,13 @@ export default function MatchPicturesScreen() {
       initializeGame();
     };
     setupAudio();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setScreenDimensions(window);
+    });
+    return () => subscription?.remove();
   }, []);
 
   const initializeGame = (startIndex: number = 0) => {
@@ -158,8 +211,10 @@ export default function MatchPicturesScreen() {
   // Container ölçüleri alınmadan hesap yapmayalım
   const canLayout = containerSize.width > 0 && containerSize.height > 0;
 
-  const PADDING = 24;
-  const OFFSET_Y = 86;
+  // Get responsive layout configuration
+  const layoutConfig = getLayoutConfig(screenDimensions.width, screenDimensions.height);
+  const { CARD_WIDTH, CARD_ASPECT_RATIO, PADDING, OFFSET_Y, CARD_TEXT_SIZE } = layoutConfig;
+  const CARD_HEIGHT = CARD_WIDTH * CARD_ASPECT_RATIO; // Responsive aspect ratio
   const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
@@ -386,6 +441,8 @@ export default function MatchPicturesScreen() {
             // center tabanlı konum → left/top = center - half size
             left: p.x - CARD_WIDTH / 2,
             top: p.y - CARD_HEIGHT / 2,
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
           },
         ]}
         onPress={handleCardTap}
@@ -393,7 +450,7 @@ export default function MatchPicturesScreen() {
       >
         {card.isMatched ? (
           <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-            <SFProText weight="semibold" style={styles.cardText}>
+            <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
               {card.text}
             </SFProText>
           </View>
@@ -429,6 +486,8 @@ export default function MatchPicturesScreen() {
           canLayout && {
             left: containerSize.width / 2 - CARD_WIDTH / 2,
             top: containerSize.height / 2 - CARD_HEIGHT / 2,
+            width: CARD_WIDTH,
+            height: CARD_HEIGHT,
           },
           {
             transform: [
@@ -480,7 +539,7 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            <SFProText weight="bold" style={styles.cardText}>
+            <SFProText weight="bold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
               {gameState.matchCard.text}
             </SFProText>
           </Animated.View>
@@ -534,8 +593,6 @@ const styles = StyleSheet.create({
   },
 
   matchCard: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
     position: 'absolute',
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
@@ -547,8 +604,6 @@ const styles = StyleSheet.create({
   },
 
   staticCard: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
     position: 'absolute',
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
@@ -579,7 +634,6 @@ const styles = StyleSheet.create({
   },
 
   cardText: {
-    fontSize: 24,
     color: '#000',
     textAlign: 'center',
     textTransform: 'capitalize',
