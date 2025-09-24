@@ -49,12 +49,17 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
   } else {
     // Portrait Mode
     if (tablet) {
-      // Tablet Portrait - Device width'e oransal grid sistemi
-      const SQUARE_RATIO = 309 / 1024; // 0.302 - Square width / device width oranı
+      // Tablet Portrait - Height'a göre card boyutu belirleme
+      const CARD_HEIGHT_RATIO = 276 / 1400; // Card height / device height oranı (1400 base height)
+      const CARD_ASPECT_RATIO = 309 / 276; // Width / Height oranı
       const GAP_RATIO = 100 / 1024;    // 0.098 - Gap / device width oranı
       
-      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Device width'e oransal square
-      const squareSize = Math.max(240, calculatedSquareSize); // Min 260
+      // Önce height'ı hesapla
+      const cardHeight = screenHeight * CARD_HEIGHT_RATIO; // Device height'e oransal card height
+      // Sonra height'a göre width'i 309/276 oranında hesapla
+      const cardWidth = cardHeight * CARD_ASPECT_RATIO; // Height'a göre width
+      const squareSize = Math.max(240, Math.max(cardWidth, cardHeight)); // Min 240, width/height'tan büyük olan
+      
       const gapSize = screenWidth * GAP_RATIO;       // Device width'e oransal gap
       const leftMargin = (screenWidth - (2 * squareSize + gapSize)) / 2; // Center için margin
       
@@ -64,7 +69,7 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
         COL_GAP: gapSize,   // Oransal gap
         ROW_GAP: 60,        // Fixed row gap
         COLUMNS: 2,         // Always 2 columns in portrait
-        SQUARE_SIZE: squareSize, // Oransal square size
+        SQUARE_SIZE: squareSize, // Width ve height'tan büyük olan
       };
     } else {
       // Phone Portrait - Normal grid
