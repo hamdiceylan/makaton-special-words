@@ -36,7 +36,7 @@ const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
   if (landscape) {
     if (tablet) {
       // Tablet Landscape
-      const cardWidth = screenWidth * (300 / 1400);
+      const cardWidth = screenHeight * (300 / 1024);
       let padding = 150;
       
       // OFFSET_Y'yi de device height ile orantılı yap (landscape için 1024 base height)
