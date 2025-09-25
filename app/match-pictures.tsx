@@ -652,7 +652,64 @@ export default function MatchPicturesScreen() {
 
       {/* Bottom (VStack's second view): Responsive height */}
       <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
-        {/* toolbar/controls can go here */}
+        <View style={styles.toolbar}>
+          {/* Left group: to-end-icon and previous-icon */}
+          <View style={styles.toolbarGroup}>
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image 
+                source={require('../assets/images/to-start-icon.png')}
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <View style={{ width: 15 }} />
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image  
+                source={require('../assets/images/previous-icon.png')}
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Middle group: lock-icon and refresh-icon */}
+          <View style={styles.toolbarGroup}>
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image 
+                source={require('../assets/images/lock-icon.png')} 
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <View style={{ width: 16 }} />
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image 
+                source={require('../assets/images/refresh-icon.png')} 
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Right group: next-icon and to-start-icon */}
+          <View style={styles.toolbarGroup}>
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image 
+                source={require('../assets/images/next-icon.png')}
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <View style={{ width: 15 }} />
+            <TouchableOpacity style={styles.toolbarButton}>
+              <Image  
+                source={require('../assets/images/to-end-icon.png')}
+                style={styles.toolbarIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -675,6 +732,31 @@ const styles = StyleSheet.create({
   // Bottom responsive toolbar
   bottomBar: {
     backgroundColor: '#F3F3F3',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  toolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 21,
+    paddingTop: 18,
+  },
+
+  toolbarGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  toolbarButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  toolbarIcon: {
+    // Let the image determine its own size
   },
 
   matchCard: {
