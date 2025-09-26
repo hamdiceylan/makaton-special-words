@@ -1,5 +1,7 @@
+import { useNavigation } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   Image,
@@ -133,6 +135,7 @@ interface GameState {
 }
 
 export default function MatchPicturesScreen() {
+  const navigation = useNavigation();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -153,6 +156,7 @@ export default function MatchPicturesScreen() {
   const [cardOpacity] = useState(new Animated.Value(1));
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   // Game area (containerView) dimensions
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -174,6 +178,25 @@ export default function MatchPicturesScreen() {
     });
     return () => subscription?.remove();
   }, []);
+
+  // Update header close button enabled/disabled based on lock state
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={isLocked ? undefined : () => navigation.goBack()}
+          disabled={isLocked}
+          style={{ opacity: isLocked ? 0.4 : 1 }}
+        >
+          <Image
+            source={require('../assets/images/close-circle-icon.png')}
+            style={{ width: 30, height: 30 }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [isLocked]);
 
   const initializeGame = (startIndex: number = 0) => {
     // Get current group of 4 words starting from startIndex
@@ -503,6 +526,60 @@ export default function MatchPicturesScreen() {
     }
   };
 
+  // Navigation handlers
+  const handleToStart = () => {
+    if (gameState.isAnimating) return;
+    initializeGame(0);
+  };
+
+  const handlePrevious = () => {
+    if (gameState.isAnimating) return;
+    const { currentGroupStart } = gameState;
+    const newStart = Math.max(0, currentGroupStart - 4);
+    initializeGame(newStart);
+  };
+
+  const handleNext = () => {
+    if (gameState.isAnimating) return;
+    const { currentGroupStart } = gameState;
+    const newStart = currentGroupStart + 4;
+    if (newStart < words.length) {
+      initializeGame(newStart);
+    }
+  };
+
+  const handleToEnd = () => {
+    if (gameState.isAnimating) return;
+    // Find the last complete group of 4 words
+    const lastGroupStart = Math.max(0, words.length - (words.length % 4 === 0 ? 4 : words.length % 4));
+    initializeGame(lastGroupStart);
+  };
+
+  // Check if we're at the start or end of the list
+  const isAtStart = gameState.currentGroupStart === 0;
+  const isAtEnd = gameState.currentGroupStart + 4 >= words.length;
+
+  // Lock button handlers
+  const handleLockPress = () => {
+    Alert.alert('Info', 'Hold for 3 seconds to lock.');
+  };
+  const handleLockLongPress = () => {
+    setIsLocked(prev => !prev);
+  };
+
+  // Refresh current stage: reset all matches and pick a new random word (like start)
+  const handleRefresh = () => {
+    if (gameState.isAnimating) return;
+    Animated.timing(cardOpacity, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start(() => {
+      // Reinitialize the same group start to reset static cards and target order
+      initializeGame(gameState.currentGroupStart);
+    });
+  };
+
   const renderStaticCard = (card: GameCard, index: number) => {
     const positions = getStaticCardPositions();
     const p = positions[index];
@@ -653,20 +730,28 @@ export default function MatchPicturesScreen() {
       {/* Bottom (VStack's second view): Responsive height */}
       <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
         <View style={styles.toolbar}>
-          {/* Left group: to-end-icon and previous-icon */}
+          {/* Left group: to-start-icon and previous-icon */}
           <View style={styles.toolbarGroup}>
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity 
+              style={[styles.toolbarButton, (isAtStart || isLocked) && styles.toolbarButtonDisabled]} 
+              onPress={(isAtStart || isLocked) ? undefined : handleToStart}
+              disabled={isAtStart || isLocked}
+            >
               <Image 
-                source={require('../assets/images/to-start-icon.png')}
-                style={styles.toolbarIcon}
+                source={require('../assets/images/to-start-icon.png')} 
+                style={[styles.toolbarIcon, (isAtStart || isLocked) && styles.toolbarIconDisabled]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
             <View style={{ width: 15 }} />
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity 
+              style={[styles.toolbarButton, isAtStart && styles.toolbarButtonDisabled]} 
+              onPress={isAtStart ? undefined : handlePrevious}
+              disabled={isAtStart}
+            >
               <Image  
                 source={require('../assets/images/previous-icon.png')}
-                style={styles.toolbarIcon}
+                style={[styles.toolbarIcon, isAtStart && styles.toolbarIconDisabled]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -674,15 +759,20 @@ export default function MatchPicturesScreen() {
 
           {/* Middle group: lock-icon and refresh-icon */}
           <View style={styles.toolbarGroup}>
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity 
+              style={styles.toolbarButton}
+              onPress={handleLockPress}
+              onLongPress={handleLockLongPress}
+              delayLongPress={3000}
+            >
               <Image 
-                source={require('../assets/images/lock-icon.png')} 
+                source={isLocked ? require('../assets/images/unlock.png') : require('../assets/images/lock-icon.png')} 
                 style={styles.toolbarIcon}
                 resizeMode="contain"
               />
             </TouchableOpacity>
             <View style={{ width: 16 }} />
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity style={styles.toolbarButton} onPress={handleRefresh}>
               <Image 
                 source={require('../assets/images/refresh-icon.png')} 
                 style={styles.toolbarIcon}
@@ -691,20 +781,28 @@ export default function MatchPicturesScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Right group: next-icon and to-start-icon */}
+          {/* Right group: next-icon and to-end-icon */}
           <View style={styles.toolbarGroup}>
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity 
+              style={[styles.toolbarButton, isAtEnd && styles.toolbarButtonDisabled]} 
+              onPress={isAtEnd ? undefined : handleNext}
+              disabled={isAtEnd}
+            >
               <Image 
                 source={require('../assets/images/next-icon.png')}
-                style={styles.toolbarIcon}
+                style={[styles.toolbarIcon, isAtEnd && styles.toolbarIconDisabled]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
             <View style={{ width: 15 }} />
-            <TouchableOpacity style={styles.toolbarButton}>
+            <TouchableOpacity 
+              style={[styles.toolbarButton, (isAtEnd || isLocked) && styles.toolbarButtonDisabled]} 
+              onPress={(isAtEnd || isLocked) ? undefined : handleToEnd}
+              disabled={isAtEnd || isLocked}
+            >
               <Image  
                 source={require('../assets/images/to-end-icon.png')}
-                style={styles.toolbarIcon}
+                style={[styles.toolbarIcon, (isAtEnd || isLocked) && styles.toolbarIconDisabled]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -757,6 +855,14 @@ const styles = StyleSheet.create({
 
   toolbarIcon: {
     // Let the image determine its own size
+  },
+
+  toolbarButtonDisabled: {
+    // No additional styling needed for button
+  },
+
+  toolbarIconDisabled: {
+    opacity: 0.4,
   },
 
   matchCard: {

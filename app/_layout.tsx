@@ -1,5 +1,5 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Pressable } from 'react-native';
 import { JostText } from '../src/theme/typography';
@@ -73,7 +73,27 @@ export default function RootLayout() {
           }}
         />
   
-        <Stack.Screen name="match-pictures" options={{ title: 'Match Pictures' }} />
+        <Stack.Screen 
+          name="match-pictures" 
+          options={{ 
+            title: '',
+            headerTitle: '',
+            headerLeft: () => null,
+            headerRight: () => (
+              <Pressable
+                onPress={() => router.back()}
+                style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+              >
+                <Image
+                  source={require('../assets/images/close-circle-icon.png')}
+                  style={{ width: 30, height: 30 }}
+                />
+              </Pressable>
+            ),
+            presentation: 'fullScreenModal',
+            headerShown: true,
+          }} 
+        />
         <Stack.Screen name="match-words" options={{ title: 'Match Words' }} />
         <Stack.Screen name="word-to-picture" options={{ title: 'Word to Picture' }} />
         <Stack.Screen name="picture-to-word" options={{ title: 'Picture to Word' }} />
