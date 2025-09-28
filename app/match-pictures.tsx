@@ -13,7 +13,7 @@ import {
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
-import { initializeAudio, playWordSound } from '../src/utils/soundUtils';
+import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
 // Responsive toolbar height - proportional to device height in landscape mode
 const getToolbarHeight = (screenWidth: number, screenHeight: number) => {
@@ -157,12 +157,65 @@ export default function MatchPicturesScreen() {
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  
+  // Shake animation states for each card
+  const [cardShakeAnimations] = useState([
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]);
 
   // Game area (containerView) dimensions
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   // matchCard's initial center coordinates within container (center)
   const initialPosition = useRef({ x: 0, y: 0 });
+
+  // Shake animation function based on the Objective-C code
+  const shakeCard = (cardIndex: number, speedMultiplier: number = 1) => {
+    const shakeAnimation = cardShakeAnimations[cardIndex];
+    if (!shakeAnimation) return;
+
+    // Determine sign based on card position (similar to Objective-C logic)
+    // For 4 cards: first and fourth cards get +1, second and third get -1
+    const sign = ((cardIndex === 0 || cardIndex === 3) ? +1 : -1);
+
+    // Reset animation value
+    shakeAnimation.setValue(0);
+
+    // First rotation: -M_PI/8 * sign
+    Animated.timing(shakeAnimation, {
+      toValue: -Math.PI / 8 * sign,
+      duration: 500 * speedMultiplier,
+      useNativeDriver: true,
+    }).start((finished) => {
+      if (!finished) return;
+
+      // Second rotation: +M_PI/8 * sign
+      Animated.timing(shakeAnimation, {
+        toValue: Math.PI / 8 * sign,
+        duration: 1000 * speedMultiplier,
+        useNativeDriver: true,
+      }).start((finished) => {
+        if (!finished) return;
+
+        // Final rotation: back to 0
+        Animated.timing(shakeAnimation, {
+          toValue: 0,
+          duration: 500 * speedMultiplier,
+          useNativeDriver: true,
+        }).start();
+      });
+    });
+  };
+
+  // Shake all cards when a group is completed
+  const shakeAllCards = () => {
+    cardShakeAnimations.forEach((_, index) => {
+      shakeCard(index, 1);
+    });
+  };
 
   useEffect(() => {
     const setupAudio = async () => {
@@ -568,11 +621,13 @@ export default function MatchPicturesScreen() {
       setupRound(activeSet, targetOrder, currentIndex + 1);
       setGameState(prev => ({ ...prev, level: prev.level + 1 }));
     } else {
-      // Completed current group; move to next 4-word group
-      const nextGroupStart = currentGroupStart + 4;
-      setTimeout(() => {
-        initializeGame(nextGroupStart);
-      }, 400);
+      // Completed current group of 4 words
+      // Always shake cards and play reward sound for every completed group
+      shakeAllCards();
+      playRewardSound();
+      
+      // For ALL groups: don't auto-advance, user must navigate manually
+      setGameState(prev => ({ ...prev, isAnimating: false }));
     }
   };
 
@@ -651,38 +706,59 @@ export default function MatchPicturesScreen() {
       }
     };
 
+    const shakeAnimation = cardShakeAnimations[index];
+    const shakeTransform = shakeAnimation ? {
+      transform: [{ 
+        rotate: shakeAnimation.interpolate({
+          inputRange: [-Math.PI, Math.PI],
+          outputRange: ['-180deg', '180deg'],
+        })
+      }]
+    } : {};
+
     return (
-      <TouchableOpacity
+      <Animated.View
         key={card.id}
         style={[
-          styles.staticCard,
           {
             // center-based position → left/top = center - half size
+            position: 'absolute',
             left: p.x - CARD_WIDTH / 2,
             top: p.y - CARD_HEIGHT / 2,
             width: CARD_WIDTH,
             height: CARD_HEIGHT,
           },
+          shakeTransform,
         ]}
-        onPress={handleCardTap}
-        activeOpacity={0.8}
       >
-        {card.isMatched ? (
-          <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-            <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
-              {card.text}
-            </SFProText>
-          </View>
-        ) : (
-          WORD_IMAGES[card.image] && (
-            <Image
-              source={WORD_IMAGES[card.image]}
-              style={styles.cardImage}
-              resizeMode="cover"
-            />
-          )
-        )}
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.staticCard,
+            {
+              width: CARD_WIDTH,
+              height: CARD_HEIGHT,
+            },
+          ]}
+          onPress={handleCardTap}
+          activeOpacity={0.8}
+        >
+          {card.isMatched ? (
+            <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
+              <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
+                {card.text}
+              </SFProText>
+            </View>
+          ) : (
+            WORD_IMAGES[card.image] && (
+              <Image
+                source={WORD_IMAGES[card.image]}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            )
+          )}
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
