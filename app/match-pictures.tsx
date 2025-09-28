@@ -508,6 +508,56 @@ export default function MatchPicturesScreen() {
     ]).start();
   };
 
+  const handleProgrammaticMatch = (matchedCard: GameCard, matchedIndex: number) => {
+    setGameState(prev => ({ ...prev, isAnimating: true }));
+
+    const positions = getStaticCardPositions();
+    const target = positions[matchedIndex];
+
+    if (!target) return;
+
+    // First, scale up the match card slightly to show it's being "picked up"
+    Animated.spring(cardScale, {
+      toValue: 1,
+      tension: 60,
+      friction: 8,
+      useNativeDriver: true,
+    }).start(() => {
+      // Then animate the card to the target position
+      Animated.parallel([
+        Animated.timing(cardPosition, {
+          toValue: {
+            x: target.x - initialPosition.current.x,
+            y: target.y - initialPosition.current.y,
+          },
+          duration: 1000,
+          useNativeDriver: false,
+        }),
+        Animated.timing(cardScale, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Play the matched word sound for successful match
+        if (gameState.matchCard.image) {
+          playWordSound(gameState.matchCard.image);
+        }
+
+        // Mark the static card as matched (show its text) right before flip
+        setGameState(prev => {
+          const updatedStatics = prev.staticCards.map((c, i) => (
+            i === matchedIndex ? { ...c, isMatched: true } : c
+          ));
+          const nextRevealed = { ...prev.revealedMap, [matchedCard.image]: true };
+          return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
+        });
+
+        performFlipAnimation();
+      });
+    });
+  };
+
   const advanceOrFinish = () => {
     const { activeSet, targetOrder, currentIndex, currentGroupStart } = gameState;
     if (!activeSet || activeSet.length === 0) return;
@@ -587,9 +637,17 @@ export default function MatchPicturesScreen() {
     if (!p) return null;
 
     const handleCardTap = () => {
-      // Play the word sound when card is tapped
-      if (card.image) {
-        playWordSound(card.image);
+      if (gameState.isAnimating) return;
+      
+      // Check if this card matches the current match card
+      if (card.image === gameState.matchCard.image) {
+        // It's a match! Programmatically drag the match card to this position
+        handleProgrammaticMatch(card, index);
+      } else {
+        // Not a match, just play sound
+        if (card.image) {
+          playWordSound(card.image);
+        }
       }
     };
 
