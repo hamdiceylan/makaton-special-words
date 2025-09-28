@@ -171,6 +171,9 @@ export default function MatchPicturesScreen() {
 
   // matchCard's initial center coordinates within container (center)
   const initialPosition = useRef({ x: 0, y: 0 });
+  
+  // Ref to track ongoing timeouts for cleanup
+  const ongoingTimeouts = useRef<number[]>([]);
 
   // Shake animation function based on the Objective-C code
   const shakeCard = (cardIndex: number, speedMultiplier: number = 1) => {
@@ -252,6 +255,9 @@ export default function MatchPicturesScreen() {
   }, [isLocked]);
 
   const initializeGame = (startIndex: number = 0) => {
+    // Clean up any ongoing animations and states first
+    cleanupCurrentRound();
+    
     // Get current group of 4 words starting from startIndex
     const endIndex = Math.min(startIndex + 4, words.length);
     const currentGroup = words.slice(startIndex, endIndex);
@@ -284,23 +290,17 @@ export default function MatchPicturesScreen() {
     }));
 
     // Initialize first center match card
-    setTimeout(() => {
-      setupRound(staticCards, targetOrder, 0);
-    }, 0);
+    setupRound(staticCards, targetOrder, 0);
   };
 
   const setupRound = (activeSet: GameCard[], targetOrder: number[], currentIndex: number) => {
     if (activeSet.length === 0 || targetOrder.length === 0) return;
+    
+    // Clean up any ongoing animations and states first
+    cleanupCurrentRound();
+    
     const targetIdx = targetOrder[currentIndex];
     const target = activeSet[targetIdx];
-
-    // Reset transforms FIRST to ensure proper positioning
-    cardPosition.setValue({ x: 0, y: 0 });
-    cardScale.setValue(1);
-    flipAnimation.setValue(0);
-    cardOpacity.setValue(0);
-    setShowWord(false);
-    setCanShowText(false);
 
     const newMatchCard: GameCard = {
       id: 'match',
@@ -309,29 +309,27 @@ export default function MatchPicturesScreen() {
       isMatched: false,
     };
 
-    // Small delay to ensure smooth transition
-    setTimeout(() => {
-      setGameState(prev => ({
-        ...prev,
-        matchCard: newMatchCard,
-        isAnimating: false,
-        activeSet, // unchanged fixed static set
-        targetOrder,
-        currentIndex,
-      }));
-      
-      // Fade in the new card and play its sound
-      Animated.timing(cardOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        // Play the word sound after card appears
-        if (newMatchCard.image) {
-          playWordSound(newMatchCard.image);
-        }
-      });
-    }, 50);
+    // Set the new match card immediately after cleanup
+    setGameState(prev => ({
+      ...prev,
+      matchCard: newMatchCard,
+      isAnimating: false,
+      activeSet, // unchanged fixed static set
+      targetOrder,
+      currentIndex,
+    }));
+    
+    // Fade in the new card and play its sound
+    Animated.timing(cardOpacity, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      // Play the word sound after card appears
+      if (newMatchCard.image) {
+        playWordSound(newMatchCard.image);
+      }
+    });
   };
 
   // Don't calculate until container dimensions are obtained
@@ -522,7 +520,7 @@ export default function MatchPicturesScreen() {
     }).start(() => {
       setShowWord(true);
       // After a short delay, advance through the first 5 targets
-      setTimeout(() => {
+      const timeout1 = setTimeout(() => {
         // Hide the card temporarily before advancing
         Animated.timing(cardOpacity, {
           toValue: 0,
@@ -536,11 +534,13 @@ export default function MatchPicturesScreen() {
           }));
           
           // Small delay to ensure card is hidden before resetting position
-          setTimeout(() => {
+          const timeout2 = setTimeout(() => {
             advanceOrFinish();
           }, 100);
+          ongoingTimeouts.current.push(timeout2);
         });
       }, 1200);
+      ongoingTimeouts.current.push(timeout1);
     });
   };
 
@@ -631,21 +631,50 @@ export default function MatchPicturesScreen() {
     }
   };
 
+  // Cleanup function to cancel ongoing animations and reset states
+  const cleanupCurrentRound = () => {
+    // Cancel all ongoing animations
+    cardPosition.stopAnimation();
+    cardScale.stopAnimation();
+    flipAnimation.stopAnimation();
+    cardOpacity.stopAnimation();
+    
+    // Clear all ongoing timeouts
+    ongoingTimeouts.current.forEach(timeout => clearTimeout(timeout));
+    ongoingTimeouts.current = [];
+    
+    // Reset all animation values to initial state
+    cardPosition.setValue({ x: 0, y: 0 });
+    cardScale.setValue(1);
+    flipAnimation.setValue(0);
+    cardOpacity.setValue(1);
+    
+    // Reset UI states
+    setShowWord(false);
+    setCanShowText(false);
+    
+    // Stop any ongoing shake animations
+    cardShakeAnimations.forEach(animation => {
+      animation.stopAnimation();
+      animation.setValue(0);
+    });
+  };
+
   // Navigation handlers
   const handleToStart = () => {
-    if (gameState.isAnimating) return;
+    cleanupCurrentRound();
     initializeGame(0);
   };
 
   const handlePrevious = () => {
-    if (gameState.isAnimating) return;
+    cleanupCurrentRound();
     const { currentGroupStart } = gameState;
     const newStart = Math.max(0, currentGroupStart - 4);
     initializeGame(newStart);
   };
 
   const handleNext = () => {
-    if (gameState.isAnimating) return;
+    cleanupCurrentRound();
     const { currentGroupStart } = gameState;
     const newStart = currentGroupStart + 4;
     if (newStart < words.length) {
@@ -654,7 +683,7 @@ export default function MatchPicturesScreen() {
   };
 
   const handleToEnd = () => {
-    if (gameState.isAnimating) return;
+    cleanupCurrentRound();
     // Find the last complete group of 4 words
     const lastGroupStart = Math.max(0, words.length - (words.length % 4 === 0 ? 4 : words.length % 4));
     initializeGame(lastGroupStart);
@@ -674,15 +703,9 @@ export default function MatchPicturesScreen() {
 
   // Refresh current stage: reset all matches and pick a new random word (like start)
   const handleRefresh = () => {
-    if (gameState.isAnimating) return;
-    Animated.timing(cardOpacity, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: true,
-    }).start(() => {
-      // Reinitialize the same group start to reset static cards and target order
-      initializeGame(gameState.currentGroupStart);
-    });
+    cleanupCurrentRound();
+    // Reinitialize the same group start to reset static cards and target order
+    initializeGame(gameState.currentGroupStart);
   };
 
   const renderStaticCard = (card: GameCard, index: number) => {
@@ -699,10 +722,8 @@ export default function MatchPicturesScreen() {
         // It's a match! Programmatically drag the match card to this position
         handleProgrammaticMatch(card, index);
       } else {
-        // Not a match, just play sound
-        if (card.image) {
-          playWordSound(card.image);
-        }
+        // Not a match - don't play sound, just do nothing
+        // (Previously played sound here, but removed as requested)
       }
     };
 
