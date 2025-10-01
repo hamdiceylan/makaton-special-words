@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
-import { isLandscape, isTablet } from '../src/utils/device';
+import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#279095' },
   containerView: { flex: 1, position: 'relative', backgroundColor: '#fff' },
   bottomBar: { backgroundColor: '#F3F3F3', justifyContent: 'flex-start', alignItems: 'center' },
-  toolbar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingHorizontal: 21, paddingTop: 18 },
+  toolbar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingHorizontal: 21, paddingTop: isCurrentlyLandscape() ? 10 : 18 },
   toolbarGroup: { flexDirection: 'row', alignItems: 'center' },
   toolbarButton: { justifyContent: 'center', alignItems: 'center' },
   toolbarIcon: {},

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
-import { isLandscape, isTablet } from '../src/utils/device';
+import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 21,
-    paddingTop: 18,
+    paddingTop: isCurrentlyLandscape() ? 10 : 18,
   },
 
   toolbarGroup: {
