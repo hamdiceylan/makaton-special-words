@@ -8,14 +8,14 @@ export type LayoutResult = {
 };
 
 const CARD_ASPECT = 3 / 4; // 4:3
-const MIN_GAP_Y = 5;
+const MIN_GAP_Y = 10;
 const USE_SPECIAL_4_LAYOUT = true;
 
 export const getToolbarHeight = (sw: number, sh: number) => {
   const landscape = isLandscape(sw, sh);
   if (landscape) {
-    const responsive = sh * (70 / 1024);
-    return Math.min(isTablet() ? 70 : 60, Math.max(60, responsive));
+    const responsive = sh * (60 / 1024);
+    return Math.min(isTablet() ? 60 : 40, Math.max(40, responsive));
   }
   return 60;
 };
@@ -91,10 +91,18 @@ export function computeLayout(
           PADDING = Math.max(20, reqPadding);
         }
       } else {
-        w = playH * (130 / 390);
-        h = w * (90 / 130);
-        PADDING = 50;
-        OFFSET_Y = -15;
+        // Phone landscape: keep size moderate, pull statics inward toward the center
+        w = playH * (170 / 390); // ~43.5% of playH
+        h = w * (95 / 130);
+        PADDING = 60; // increase padding to move statics closer to the center
+        OFFSET_Y = 0;
+        // Keep a small minimum gap between inner edges of columns
+        const currentGap = playW - 2 * PADDING - 2 * w;
+        const minGap = 16;
+        if (currentGap < minGap) {
+          const reqPadding = (playW - 2 * w - minGap) / 2;
+          PADDING = Math.max(12, reqPadding);
+        }
       }
     } else {
       if (isPad) {
@@ -118,13 +126,31 @@ export function computeLayout(
 
     if (!isPortrait) {
       const H = playH;
-      const topCardCenter = H / 2 - h - OFFSET_Y;
-      const topCardTop = topCardCenter - h / 2;
-      const bottomCardCenter = H / 2 + h + OFFSET_Y;
-      const bottomCardBottom = bottomCardCenter + h / 2;
+      let topCardCenter = H / 2 - h - OFFSET_Y;
+      let topCardTop = topCardCenter - h / 2;
+      let bottomCardCenter = H / 2 + h + OFFSET_Y;
+      let bottomCardBottom = bottomCardCenter + h / 2;
       if (topCardTop < 0 || bottomCardBottom > H) {
         const maxOffsetY = (H - 3 * h) / 2 - 10;
         OFFSET_Y = Math.max(0, maxOffsetY);
+      }
+      // Enforce minimum vertical padding inside the play area
+      topCardCenter = H / 2 - h - OFFSET_Y;
+      topCardTop = topCardCenter - h / 2;
+      bottomCardCenter = H / 2 + h + OFFSET_Y;
+      bottomCardBottom = bottomCardCenter + h / 2;
+      if (topCardTop < MIN_GAP_Y) {
+        const deficit = MIN_GAP_Y - topCardTop;
+        OFFSET_Y = Math.max(0, OFFSET_Y + deficit);
+      }
+      // recompute after potential change
+      topCardCenter = H / 2 - h - OFFSET_Y;
+      topCardTop = topCardCenter - h / 2;
+      bottomCardCenter = H / 2 + h + OFFSET_Y;
+      bottomCardBottom = bottomCardCenter + h / 2;
+      if (bottomCardBottom > H - MIN_GAP_Y) {
+        const deficit = bottomCardBottom - (H - MIN_GAP_Y);
+        OFFSET_Y = Math.max(0, OFFSET_Y - deficit);
       }
     }
 

@@ -10,9 +10,10 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
-import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
+import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
@@ -42,6 +43,7 @@ interface GameState {
 
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -740,22 +742,24 @@ export default function MatchPicturesScreen() {
   return (
     <View style={styles.screen}>
       {/* Top (VStack's first view): Game area containerView */}
-      <View
-        style={styles.containerView}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          setContainerSize({ width, height });
-        }}
-      >
-        {/* Static cards */}
-        {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
-        {/* Middle matchCard */}
-        {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+        <View
+          style={styles.containerView}
+          onLayout={(e) => {
+            const { width, height } = e.nativeEvent.layout;
+            setContainerSize({ width, height });
+          }}
+        >
+          {/* Static cards */}
+          {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
+          {/* Middle matchCard */}
+          {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
+        </View>
+      </SafeAreaView>
 
       {/* Bottom (VStack's second view): Responsive height */}
-      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
-        <View style={styles.toolbar}>
+      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}>
+        <View style={[styles.toolbar, { paddingTop: Math.max(10, TOOLBAR_HEIGHT * 0.2) }]}>
           {/* Left group: to-start-icon and previous-icon */}
           <View style={styles.toolbarGroup}>
             <TouchableOpacity 
@@ -843,7 +847,7 @@ const styles = StyleSheet.create({
   // Full screen, ignore safe area
   screen: {
     flex: 1,
-    backgroundColor: '#279095',
+    backgroundColor: '#fff',
   },
 
   // Top area (game area, containerView)
@@ -866,7 +870,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 21,
-    paddingTop: isCurrentlyLandscape() ? 10 : 18,
   },
 
   toolbarGroup: {

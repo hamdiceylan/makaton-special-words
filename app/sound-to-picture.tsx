@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
@@ -42,6 +43,7 @@ interface GameState {
 
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -747,21 +749,23 @@ export default function MatchPicturesScreen() {
   return (
     <View style={styles.screen}>
       {/* Top (VStack's first view): Game area containerView */}
-      <View
-        style={styles.containerView}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          setContainerSize({ width, height });
-        }}
-      >
-        {/* Static cards */}
-        {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
-        {/* Middle matchCard */}
-        {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+        <View
+          style={styles.containerView}
+          onLayout={(e) => {
+            const { width, height } = e.nativeEvent.layout;
+            setContainerSize({ width, height });
+          }}
+        >
+          {/* Static cards */}
+          {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
+          {/* Middle matchCard */}
+          {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
+        </View>
+      </SafeAreaView>
 
       {/* Bottom (VStack's second view): Responsive height */}
-      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
+      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}> 
         <View style={styles.toolbar}>
           {/* Left group: to-start-icon and previous-icon */}
           <View style={styles.toolbarGroup}>
@@ -850,7 +854,7 @@ const styles = StyleSheet.create({
   // Full screen, ignore safe area
   screen: {
     flex: 1,
-    backgroundColor: '#279095',
+    backgroundColor: '#fff',
   },
 
   // Top area (game area, containerView)
