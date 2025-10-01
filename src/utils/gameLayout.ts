@@ -266,7 +266,9 @@ export function computeLayout(
       cardH = cardW * CARD_ASPECT;
       marginTop = (playH - 2 * cardH) / 3;
     } else {
-      marginTop = marginLeft = (isPad ? 40 : 20) * magnification;
+      // Phone landscape: enlarge cards by reducing gaps and bringing columns closer
+      marginTop = (isPad ? 40 : 12) * magnification;
+      marginLeft = (isPad ? 40 : 60) * magnification;
       cardH = (playH - 3 * marginTop) / 2;
       cardW = cardH / CARD_ASPECT;
     }
