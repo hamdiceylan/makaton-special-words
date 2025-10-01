@@ -2,7 +2,7 @@ import { SFProText } from '@/src/theme/typography';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { isLandscape, isTablet } from '../src/utils/device';
 
 // Grid configuration based on device and orientation
@@ -119,6 +119,7 @@ interface CardItemProps {
 export default function Home() {
   const [layout, setLayout] = useState({ w: 0, h: 0 });
   const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
+  const insets = useSafeAreaInsets();
   
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -127,7 +128,8 @@ export default function Home() {
     return () => subscription?.remove();
   }, []);
   
-  const gridConfig = getGridConfig(screenDimensions.width, screenDimensions.height);
+  const contentWidth = Math.max(0, screenDimensions.width - insets.left - insets.right);
+  const gridConfig = getGridConfig(contentWidth, screenDimensions.height);
   const { LEFT, RIGHT, COL_GAP, ROW_GAP, COLUMNS, SQUARE_SIZE } = gridConfig;
   
   const isTabletDevice = isTablet();
@@ -164,7 +166,7 @@ export default function Home() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={['bottom']}>
+    <SafeAreaView style={styles.safe} edges={['left', 'right', 'bottom']}>
       <View
         style={styles.grid}
         onLayout={e => {
@@ -195,7 +197,7 @@ export default function Home() {
           if (stretchFull) {
             // Max width limitation in landscape mode
             const maxWidth = isLandscapeMode ? 716 : undefined;
-            const useMaxWidth = maxWidth && (screenDimensions.width - LEFT - RIGHT) > maxWidth;
+            const useMaxWidth = maxWidth && (contentWidth - LEFT - RIGHT) > maxWidth;
             
             return (
               <View
@@ -205,8 +207,8 @@ export default function Home() {
                   {
                     position: 'absolute',
                     bottom: 0,
-                    left: useMaxWidth ? (screenDimensions.width - maxWidth) / 2 : LEFT,
-                    right: useMaxWidth ? (screenDimensions.width - maxWidth) / 2 : RIGHT,
+                    left: useMaxWidth ? (contentWidth - maxWidth) / 2 : LEFT,
+                    right: useMaxWidth ? (contentWidth - maxWidth) / 2 : RIGHT,
                     maxWidth: maxWidth,
                     height,
                   },
