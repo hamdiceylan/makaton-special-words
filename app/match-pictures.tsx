@@ -21,7 +21,7 @@ import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/so
 // ==============================
 // CONFIG
 // ==============================
-const CARDS_PER_PAGE: 1 | 2 | 3 | 4 | 6 | 8 = 1; // Cards shown per page
+const CARDS_PER_PAGE: 1 | 2 | 3 | 4 | 6 | 8 = 2; // Cards shown per page
 const CARD_ASPECT = 3 / 4; // height / width for 4:3 cards
 const USE_SPECIAL_4_LAYOUT = true; // Enable bespoke layout for 4-card mode
 const MIN_GAP_Y = 5; // Minimum vertical spacing between rows (px)
@@ -131,7 +131,7 @@ export default function MatchPicturesScreen() {
   const initializeGame = (startIndex: number = 0) => {
     cleanupCurrentRound();
 
-    const groupSize = CARDS_PER_PAGE === 6 || CARDS_PER_PAGE === 8 ? CARDS_PER_PAGE : 4;
+    const groupSize = CARDS_PER_PAGE;
     const endIndex = Math.min(startIndex + groupSize, words.length);
     const currentGroup = words.slice(startIndex, endIndex);
 
@@ -400,20 +400,20 @@ export default function MatchPicturesScreen() {
   const handlePrevious = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const size = CARDS_PER_PAGE === 6 || CARDS_PER_PAGE === 8 ? CARDS_PER_PAGE : 4;
+    const size = CARDS_PER_PAGE;
     const newStart = Math.max(0, currentGroupStart - size);
     initializeGame(newStart);
   };
   const handleNext = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const size = CARDS_PER_PAGE === 6 || CARDS_PER_PAGE === 8 ? CARDS_PER_PAGE : 4;
+    const size = CARDS_PER_PAGE;
     const newStart = currentGroupStart + size;
     if (newStart < words.length) initializeGame(newStart);
   };
   const handleToEnd = () => {
     cleanupCurrentRound();
-    const size = CARDS_PER_PAGE === 6 || CARDS_PER_PAGE === 8 ? CARDS_PER_PAGE : 4;
+    const size = CARDS_PER_PAGE;
     const remainder = words.length % size;
     const lastStart = Math.max(0, words.length - (remainder === 0 ? size : remainder));
     initializeGame(lastStart);
@@ -421,7 +421,7 @@ export default function MatchPicturesScreen() {
 
   const isAtStart = gameState.currentGroupStart === 0;
   const isAtEnd = (() => {
-    const size = CARDS_PER_PAGE === 6 || CARDS_PER_PAGE === 8 ? CARDS_PER_PAGE : 4;
+    const size = CARDS_PER_PAGE;
     return gameState.currentGroupStart + size >= words.length;
   })();
 

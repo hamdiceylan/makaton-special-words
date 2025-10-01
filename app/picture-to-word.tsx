@@ -166,8 +166,8 @@ export default function MatchPicturesScreen() {
     // Clean up any ongoing animations and states first
     cleanupCurrentRound();
     
-    // Get current group of 4 words starting from startIndex
-    const endIndex = Math.min(startIndex + 4, words.length);
+    // Get current group based on cards-per-page
+    const endIndex = Math.min(startIndex + CARDS_PER_PAGE, words.length);
     const currentGroup = words.slice(startIndex, endIndex);
     
     // If we don't have enough words left, reset to beginning
@@ -557,14 +557,14 @@ export default function MatchPicturesScreen() {
   const handlePrevious = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = Math.max(0, currentGroupStart - 4);
+    const newStart = Math.max(0, currentGroupStart - CARDS_PER_PAGE);
     initializeGame(newStart);
   };
 
   const handleNext = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = currentGroupStart + 4;
+    const newStart = currentGroupStart + CARDS_PER_PAGE;
     if (newStart < words.length) {
       initializeGame(newStart);
     }
@@ -572,14 +572,15 @@ export default function MatchPicturesScreen() {
 
   const handleToEnd = () => {
     cleanupCurrentRound();
-    // Find the last complete group of 4 words
-    const lastGroupStart = Math.max(0, words.length - (words.length % 4 === 0 ? 4 : words.length % 4));
+    // Find the last complete group based on cards-per-page
+    const size = CARDS_PER_PAGE;
+    const lastGroupStart = Math.max(0, words.length - (words.length % size === 0 ? size : words.length % size));
     initializeGame(lastGroupStart);
   };
 
   // Check if we're at the start or end of the list
   const isAtStart = gameState.currentGroupStart === 0;
-  const isAtEnd = gameState.currentGroupStart + 4 >= words.length;
+  const isAtEnd = gameState.currentGroupStart + CARDS_PER_PAGE >= words.length;
 
   // Lock button handlers
   const handleLockPress = () => {
