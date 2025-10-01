@@ -13,107 +13,11 @@ import {
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
+import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
-// Responsive toolbar height - proportional to device height in landscape mode
-const getToolbarHeight = (screenWidth: number, screenHeight: number) => {
-  const landscape = isLandscape(screenWidth, screenHeight);
-  
-  if (landscape) {
-    // Proportional to device height in landscape mode (90px base for 1024 height)
-    const responsiveHeight = screenHeight * (90 / 1024);
-    // Limit between min 70, max 90
-    return Math.min(90, Math.max(70, responsiveHeight));
-  } else {
-    // Fixed 90 in portrait mode
-    return 90;
-  }
-};
-
-// Layout configuration based on device and orientation
-const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
-  const tablet = isTablet();
-  const landscape = isLandscape(screenWidth, screenHeight);
-  
-  if (landscape) {
-    if (tablet) {
-      // Tablet Landscape
-      const cardWidth = screenHeight * (300 / 1024);
-      let padding = 150;
-      
-      // Make OFFSET_Y proportional to device height too (1024 base height for landscape)
-      const baseOffsetY = screenHeight * (34 / 1024); // 34 ratio for 1024 height
-      
-      // Minimum gap control between cards (landscape 2 cards side by side)
-      // Calculate gap between cards with current padding
-      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 50; // Minimum gap between cards
-      
-      if (currentGap < minGapBetweenCards) {
-        // If gap is less than 50, reduce padding to increase gap to 50
-        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
-        padding = Math.max(20, requiredPadding); // Minimum 20px padding
-      }
-      // If gap is greater than 50, padding remains 150
-      
-      return {
-        CARD_WIDTH: cardWidth,
-        CARD_ASPECT_RATIO: 230 / 300,
-        PADDING: padding,
-        OFFSET_Y: baseOffsetY,
-        CARD_TEXT_SIZE: 50,
-      };
-    } else {
-      // Phone Landscape  
-      return {
-        CARD_WIDTH: screenHeight * (130 / 390), // Height-based calculation
-        CARD_ASPECT_RATIO: 90 / 130, // Flatter cards (optimal for landscape)
-        PADDING: 50,
-        OFFSET_Y: -15,
-        CARD_TEXT_SIZE: 22,
-      };
-    }
-  } else {
-    // Portrait Mode
-    if (tablet) {
-      // Tablet Portrait
-      const cardWidth = screenWidth * (300 / 1024);
-      let padding = 120;
-      
-      // Make OFFSET_Y proportional to device height too
-      const baseOffsetY = screenHeight * (198 / 1400); // 198 ratio for 1400 height
-      
-      // Minimum gap control between cards (portrait 2 cards side by side)
-      // Calculate gap between cards with current padding
-      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 140; // Minimum gap between cards
-      
-      if (currentGap < minGapBetweenCards) {
-        // If gap is less than 140, reduce padding to increase gap to 140
-        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
-        padding = Math.max(20, requiredPadding); // Minimum 20px padding
-      }
-      // If gap is greater than 140, padding remains 120
-      
-      return {
-        CARD_WIDTH: cardWidth,
-        CARD_ASPECT_RATIO: 230 / 300,
-        PADDING: padding,
-        OFFSET_Y: baseOffsetY,
-        CARD_TEXT_SIZE: 50,
-      };
-    } else {
-      // Phone Portrait - Current design
-      return {
-        CARD_WIDTH: screenWidth * (130 / 390), // 390 → 130 scale
-        CARD_ASPECT_RATIO: 100 / 130, // Orijinal aspect ratio
-        PADDING: 24,
-        OFFSET_Y: 86,
-        CARD_TEXT_SIZE: 24,
-      };
-    }
-  }
-};
+// Layout via shared layout utils
+const CARDS_PER_PAGE: 1 | 2 | 3 | 4 | 6 | 8 = 4;
 
 interface GameCard {
   id: string;
@@ -149,6 +53,8 @@ export default function MatchPicturesScreen() {
   });
 
   const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
+  const isPad = isTablet();
+  const portrait = !isLandscape(screenDimensions.width, screenDimensions.height);
 
   const [cardPosition] = useState(new Animated.ValueXY());
   const [cardScale] = useState(new Animated.Value(1));
@@ -335,58 +241,25 @@ export default function MatchPicturesScreen() {
   // Don't calculate until container dimensions are obtained
   const canLayout = containerSize.width > 0 && containerSize.height > 0;
 
-  // Get responsive layout configuration
-  const layoutConfig = getLayoutConfig(screenDimensions.width, screenDimensions.height);
-  let { CARD_WIDTH, CARD_ASPECT_RATIO, PADDING, OFFSET_Y, CARD_TEXT_SIZE } = layoutConfig;
-  const CARD_HEIGHT = CARD_WIDTH * CARD_ASPECT_RATIO; // Responsive aspect ratio
+  // Shared layout
+  const layout = React.useMemo(() => {
+    if (containerSize.width <= 0 || containerSize.height <= 0) return null;
+    return computeLayout(CARDS_PER_PAGE, containerSize.width, containerSize.height, isPad, portrait);
+  }, [containerSize, isPad, portrait]);
+  const CARD_WIDTH = layout?.cardSize.w ?? 0;
+  const CARD_HEIGHT = layout?.cardSize.h ?? 0;
+  const CARD_TEXT_SIZE = Math.max(18, CARD_HEIGHT * 0.22);
   
   // Get responsive toolbar height
   const TOOLBAR_HEIGHT = getToolbarHeight(screenDimensions.width, screenDimensions.height);
   
-  // Vertical fit control in landscape modes
-  const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
-  if (isLandscapeMode && canLayout) {
-    const H = containerSize.height;
-    
-    // Check actual card positions
-    // Top cards center: H/2 - CARD_HEIGHT - OFFSET_Y
-    // Top cards upper boundary: center - CARD_HEIGHT/2
-    const topCardCenter = H / 2 - CARD_HEIGHT - OFFSET_Y;
-    const topCardTop = topCardCenter - CARD_HEIGHT / 2;
-    
-    // Bottom cards center: H/2 + CARD_HEIGHT + OFFSET_Y  
-    // Bottom cards lower boundary: center + CARD_HEIGHT/2
-    const bottomCardCenter = H / 2 + CARD_HEIGHT + OFFSET_Y;
-    const bottomCardBottom = bottomCardCenter + CARD_HEIGHT / 2;
-    
-    if (topCardTop < 0 || bottomCardBottom > H) {
-      // Only adjust OFFSET_Y if it really overflows
-      const maxOffsetY = ((H - 3 * CARD_HEIGHT) / 2) - 10;
-      OFFSET_Y = Math.max(0, maxOffsetY);
-    }
-    // Keep original OFFSET_Y value if it doesn't overflow
-  }
+  // Vertical overflow handled inside shared layout
   
   const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
-    // All static cards are positioned within containerView (2x2 grid)
-    const W = containerSize.width;
-    const H = containerSize.height;
-
-    // safety check
-    if (W === 0 || H === 0) return [];
-
-    return [
-      // Top-left
-      { x: PADDING + CARD_WIDTH / 2, y: H / 2 - CARD_HEIGHT - OFFSET_Y },
-      // Top-right
-      { x: W - PADDING - CARD_WIDTH / 2, y: H / 2 - CARD_HEIGHT - OFFSET_Y },
-      // Bottom-left
-      { x: PADDING + CARD_WIDTH / 2, y: H / 2 + CARD_HEIGHT + OFFSET_Y },
-      // Bottom-right
-      { x: W - PADDING - CARD_WIDTH / 2, y: H / 2 + CARD_HEIGHT + OFFSET_Y },
-    ];
+    if (!layout) return [];
+    return layout.statics.map(r => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 }));
   };
 
   // Drag & drop with tap detection
@@ -814,12 +687,7 @@ export default function MatchPicturesScreen() {
         {...panResponder.panHandlers}
         style={[
           styles.matchCard,
-          canLayout && {
-            left: containerSize.width / 2 - CARD_WIDTH / 2,
-            top: containerSize.height / 2 - CARD_HEIGHT / 2,
-            width: CARD_WIDTH,
-            height: CARD_HEIGHT,
-          },
+          layout && { left: layout.match.left, top: layout.match.top, width: layout.match.width, height: layout.match.height },
           {
             transform: [
               { translateX: cardPosition.x },
