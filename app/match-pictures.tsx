@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
@@ -534,10 +534,12 @@ export default function MatchPicturesScreen() {
   return (
     <View style={styles.screen}>
       {/* Play area */}
-      <View style={styles.containerView} onLayout={onContainerLayout}>
-        {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
-        {canLayout && renderMatchCard()}
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+        <View style={styles.containerView} onLayout={onContainerLayout}>
+          {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
+          {canLayout && renderMatchCard()}
+        </View>
+      </SafeAreaView>
 
       {/* Bottom toolbar */}
       <View style={[styles.bottomBar, { height: getToolbarHeight(screen.width, screen.height) + insets.bottom }]}>
@@ -612,7 +614,7 @@ export default function MatchPicturesScreen() {
 // STYLES
 // ==============================
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#279095' },
+  screen: { flex: 1, backgroundColor: '#fff' },
   containerView: { flex: 1, position: 'relative', backgroundColor: '#fff' },
   bottomBar: { backgroundColor: '#F3F3F3', justifyContent: 'flex-start', alignItems: 'center' },
   toolbar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingHorizontal: 21, paddingTop: isCurrentlyLandscape() ? 10 : 18 },
