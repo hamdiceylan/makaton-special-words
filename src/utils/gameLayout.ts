@@ -14,8 +14,8 @@ const USE_SPECIAL_4_LAYOUT = true;
 export const getToolbarHeight = (sw: number, sh: number) => {
   const landscape = isLandscape(sw, sh);
   if (landscape) {
-    const responsive = sh * (60 / 1024);
-    return Math.min(isTablet() ? 60 : 40, Math.max(60, responsive));
+    const responsive = sh * (70 / 1024);
+    return Math.min(isTablet() ? 70 : 40, Math.max(60, responsive));
   }
   return 60;
 };
