@@ -13,15 +13,13 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
+import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
 
 // Toolbar height provided by shared layout utils
-
-// Shared layout config
-const CARDS_PER_PAGE: 1 | 2 | 3 | 4 | 6 | 8 = 4;
 
 interface GameCard {
   id: string;
@@ -45,6 +43,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const { cardsPerPage } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -173,7 +172,7 @@ export default function MatchPicturesScreen() {
     cleanupCurrentRound();
     
     // Get current group based on cards-per-page
-    const endIndex = Math.min(startIndex + CARDS_PER_PAGE, words.length);
+    const endIndex = Math.min(startIndex + cardsPerPage, words.length);
     const currentGroup = words.slice(startIndex, endIndex);
     
     // If we don't have enough words left, reset to beginning
@@ -252,8 +251,8 @@ export default function MatchPicturesScreen() {
   // Shared layout
   const layout = React.useMemo(() => {
     if (containerSize.width <= 0 || containerSize.height <= 0) return null;
-    return computeLayout(CARDS_PER_PAGE, containerSize.width, containerSize.height, isPad, portrait);
-  }, [containerSize, isPad, portrait]);
+    return computeLayout(cardsPerPage as 1 | 2 | 3 | 4 | 6 | 8, containerSize.width, containerSize.height, isPad, portrait);
+  }, [containerSize, isPad, portrait, cardsPerPage]);
   const CARD_WIDTH = layout?.cardSize.w ?? 0;
   const CARD_HEIGHT = layout?.cardSize.h ?? 0;
   const CARD_TEXT_SIZE = Math.max(18, CARD_HEIGHT * 0.22);
@@ -551,14 +550,14 @@ export default function MatchPicturesScreen() {
   const handlePrevious = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = Math.max(0, currentGroupStart - CARDS_PER_PAGE);
+    const newStart = Math.max(0, currentGroupStart - cardsPerPage);
     initializeGame(newStart);
   };
 
   const handleNext = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = currentGroupStart + CARDS_PER_PAGE;
+    const newStart = currentGroupStart + cardsPerPage;
     if (newStart < words.length) {
       initializeGame(newStart);
     }
@@ -567,14 +566,14 @@ export default function MatchPicturesScreen() {
   const handleToEnd = () => {
     cleanupCurrentRound();
     // Find the last complete group based on cards-per-page
-    const size = CARDS_PER_PAGE;
+    const size = cardsPerPage;
     const lastGroupStart = Math.max(0, words.length - (words.length % size === 0 ? size : words.length % size));
     initializeGame(lastGroupStart);
   };
 
   // Check if we're at the start or end of the list
   const isAtStart = gameState.currentGroupStart === 0;
-  const isAtEnd = gameState.currentGroupStart + CARDS_PER_PAGE >= words.length;
+  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= words.length;
 
   // Lock button handlers
   const handleLockPress = () => {

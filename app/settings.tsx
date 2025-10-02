@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import {
     Dimensions,
+    Modal,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -10,6 +11,7 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSettings } from '../src/contexts/SettingsContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -27,27 +29,16 @@ interface SettingSection {
 }
 
 export default function Settings() {
-  const [settings, setSettings] = useState({
-    automatic: true,
-    playBeforeMatch: true,
-    playAfterMatch: false,
-    recordNewSounds: false,
-    textToSpeech: true,
-    capitalLetters: true,
-    largeText: false,
-    enableEditing: false,
-    enableReward: false,
-    enableDebugging: true,
-  });
-
-  const [animationSpeed, setAnimationSpeed] = useState(0.5);
-
-  const toggleSetting = (key: keyof typeof settings) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
+  const { 
+    settings, 
+    toggleSetting, 
+    animationSpeed, 
+    setAnimationSpeed, 
+    cardsPerPage, 
+    setCardsPerPage 
+  } = useSettings();
+  
+  const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
 
   const sections: SettingSection[] = [
     {
@@ -144,7 +135,8 @@ export default function Settings() {
           id: 'cardsPerPage',
           title: 'Cards Per Page',
           type: 'navigation',
-          value: '4',
+          value: cardsPerPage.toString(),
+          onPress: () => setShowCardsPerPageModal(true),
         },
         {
           id: 'switches',
@@ -255,6 +247,8 @@ export default function Settings() {
     }
   };
 
+  const cardsPerPageOptions = [1, 2, 3, 4, 6, 8];
+
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -282,6 +276,48 @@ export default function Settings() {
           </View>
         ))}
       </ScrollView>
+
+      <Modal
+        visible={showCardsPerPageModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowCardsPerPageModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowCardsPerPageModal(false)}
+        >
+          <Pressable 
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
+            {cardsPerPageOptions.map((option) => (
+              <Pressable
+                key={option}
+                style={styles.modalOption}
+                onPress={() => {
+                  setCardsPerPage(option);
+                  setShowCardsPerPageModal(false);
+                }}
+              >
+                <Text style={[
+                  styles.modalOptionText,
+                  cardsPerPage === option && styles.modalOptionTextSelected
+                ]}>
+                  {option}
+                </Text>
+                {cardsPerPage === option && (
+                  <Image
+                    source={require('../assets/images/check-icon.png')}
+                    style={styles.checkIcon}
+                  />
+                )}
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -406,5 +442,56 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 16,
     color: '#8E8E93',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(122, 122, 122, 0.3)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 12,
+    paddingBottom: 60,
+    paddingHorizontal: 36,
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#C7C7CC',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontFamily: 'SF-Pro-Display-Medium',
+    color: '#000000',
+    marginBottom: 20,
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 48,
+    paddingLeft: 0,
+    paddingRight: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F5F5F5',
+  },
+  modalOptionText: {
+    fontSize: 16,
+    fontFamily: 'SF-Pro-Display-Regular',
+    color: '#000000',
+  },
+  modalOptionTextSelected: {
+    color: '#4664CD',
+    fontFamily: 'SF-Pro-Display-Medium',
+  },
+  checkIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#4664CD',
   },
 });

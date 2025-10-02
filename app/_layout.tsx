@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Platform, Pressable, Text } from 'react-native';
+import { SettingsProvider } from '../src/contexts/SettingsContext';
 import { JostText } from '../src/theme/typography';
 
 export default function RootLayout() {
@@ -28,7 +29,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <SettingsProvider>
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
@@ -240,6 +241,6 @@ export default function RootLayout() {
            }}
          />
       </Stack>
-    </>
+    </SettingsProvider>
   );
 }
