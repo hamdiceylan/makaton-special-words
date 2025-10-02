@@ -1,7 +1,7 @@
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Image, Pressable } from 'react-native';
+import { Image, Platform, Pressable } from 'react-native';
 import { JostText } from '../src/theme/typography';
 
 export default function RootLayout() {
@@ -54,7 +54,7 @@ export default function RootLayout() {
                   color: '#000',
                 }}
               >
-                Special Words
+                Special Word
               </JostText>
             ),
             headerRight: () => (
@@ -62,6 +62,7 @@ export default function RootLayout() {
                 onPress={() => {}}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
+                  marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
                 })}
               >
                 <Image

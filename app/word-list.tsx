@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Alert, FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { SFProText } from '../src/theme/typography';
@@ -57,7 +57,13 @@ export default function WordListScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: isTablet() ? 30 : 20}}>
+        <View style={{ 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          gap: isTablet() ? 30 : 20,
+          paddingLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+          paddingRight: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+        }}>
           <Pressable 
             onPress={handleAddWord}
             style={({ pressed }) => ({

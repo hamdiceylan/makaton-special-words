@@ -6,6 +6,7 @@ import {
   Dimensions,
   Image,
   PanResponder,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View
@@ -152,7 +153,10 @@ export default function MatchPicturesScreen() {
         <TouchableOpacity
           onPress={isLocked ? undefined : () => navigation.goBack()}
           disabled={isLocked}
-          style={{ opacity: isLocked ? 0.4 : 1 }}
+          style={{ 
+            opacity: isLocked ? 0.4 : 1,
+            marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 3 : 0
+          }}
         >
           <Image
             source={require('../assets/images/close-circle-icon.png')}
