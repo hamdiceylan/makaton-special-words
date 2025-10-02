@@ -1,7 +1,7 @@
 import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Image, Platform, Pressable } from 'react-native';
+import { Image, Platform, Pressable, Text } from 'react-native';
 import { JostText } from '../src/theme/typography';
 
 export default function RootLayout() {
@@ -59,7 +59,7 @@ export default function RootLayout() {
             ),
             headerRight: () => (
               <Pressable
-                onPress={() => {}}
+                onPress={() => router.push('/settings')}
                 style={({ pressed }) => ({
                   opacity: pressed ? 0.5 : 1,
                   marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
@@ -216,6 +216,27 @@ export default function RootLayout() {
                fontSize: 15,
                color: '#000', // title color black
              },
+           }}
+         />
+
+         <Stack.Screen
+           name="settings"
+           options={{
+             title: 'Settings',
+             headerTintColor: '#4664CD',
+             headerTitleStyle: {
+               fontFamily: 'SF-Pro-Display-Medium',
+               fontSize: 16,
+               color: '#000',
+             },
+             headerLeft: () => (
+               <Pressable
+                 onPress={() => router.back()}
+                 style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+               >
+                 <Text style={{ color: '#4664CD', fontSize: 16 }}>Close</Text>
+               </Pressable>
+             ),
            }}
          />
       </Stack>
