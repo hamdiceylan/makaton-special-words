@@ -379,8 +379,10 @@ export default function MatchPicturesScreen() {
       setupRound(activeSet, targetOrder, currentIndex + 1);
       setGameState(prev => ({ ...prev, level: prev.level + 1 }));
     } else {
-      shakeAllCards();
-      await playRewardSound();
+      if (settings.enableReward) {
+        shakeAllCards();
+        await playRewardSound();
+      }
       // Auto-advance to next page if enabled
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;

@@ -509,9 +509,11 @@ export default function MatchPicturesScreen() {
       setGameState(prev => ({ ...prev, level: prev.level + 1 }));
     } else {
       // Completed current group of 4 words
-      // Always shake cards and play reward sound for every completed group
-      shakeAllCards();
-      await playRewardSound();
+      // Trigger reward only if enabled in settings
+      if (settings.enableReward) {
+        shakeAllCards();
+        await playRewardSound();
+      }
 
       // Auto-advance to next page if enabled
       if (settings.automatic) {
