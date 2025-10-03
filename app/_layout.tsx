@@ -242,6 +242,38 @@ export default function RootLayout() {
              ),
            }}
          />
+
+         <Stack.Screen
+           name="extra-actions"
+           options={{
+             title: 'Extra Actions',
+             headerTintColor: '#4664CD',
+             headerTitleStyle: {
+               fontFamily: 'SF-Pro-Display-Semibold',
+               fontSize: 18,
+               color: '#000',
+             },
+             headerLeft: () => (
+               <Pressable
+                 onPress={() => router.back()}
+                 style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+               >
+                 <Text style={{ color: '#4664CD', fontSize: 16 }}>Back</Text>
+               </Pressable>
+             ),
+             headerRight: () => (
+               <Pressable
+                 onPress={() => router.push('/settings')}
+                 style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
+               >
+                 <Image
+                   source={require('../assets/images/settings-icon.png')}
+                   style={{ width: 20, height: 20 }}
+                 />
+               </Pressable>
+             ),
+           }}
+         />
       </Stack>
     </SettingsProvider>
     </GestureHandlerRootView>

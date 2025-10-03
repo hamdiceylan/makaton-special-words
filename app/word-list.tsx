@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
@@ -95,7 +96,7 @@ export default function WordListScreen() {
   };
 
   const handleSettings = () => {
-    Alert.alert('Settings', 'List settings function');
+    router.push('/extra-actions');
   };
 
   const handleReset = () => {
