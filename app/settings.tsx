@@ -178,10 +178,12 @@ export default function Settings() {
   const renderSlider = () => (
     <View style={styles.sliderContainer}>
       <Pressable
-        style={styles.sliderButton}
         onPress={() => setAnimationSpeed(Math.max(0, animationSpeed - 0.1))}
       >
-        <Text style={styles.sliderButtonText}>-</Text>
+        <Image
+          source={require('../assets/images/decrease-icon.png')}
+          style={styles.sliderIcon}
+        />
       </Pressable>
       <View style={styles.sliderTrack}>
         <View
@@ -198,10 +200,12 @@ export default function Settings() {
         />
       </View>
       <Pressable
-        style={styles.sliderButton}
         onPress={() => setAnimationSpeed(Math.min(1, animationSpeed + 0.1))}
       >
-        <Text style={styles.sliderButtonText}>+</Text>
+        <Image
+          source={require('../assets/images/increase-icon.png')}
+          style={styles.sliderIcon}
+        />
       </Pressable>
     </View>
   );
@@ -397,6 +401,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#000000',
+  },
+  sliderIcon: {
+    width: 25,
+    height: 25,
+
   },
   sliderTrack: {
     flex: 1,

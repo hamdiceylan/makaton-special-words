@@ -55,7 +55,7 @@ export default function RootLayout() {
                   color: '#000',
                 }}
               >
-                Special Word
+                Special Words
               </JostText>
             ),
             headerRight: () => (

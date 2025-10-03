@@ -18,7 +18,7 @@ import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
-import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
+import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 
 // ==============================
 // CONFIG
@@ -58,7 +58,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale } = useSettings();
 
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
@@ -85,6 +85,12 @@ export default function MatchPicturesScreen() {
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
 
+  // Animation speed factor: higher slider -> faster animations
+  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  const DURATION = {
+    move: Math.round(1000 / speedFactor),
+    scale: Math.round(600 / speedFactor),
+  };
   const [cardShakeAnimations] = useState([
     new Animated.Value(0),
     new Animated.Value(0),
@@ -196,7 +202,7 @@ export default function MatchPicturesScreen() {
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      if (newMatchCard.image) playWordSound(newMatchCard.image);
+      if (settings.playBeforeMatch && newMatchCard.image) playWord(newMatchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
     });
   };
 
@@ -248,7 +254,7 @@ export default function MatchPicturesScreen() {
       if (gameState.isAnimating) return;
       const tap = Math.abs(g.dx) < 10 && Math.abs(g.dy) < 10;
       if (tap) {
-        if (gameState.matchCard.image) playWordSound(gameState.matchCard.image);
+        if (settings.playBeforeMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         Animated.parallel([
           Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
           Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
@@ -302,7 +308,7 @@ export default function MatchPicturesScreen() {
       }),
       Animated.timing(cardScale, { toValue: 1, duration: 300, useNativeDriver: true }),
     ]).start(() => {
-      if (gameState.matchCard.image) playWordSound(gameState.matchCard.image);
+      if (settings.playAfterMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
       setGameState(prev => {
         const updated = prev.staticCards.map((c, i) => (i === matchedIndex ? { ...c, isMatched: true } : c));
         const revealed = { ...prev.revealedMap, [matchedCard.image]: true };
@@ -349,12 +355,12 @@ export default function MatchPicturesScreen() {
       Animated.parallel([
         Animated.timing(cardPosition, {
           toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
-          duration: 1000,
+          duration: DURATION.move,
           useNativeDriver: false,
         }),
-        Animated.timing(cardScale, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
       ]).start(() => {
-        if (gameState.matchCard.image) playWordSound(gameState.matchCard.image);
+        if (settings.playAfterMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         setGameState(prev => {
           const updated = prev.staticCards.map((c, i) => (i === idx ? { ...c, isMatched: true } : c));
           const revealed = { ...prev.revealedMap, [card.image]: true };
@@ -365,8 +371,8 @@ export default function MatchPicturesScreen() {
     });
   };
 
-  const advanceOrFinish = () => {
-    const { activeSet, targetOrder, currentIndex } = gameState;
+  const advanceOrFinish = async () => {
+    const { activeSet, targetOrder, currentIndex, currentGroupStart } = gameState;
     if (!activeSet || !activeSet.length) return;
     const hasNext = currentIndex + 1 < targetOrder.length;
     if (hasNext) {
@@ -374,7 +380,16 @@ export default function MatchPicturesScreen() {
       setGameState(prev => ({ ...prev, level: prev.level + 1 }));
     } else {
       shakeAllCards();
-      playRewardSound();
+      await playRewardSound();
+      // Auto-advance to next page if enabled
+      if (settings.automatic) {
+        const newStart = currentGroupStart + cardsPerPage;
+        if (newStart < words.length) {
+          cleanupCurrentRound();
+          initializeGame(newStart);
+          return;
+        }
+      }
       setGameState(prev => ({ ...prev, isAnimating: false }));
     }
   };
@@ -473,8 +488,17 @@ export default function MatchPicturesScreen() {
         >
           {card.isMatched ? (
             <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-              <SFProText weight="semibold" style={[styles.cardText, { fontSize: Math.max(18, r.height * 0.22) }]}>
-                {card.text}
+              <SFProText
+                weight="semibold"
+                style={[
+                  styles.cardText,
+                  { fontSize: Math.max(18, r.height * 0.22) * (settings.largeText ? 1.2 : 1) },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
+                {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : ((card.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (card.text ?? '').slice(1))}
               </SFProText>
             </View>
           ) : (
@@ -523,8 +547,17 @@ export default function MatchPicturesScreen() {
             pointerEvents="none"
           >
             {canShowText && (
-              <SFProText weight="semibold" style={[styles.cardText, { fontSize: Math.max(18, r.height * 0.22) }]}>
-                {gameState.matchCard.text}
+              <SFProText
+                weight="semibold"
+                style={[
+                  styles.cardText,
+                  { fontSize: Math.max(18, r.height * 0.22) * (settings.largeText ? 1.2 : 1) },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
+                {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : ((gameState.matchCard.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (gameState.matchCard.text ?? '').slice(1))}
               </SFProText>
             )}
           </Animated.View>
@@ -657,5 +690,5 @@ const styles = StyleSheet.create({
   },
   cardBack: { backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center' },
   cardImage: { width: '100%', height: '100%', borderRadius: 6 },
-  cardText: { color: '#000', textAlign: 'center', textTransform: 'capitalize' },
+  cardText: { color: '#000', textAlign: 'center' },
 });

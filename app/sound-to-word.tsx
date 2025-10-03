@@ -17,7 +17,7 @@ import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
-import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
+import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 
 // Toolbar height provided by shared layout utils
 
@@ -43,7 +43,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -68,6 +68,12 @@ export default function MatchPicturesScreen() {
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   
+  // Animation speed factor: higher slider -> faster animations
+  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  const DURATION = {
+    move: Math.round(1000 / speedFactor),
+    scale: Math.round(600 / speedFactor),
+  };
   // Shake animation states for each card
   const [cardShakeAnimations] = useState([
     new Animated.Value(0),
@@ -239,8 +245,8 @@ export default function MatchPicturesScreen() {
       useNativeDriver: true,
     }).start(() => {
       // Play the word sound after card appears
-      if (newMatchCard.image) {
-        playWordSound(newMatchCard.image);
+      if (settings.playBeforeMatch && newMatchCard.image) {
+        playWord(newMatchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
       }
     });
   };
@@ -294,8 +300,8 @@ export default function MatchPicturesScreen() {
       
       if (isTab) {
         // It's a tap - play sound and return card to center
-        if (gameState.matchCard.image) {
-          playWordSound(gameState.matchCard.image);
+        if (settings.playBeforeMatch && gameState.matchCard.image) {
+          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
         Animated.parallel([
           Animated.spring(cardPosition, {
@@ -372,8 +378,8 @@ export default function MatchPicturesScreen() {
       }),
     ]).start(() => {
       // Play the matched word sound for successful match
-      if (gameState.matchCard.image) {
-        playWordSound(gameState.matchCard.image);
+      if (settings.playAfterMatch && gameState.matchCard.image) {
+        playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
       }
 
       // Now mark the static card as matched (show its text) right before flip
@@ -464,18 +470,18 @@ export default function MatchPicturesScreen() {
             x: target.x - initialPosition.current.x,
             y: target.y - initialPosition.current.y,
           },
-          duration: 1000,
+          duration: DURATION.move,
           useNativeDriver: false,
         }),
         Animated.timing(cardScale, {
           toValue: 1,
-          duration: 600,
+          duration: DURATION.scale,
           useNativeDriver: true,
         }),
       ]).start(() => {
         // Play the matched word sound for successful match
-        if (gameState.matchCard.image) {
-          playWordSound(gameState.matchCard.image);
+        if (settings.playAfterMatch && gameState.matchCard.image) {
+          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
 
         // Mark the static card as matched (show its text) right before flip
@@ -492,7 +498,7 @@ export default function MatchPicturesScreen() {
     });
   };
 
-  const advanceOrFinish = () => {
+  const advanceOrFinish = async () => {
     const { activeSet, targetOrder, currentIndex, currentGroupStart } = gameState;
     if (!activeSet || activeSet.length === 0) return;
 
@@ -505,9 +511,18 @@ export default function MatchPicturesScreen() {
       // Completed current group of 4 words
       // Always shake cards and play reward sound for every completed group
       shakeAllCards();
-      playRewardSound();
-      
-      // For ALL groups: don't auto-advance, user must navigate manually
+      await playRewardSound();
+
+      // Auto-advance to next page if enabled
+      if (settings.automatic) {
+        const newStart = currentGroupStart + cardsPerPage;
+        if (newStart < words.length) {
+          cleanupCurrentRound();
+          initializeGame(newStart);
+          return;
+        }
+      }
+      // Otherwise stop animating and wait for user navigation
       setGameState(prev => ({ ...prev, isAnimating: false }));
     }
   };
@@ -657,8 +672,18 @@ export default function MatchPicturesScreen() {
             </View>
           ) : (
             <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-              <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
-                {card.text}
+              <SFProText
+                weight="semibold"
+                style={[
+                  styles.cardText,
+                  settings.largeText && { fontSize: CARD_TEXT_SIZE * 1.2 },
+                  !settings.largeText && { fontSize: CARD_TEXT_SIZE },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
+                {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : ((card.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (card.text ?? '').slice(1))}
               </SFProText>
             </View>
           )}
@@ -949,7 +974,6 @@ const styles = StyleSheet.create({
   cardText: {
     color: '#000',
     textAlign: 'center',
-    textTransform: 'capitalize',
   },
 
   questionIcon: {
