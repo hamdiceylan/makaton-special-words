@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Image, Platform, Pressable, Text } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SettingsProvider } from '../src/contexts/SettingsContext';
 import { JostText } from '../src/theme/typography';
 
@@ -29,9 +30,10 @@ export default function RootLayout() {
   }
 
   return (
-    <SettingsProvider>
-      <StatusBar style="auto" />
-      <Stack
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SettingsProvider>
+        <StatusBar style="auto" />
+        <Stack
         screenOptions={{
           headerStyle: { backgroundColor: '#FBFBFE' }, // default for all screens
           headerShadowVisible: false,
@@ -242,5 +244,6 @@ export default function RootLayout() {
          />
       </Stack>
     </SettingsProvider>
+    </GestureHandlerRootView>
   );
 }
