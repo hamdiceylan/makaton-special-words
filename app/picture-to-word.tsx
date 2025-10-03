@@ -43,7 +43,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -179,7 +179,18 @@ export default function MatchPicturesScreen() {
     
     // Get current group based on cards-per-page
     const endIndex = Math.min(startIndex + cardsPerPage, words.length);
-    const currentGroup = words.slice(startIndex, endIndex);
+    let currentGroup = words.slice(startIndex, endIndex);
+    
+    // Apply shuffle mode logic
+    if (shuffleMode === 'all') {
+      // All: shuffle the entire words array globally
+      const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+      currentGroup = shuffledWords.slice(startIndex, endIndex);
+    } else if (shuffleMode === 'page') {
+      // Page: shuffle only the current page's words
+      currentGroup = [...currentGroup].sort(() => Math.random() - 0.5);
+    }
+    // Off: no shuffling, use original order
     
     // If we don't have enough words left, reset to beginning
     if (currentGroup.length === 0) {
@@ -193,7 +204,7 @@ export default function MatchPicturesScreen() {
       isMatched: false,
     }));
 
-    // Target order only among the current static cards (no reshuffle of positions)
+    // Target order among the current static cards - always random for match card selection
     const indices = staticCards.map((_, i) => i);
     const targetOrder = [...indices].sort(() => Math.random() - 0.5);
 

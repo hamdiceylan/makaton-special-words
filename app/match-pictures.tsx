@@ -58,7 +58,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode } = useSettings();
 
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
@@ -144,7 +144,18 @@ export default function MatchPicturesScreen() {
 
     const groupSize = cardsPerPage;
     const endIndex = Math.min(startIndex + groupSize, words.length);
-    const currentGroup = words.slice(startIndex, endIndex);
+    let currentGroup = words.slice(startIndex, endIndex);
+    
+    // Apply shuffle mode logic
+    if (shuffleMode === 'all') {
+      // All: shuffle the entire words array globally
+      const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+      currentGroup = shuffledWords.slice(startIndex, endIndex);
+    } else if (shuffleMode === 'page') {
+      // Page: shuffle only the current page's words
+      currentGroup = [...currentGroup].sort(() => Math.random() - 0.5);
+    }
+    // Off: no shuffling, use original order
 
     if (currentGroup.length === 0) {
       return initializeGame(0);
@@ -158,6 +169,7 @@ export default function MatchPicturesScreen() {
     }));
 
     const indices = staticCards.map((_, i) => i);
+    // Always random for match card selection
     const targetOrder = [...indices].sort(() => Math.random() - 0.5);
 
     setGameState(prev => ({

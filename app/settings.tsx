@@ -35,10 +35,13 @@ export default function Settings() {
     animationSpeed, 
     setAnimationSpeed, 
     cardsPerPage, 
-    setCardsPerPage 
+    setCardsPerPage,
+    shuffleMode,
+    setShuffleMode,
   } = useSettings();
   
   const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
+  const [showShuffleModeModal, setShowShuffleModeModal] = useState(false);
 
   const sections: SettingSection[] = [
     {
@@ -129,7 +132,8 @@ export default function Settings() {
           id: 'shuffleCards',
           title: 'Shuffle Cards',
           type: 'navigation',
-          value: 'Off',
+          value: shuffleMode === 'off' ? 'Off' : shuffleMode === 'page' ? 'Page' : 'All',
+          onPress: () => setShowShuffleModeModal(true),
         },
         {
           id: 'cardsPerPage',
@@ -252,6 +256,11 @@ export default function Settings() {
   };
 
   const cardsPerPageOptions = [1, 2, 3, 4, 6, 8];
+  const shuffleOptions: { key: 'off' | 'page' | 'all'; label: string }[] = [
+    { key: 'off', label: 'Off' },
+    { key: 'page', label: 'Page' },
+    { key: 'all', label: 'All' },
+  ];
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
@@ -312,6 +321,48 @@ export default function Settings() {
                   {option}
                 </Text>
                 {cardsPerPage === option && (
+                  <Image
+                    source={require('../assets/images/check-icon.png')}
+                    style={styles.checkIcon}
+                  />
+                )}
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showShuffleModeModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowShuffleModeModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowShuffleModeModal(false)}
+        >
+          <Pressable 
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
+            {shuffleOptions.map((option) => (
+              <Pressable
+                key={option.key}
+                style={styles.modalOption}
+                onPress={() => {
+                  setShuffleMode(option.key);
+                  setShowShuffleModeModal(false);
+                }}
+              >
+                <Text style={[
+                  styles.modalOptionText,
+                  shuffleMode === option.key && styles.modalOptionTextSelected
+                ]}>
+                  {option.label}
+                </Text>
+                {shuffleMode === option.key && (
                   <Image
                     source={require('../assets/images/check-icon.png')}
                     style={styles.checkIcon}

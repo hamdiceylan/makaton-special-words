@@ -8,6 +8,8 @@ interface SettingsContextType {
   setLocale: (locale: string) => void;
   cardsPerPage: number;
   setCardsPerPage: (value: number) => void;
+  shuffleMode: 'off' | 'page' | 'all';
+  setShuffleMode: (value: 'off' | 'page' | 'all') => void;
   animationSpeed: number;
   setAnimationSpeed: (value: number) => void;
   settings: {
@@ -46,6 +48,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   // Per-profile, persisted fields
   const [locale, setLocale] = useState('en-GB');
   const [cardsPerPage, setCardsPerPage] = useState(4);
+  const [shuffleMode, setShuffleMode] = useState<'off' | 'page' | 'all'>('off');
   const [animationSpeed, internalSetAnimationSpeed] = useState(0.5);
   const [settings, setSettings] = useState({
     automatic: false,
@@ -72,6 +75,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     locale: `settings:${profileId}:locale`,
     animationSpeed: `settings:${profileId}:animationSpeed`,
     cardsPerPage: `settings:${profileId}:cardsPerPage`,
+    shuffleMode: `settings:${profileId}:shuffleMode`,
     flags: `settings:${profileId}:flags`,
   }), [profileId]);
 
@@ -80,10 +84,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     let cancelled = false;
     (async () => {
       try {
-        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedFlags] = await Promise.all([
+        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedFlags] = await Promise.all([
           AsyncStorage.getItem(storageKeys.locale),
           AsyncStorage.getItem(storageKeys.animationSpeed),
           AsyncStorage.getItem(storageKeys.cardsPerPage),
+          AsyncStorage.getItem(storageKeys.shuffleMode),
           AsyncStorage.getItem(storageKeys.flags),
         ]);
         if (!cancelled) {
@@ -101,6 +106,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
             if (!Number.isNaN(parsedCards)) {
               setCardsPerPage(parsedCards);
             }
+          }
+          if (storedShuffleMode === 'off' || storedShuffleMode === 'page' || storedShuffleMode === 'all') {
+            setShuffleMode(storedShuffleMode);
           }
           if (storedFlags) {
             try {
@@ -147,6 +155,15 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     })();
   }, [cardsPerPage, storageKeys]);
 
+  // Persist shuffleMode per profile
+  useEffect(() => {
+    (async () => {
+      try {
+        await AsyncStorage.setItem(storageKeys.shuffleMode, shuffleMode);
+      } catch {}
+    })();
+  }, [shuffleMode, storageKeys]);
+
   // Persist boolean flags (settings) per profile
   useEffect(() => {
     (async () => {
@@ -170,6 +187,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setLocale,
     cardsPerPage,
     setCardsPerPage,
+    shuffleMode,
+    setShuffleMode,
     animationSpeed,
     setAnimationSpeed,
     settings,
