@@ -12,6 +12,8 @@ interface SettingsContextType {
   setShuffleMode: (value: 'off' | 'page' | 'all') => void;
   animationSpeed: number;
   setAnimationSpeed: (value: number) => void;
+  switchCount: number;
+  setSwitchCount: (value: number) => void;
   settings: {
     automatic: boolean;
     playBeforeMatch: boolean;
@@ -50,6 +52,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   const [cardsPerPage, setCardsPerPage] = useState(4);
   const [shuffleMode, setShuffleMode] = useState<'off' | 'page' | 'all'>('off');
   const [animationSpeed, internalSetAnimationSpeed] = useState(0.5);
+  const [switchCount, setSwitchCount] = useState(0);
   const [settings, setSettings] = useState({
     automatic: false,
     playBeforeMatch: true,
@@ -76,6 +79,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     animationSpeed: `settings:${profileId}:animationSpeed`,
     cardsPerPage: `settings:${profileId}:cardsPerPage`,
     shuffleMode: `settings:${profileId}:shuffleMode`,
+    switchCount: `settings:${profileId}:switchCount`,
     flags: `settings:${profileId}:flags`,
   }), [profileId]);
 
@@ -84,11 +88,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     let cancelled = false;
     (async () => {
       try {
-        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedFlags] = await Promise.all([
+        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedSwitchCount, storedFlags] = await Promise.all([
           AsyncStorage.getItem(storageKeys.locale),
           AsyncStorage.getItem(storageKeys.animationSpeed),
           AsyncStorage.getItem(storageKeys.cardsPerPage),
           AsyncStorage.getItem(storageKeys.shuffleMode),
+          AsyncStorage.getItem(storageKeys.switchCount),
           AsyncStorage.getItem(storageKeys.flags),
         ]);
         if (!cancelled) {
@@ -109,6 +114,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
           }
           if (storedShuffleMode === 'off' || storedShuffleMode === 'page' || storedShuffleMode === 'all') {
             setShuffleMode(storedShuffleMode);
+          }
+          if (storedSwitchCount) {
+            const parsedSwitchCount = parseInt(storedSwitchCount, 10);
+            if (!Number.isNaN(parsedSwitchCount) && parsedSwitchCount >= 0 && parsedSwitchCount <= 3) {
+              setSwitchCount(parsedSwitchCount);
+            }
           }
           if (storedFlags) {
             try {
@@ -164,6 +175,15 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     })();
   }, [shuffleMode, storageKeys]);
 
+  // Persist switchCount per profile
+  useEffect(() => {
+    (async () => {
+      try {
+        await AsyncStorage.setItem(storageKeys.switchCount, String(switchCount));
+      } catch {}
+    })();
+  }, [switchCount, storageKeys]);
+
   // Persist boolean flags (settings) per profile
   useEffect(() => {
     (async () => {
@@ -191,6 +211,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setShuffleMode,
     animationSpeed,
     setAnimationSpeed,
+    switchCount,
+    setSwitchCount,
     settings,
     toggleSetting,
   };

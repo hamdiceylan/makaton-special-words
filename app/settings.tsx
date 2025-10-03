@@ -38,10 +38,13 @@ export default function Settings() {
     setCardsPerPage,
     shuffleMode,
     setShuffleMode,
+    switchCount,
+    setSwitchCount,
   } = useSettings();
   
   const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
   const [showShuffleModeModal, setShowShuffleModeModal] = useState(false);
+  const [showSwitchCountModal, setShowSwitchCountModal] = useState(false);
 
   const sections: SettingSection[] = [
     {
@@ -146,7 +149,8 @@ export default function Settings() {
           id: 'switches',
           title: 'Switches',
           type: 'navigation',
-          value: '0',
+          value: switchCount.toString(),
+          onPress: () => setShowSwitchCountModal(true),
         },
         {
           id: 'enableDebugging',
@@ -261,6 +265,7 @@ export default function Settings() {
     { key: 'page', label: 'Page' },
     { key: 'all', label: 'All' },
   ];
+  const switchCountOptions = [0, 1, 2, 3];
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
@@ -363,6 +368,48 @@ export default function Settings() {
                   {option.label}
                 </Text>
                 {shuffleMode === option.key && (
+                  <Image
+                    source={require('../assets/images/check-icon.png')}
+                    style={styles.checkIcon}
+                  />
+                )}
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={showSwitchCountModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSwitchCountModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowSwitchCountModal(false)}
+        >
+          <Pressable 
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHandle} />
+            {switchCountOptions.map((option) => (
+              <Pressable
+                key={option}
+                style={styles.modalOption}
+                onPress={() => {
+                  setSwitchCount(option);
+                  setShowSwitchCountModal(false);
+                }}
+              >
+                <Text style={[
+                  styles.modalOptionText,
+                  switchCount === option && styles.modalOptionTextSelected
+                ]}>
+                  {option === 0 ? 'Off' : `${option} Switch${option > 1 ? 'es' : ''}`}
+                </Text>
+                {switchCount === option && (
                   <Image
                     source={require('../assets/images/check-icon.png')}
                     style={styles.checkIcon}

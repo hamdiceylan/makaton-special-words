@@ -14,6 +14,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
+import { useSwitchControl } from '../src/hooks/useSwitchControl';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
@@ -43,7 +44,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -67,6 +68,39 @@ export default function MatchPicturesScreen() {
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+
+  // Switch control for accessibility
+  const switchControl = useSwitchControl({
+    items: gameState.staticCards,
+    onItemSelect: (card, index) => {
+      if (gameState.isAnimating) return;
+      
+      // Check if this card matches the current match card
+      if (card.image === gameState.matchCard.image) {
+        // It's a match! Programmatically drag the match card to this position
+        handleProgrammaticMatch(card, index);
+      }
+    },
+    onAdvance: () => {
+      // Advance to next match card
+      if (gameState.currentIndex < gameState.targetOrder.length - 1) {
+        const nextIndex = gameState.currentIndex + 1;
+        const nextTargetIndex = gameState.targetOrder[nextIndex];
+        const nextMatchCard = gameState.staticCards[nextTargetIndex];
+        
+        setGameState(prev => ({
+          ...prev,
+          currentIndex: nextIndex,
+          matchCard: nextMatchCard,
+          revealedMap: {},
+        }));
+        
+        // Reset switch highlighting
+        switchControl.resetHighlight();
+      }
+    },
+    autoAdvanceDelay: 2000,
+  });
   
   // Animation speed factor: higher slider -> faster animations
   const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
