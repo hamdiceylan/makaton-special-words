@@ -6,114 +6,21 @@ import {
   Dimensions,
   Image,
   PanResponder,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
+import { useSettings } from '../src/contexts/SettingsContext';
+import { useSwitchControl } from '../src/hooks/useSwitchControl';
 import { SFProText } from '../src/theme/typography';
-import { isLandscape, isTablet } from '../src/utils/device';
-import { initializeAudio, playRewardSound, playWordSound } from '../src/utils/soundUtils';
+import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
+import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
+import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 
-// Responsive toolbar height - proportional to device height in landscape mode
-const getToolbarHeight = (screenWidth: number, screenHeight: number) => {
-  const landscape = isLandscape(screenWidth, screenHeight);
-  
-  if (landscape) {
-    // Proportional to device height in landscape mode (90px base for 1024 height)
-    const responsiveHeight = screenHeight * (90 / 1024);
-    // Limit between min 70, max 90
-    return Math.min(90, Math.max(70, responsiveHeight));
-  } else {
-    // Fixed 90 in portrait mode
-    return 90;
-  }
-};
-
-// Layout configuration based on device and orientation
-const getLayoutConfig = (screenWidth: number, screenHeight: number) => {
-  const tablet = isTablet();
-  const landscape = isLandscape(screenWidth, screenHeight);
-  
-  if (landscape) {
-    if (tablet) {
-      // Tablet Landscape
-      const cardWidth = screenHeight * (300 / 1024);
-      let padding = 150;
-      
-      // Make OFFSET_Y proportional to device height too (1024 base height for landscape)
-      const baseOffsetY = screenHeight * (34 / 1024); // 34 ratio for 1024 height
-      
-      // Minimum gap control between cards (landscape 2 cards side by side)
-      // Calculate gap between cards with current padding
-      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 50; // Minimum gap between cards
-      
-      if (currentGap < minGapBetweenCards) {
-        // If gap is less than 50, reduce padding to increase gap to 50
-        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
-        padding = Math.max(20, requiredPadding); // Minimum 20px padding
-      }
-      // If gap is greater than 50, padding remains 150
-      
-      return {
-        CARD_WIDTH: cardWidth,
-        CARD_ASPECT_RATIO: 230 / 300,
-        PADDING: padding,
-        OFFSET_Y: baseOffsetY,
-        CARD_TEXT_SIZE: 50,
-      };
-    } else {
-      // Phone Landscape  
-      return {
-        CARD_WIDTH: screenHeight * (130 / 390), // Height-based calculation
-        CARD_ASPECT_RATIO: 90 / 130, // Flatter cards (optimal for landscape)
-        PADDING: 50,
-        OFFSET_Y: -15,
-        CARD_TEXT_SIZE: 22,
-      };
-    }
-  } else {
-    // Portrait Mode
-    if (tablet) {
-      // Tablet Portrait
-      const cardWidth = screenWidth * (300 / 1024);
-      let padding = 120;
-      
-      // Make OFFSET_Y proportional to device height too
-      const baseOffsetY = screenHeight * (198 / 1400); // 198 ratio for 1400 height
-      
-      // Minimum gap control between cards (portrait 2 cards side by side)
-      // Calculate gap between cards with current padding
-      const currentGap = screenWidth - (2 * padding) - (2 * cardWidth);
-      const minGapBetweenCards = 140; // Minimum gap between cards
-      
-      if (currentGap < minGapBetweenCards) {
-        // If gap is less than 140, reduce padding to increase gap to 140
-        const requiredPadding = (screenWidth - (2 * cardWidth) - minGapBetweenCards) / 2;
-        padding = Math.max(20, requiredPadding); // Minimum 20px padding
-      }
-      // If gap is greater than 140, padding remains 120
-      
-      return {
-        CARD_WIDTH: cardWidth,
-        CARD_ASPECT_RATIO: 230 / 300,
-        PADDING: padding,
-        OFFSET_Y: baseOffsetY,
-        CARD_TEXT_SIZE: 50,
-      };
-    } else {
-      // Phone Portrait - Current design
-      return {
-        CARD_WIDTH: screenWidth * (130 / 390), // 390 → 130 scale
-        CARD_ASPECT_RATIO: 100 / 130, // Orijinal aspect ratio
-        PADDING: 24,
-        OFFSET_Y: 86,
-        CARD_TEXT_SIZE: 24,
-      };
-    }
-  }
-};
+// Toolbar height provided by shared layout utils
 
 interface GameCard {
   id: string;
@@ -136,6 +43,8 @@ interface GameState {
 
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -149,6 +58,8 @@ export default function MatchPicturesScreen() {
   });
 
   const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
+  const isPad = isTablet();
+  const portrait = !isLandscape(screenDimensions.width, screenDimensions.height);
 
   const [cardPosition] = useState(new Animated.ValueXY());
   const [cardScale] = useState(new Animated.Value(1));
@@ -157,7 +68,46 @@ export default function MatchPicturesScreen() {
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+
+  // Switch control for accessibility
+  const switchControl = useSwitchControl({
+    items: gameState.staticCards,
+    onItemSelect: (card, index) => {
+      if (gameState.isAnimating) return;
+      
+      // Check if this card matches the current match card
+      if (card.image === gameState.matchCard.image) {
+        // It's a match! Programmatically drag the match card to this position
+        handleProgrammaticMatch(card, index);
+      }
+    },
+    onAdvance: () => {
+      // Advance to next match card
+      if (gameState.currentIndex < gameState.targetOrder.length - 1) {
+        const nextIndex = gameState.currentIndex + 1;
+        const nextTargetIndex = gameState.targetOrder[nextIndex];
+        const nextMatchCard = gameState.staticCards[nextTargetIndex];
+        
+        setGameState(prev => ({
+          ...prev,
+          currentIndex: nextIndex,
+          matchCard: nextMatchCard,
+          revealedMap: {},
+        }));
+        
+        // Reset switch highlighting
+        switchControl.resetHighlight();
+      }
+    },
+    autoAdvanceDelay: 2000,
+  });
   
+  // Animation speed factor: higher slider -> faster animations
+  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  const DURATION = {
+    move: Math.round(1000 / speedFactor),
+    scale: Math.round(600 / speedFactor),
+  };
   // Shake animation states for each card
   const [cardShakeAnimations] = useState([
     new Animated.Value(0),
@@ -242,7 +192,10 @@ export default function MatchPicturesScreen() {
         <TouchableOpacity
           onPress={isLocked ? undefined : () => navigation.goBack()}
           disabled={isLocked}
-          style={{ opacity: isLocked ? 0.4 : 1 }}
+          style={{ 
+            opacity: isLocked ? 0.4 : 1,
+            marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 3 : 0
+          }}
         >
           <Image
             source={require('../assets/images/close-circle-icon.png')}
@@ -258,9 +211,20 @@ export default function MatchPicturesScreen() {
     // Clean up any ongoing animations and states first
     cleanupCurrentRound();
     
-    // Get current group of 4 words starting from startIndex
-    const endIndex = Math.min(startIndex + 4, words.length);
-    const currentGroup = words.slice(startIndex, endIndex);
+    // Get current group based on cards-per-page
+    const endIndex = Math.min(startIndex + cardsPerPage, words.length);
+    let currentGroup = words.slice(startIndex, endIndex);
+    
+    // Apply shuffle mode logic
+    if (shuffleMode === 'all') {
+      // All: shuffle the entire words array globally
+      const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+      currentGroup = shuffledWords.slice(startIndex, endIndex);
+    } else if (shuffleMode === 'page') {
+      // Page: shuffle only the current page's words
+      currentGroup = [...currentGroup].sort(() => Math.random() - 0.5);
+    }
+    // Off: no shuffling, use original order
     
     // If we don't have enough words left, reset to beginning
     if (currentGroup.length === 0) {
@@ -274,7 +238,7 @@ export default function MatchPicturesScreen() {
       isMatched: false,
     }));
 
-    // Target order only among the current static cards (no reshuffle of positions)
+    // Target order among the current static cards - always random for match card selection
     const indices = staticCards.map((_, i) => i);
     const targetOrder = [...indices].sort(() => Math.random() - 0.5);
 
@@ -326,8 +290,8 @@ export default function MatchPicturesScreen() {
       useNativeDriver: true,
     }).start(() => {
       // Play the word sound after card appears
-      if (newMatchCard.image) {
-        playWordSound(newMatchCard.image);
+      if (settings.playBeforeMatch && newMatchCard.image) {
+        playWord(newMatchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
       }
     });
   };
@@ -335,58 +299,25 @@ export default function MatchPicturesScreen() {
   // Don't calculate until container dimensions are obtained
   const canLayout = containerSize.width > 0 && containerSize.height > 0;
 
-  // Get responsive layout configuration
-  const layoutConfig = getLayoutConfig(screenDimensions.width, screenDimensions.height);
-  let { CARD_WIDTH, CARD_ASPECT_RATIO, PADDING, OFFSET_Y, CARD_TEXT_SIZE } = layoutConfig;
-  const CARD_HEIGHT = CARD_WIDTH * CARD_ASPECT_RATIO; // Responsive aspect ratio
+  // Shared layout
+  const layout = React.useMemo(() => {
+    if (containerSize.width <= 0 || containerSize.height <= 0) return null;
+    return computeLayout(cardsPerPage as 1 | 2 | 3 | 4 | 6 | 8, containerSize.width, containerSize.height, isPad, portrait);
+  }, [containerSize, isPad, portrait, cardsPerPage]);
+  const CARD_WIDTH = layout?.cardSize.w ?? 0;
+  const CARD_HEIGHT = layout?.cardSize.h ?? 0;
+  const CARD_TEXT_SIZE = Math.max(18, CARD_HEIGHT * 0.22);
   
   // Get responsive toolbar height
   const TOOLBAR_HEIGHT = getToolbarHeight(screenDimensions.width, screenDimensions.height);
   
-  // Vertical fit control in landscape modes
-  const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
-  if (isLandscapeMode && canLayout) {
-    const H = containerSize.height;
-    
-    // Check actual card positions
-    // Top cards center: H/2 - CARD_HEIGHT - OFFSET_Y
-    // Top cards upper boundary: center - CARD_HEIGHT/2
-    const topCardCenter = H / 2 - CARD_HEIGHT - OFFSET_Y;
-    const topCardTop = topCardCenter - CARD_HEIGHT / 2;
-    
-    // Bottom cards center: H/2 + CARD_HEIGHT + OFFSET_Y  
-    // Bottom cards lower boundary: center + CARD_HEIGHT/2
-    const bottomCardCenter = H / 2 + CARD_HEIGHT + OFFSET_Y;
-    const bottomCardBottom = bottomCardCenter + CARD_HEIGHT / 2;
-    
-    if (topCardTop < 0 || bottomCardBottom > H) {
-      // Only adjust OFFSET_Y if it really overflows
-      const maxOffsetY = ((H - 3 * CARD_HEIGHT) / 2) - 10;
-      OFFSET_Y = Math.max(0, maxOffsetY);
-    }
-    // Keep original OFFSET_Y value if it doesn't overflow
-  }
+  // Vertical overflow handled inside shared layout
   
   const PERSPECTIVE = 800;
 
   const getStaticCardPositions = () => {
-    // All static cards are positioned within containerView (2x2 grid)
-    const W = containerSize.width;
-    const H = containerSize.height;
-
-    // safety check
-    if (W === 0 || H === 0) return [];
-
-    return [
-      // Top-left
-      { x: PADDING + CARD_WIDTH / 2, y: H / 2 - CARD_HEIGHT - OFFSET_Y },
-      // Top-right
-      { x: W - PADDING - CARD_WIDTH / 2, y: H / 2 - CARD_HEIGHT - OFFSET_Y },
-      // Bottom-left
-      { x: PADDING + CARD_WIDTH / 2, y: H / 2 + CARD_HEIGHT + OFFSET_Y },
-      // Bottom-right
-      { x: W - PADDING - CARD_WIDTH / 2, y: H / 2 + CARD_HEIGHT + OFFSET_Y },
-    ];
+    if (!layout) return [];
+    return layout.statics.map(r => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 }));
   };
 
   // Drag & drop with tap detection
@@ -414,8 +345,8 @@ export default function MatchPicturesScreen() {
       
       if (isTab) {
         // It's a tap - play sound and return card to center
-        if (gameState.matchCard.image) {
-          playWordSound(gameState.matchCard.image);
+        if (settings.playBeforeMatch && gameState.matchCard.image) {
+          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
         Animated.parallel([
           Animated.spring(cardPosition, {
@@ -492,8 +423,8 @@ export default function MatchPicturesScreen() {
       }),
     ]).start(() => {
       // Play the matched word sound for successful match
-      if (gameState.matchCard.image) {
-        playWordSound(gameState.matchCard.image);
+      if (settings.playAfterMatch && gameState.matchCard.image) {
+        playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
       }
 
       // Now mark the static card as matched (show its text) right before flip
@@ -584,18 +515,18 @@ export default function MatchPicturesScreen() {
             x: target.x - initialPosition.current.x,
             y: target.y - initialPosition.current.y,
           },
-          duration: 1000,
+          duration: DURATION.move,
           useNativeDriver: false,
         }),
         Animated.timing(cardScale, {
           toValue: 1,
-          duration: 600,
+          duration: DURATION.scale,
           useNativeDriver: true,
         }),
       ]).start(() => {
         // Play the matched word sound for successful match
-        if (gameState.matchCard.image) {
-          playWordSound(gameState.matchCard.image);
+        if (settings.playAfterMatch && gameState.matchCard.image) {
+          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
 
         // Mark the static card as matched (show its text) right before flip
@@ -612,7 +543,7 @@ export default function MatchPicturesScreen() {
     });
   };
 
-  const advanceOrFinish = () => {
+  const advanceOrFinish = async () => {
     const { activeSet, targetOrder, currentIndex, currentGroupStart } = gameState;
     if (!activeSet || activeSet.length === 0) return;
 
@@ -623,11 +554,22 @@ export default function MatchPicturesScreen() {
       setGameState(prev => ({ ...prev, level: prev.level + 1 }));
     } else {
       // Completed current group of 4 words
-      // Always shake cards and play reward sound for every completed group
-      shakeAllCards();
-      playRewardSound();
-      
-      // For ALL groups: don't auto-advance, user must navigate manually
+      // Trigger reward only if enabled in settings
+      if (settings.enableReward) {
+        shakeAllCards();
+        await playRewardSound();
+      }
+
+      // Auto-advance to next page if enabled
+      if (settings.automatic) {
+        const newStart = currentGroupStart + cardsPerPage;
+        if (newStart < words.length) {
+          cleanupCurrentRound();
+          initializeGame(newStart);
+          return;
+        }
+      }
+      // Otherwise stop animating and wait for user navigation
       setGameState(prev => ({ ...prev, isAnimating: false }));
     }
   };
@@ -670,14 +612,14 @@ export default function MatchPicturesScreen() {
   const handlePrevious = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = Math.max(0, currentGroupStart - 4);
+    const newStart = Math.max(0, currentGroupStart - cardsPerPage);
     initializeGame(newStart);
   };
 
   const handleNext = () => {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
-    const newStart = currentGroupStart + 4;
+    const newStart = currentGroupStart + cardsPerPage;
     if (newStart < words.length) {
       initializeGame(newStart);
     }
@@ -685,14 +627,15 @@ export default function MatchPicturesScreen() {
 
   const handleToEnd = () => {
     cleanupCurrentRound();
-    // Find the last complete group of 4 words
-    const lastGroupStart = Math.max(0, words.length - (words.length % 4 === 0 ? 4 : words.length % 4));
+    // Find the last complete group based on cards-per-page
+    const size = cardsPerPage;
+    const lastGroupStart = Math.max(0, words.length - (words.length % size === 0 ? size : words.length % size));
     initializeGame(lastGroupStart);
   };
 
   // Check if we're at the start or end of the list
   const isAtStart = gameState.currentGroupStart === 0;
-  const isAtEnd = gameState.currentGroupStart + 4 >= words.length;
+  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= words.length;
 
   // Lock button handlers
   const handleLockPress = () => {
@@ -766,8 +709,18 @@ export default function MatchPicturesScreen() {
         >
           {card.isMatched ? (
             <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-              <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
-                {card.text}
+              <SFProText
+                weight="semibold"
+                style={[
+                  styles.cardText,
+                  settings.largeText && { fontSize: CARD_TEXT_SIZE * 1.2 },
+                  !settings.largeText && { fontSize: CARD_TEXT_SIZE },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
+                {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : ((card.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (card.text ?? '').slice(1))}
               </SFProText>
             </View>
           ) : (
@@ -803,12 +756,7 @@ export default function MatchPicturesScreen() {
         {...panResponder.panHandlers}
         style={[
           styles.matchCard,
-          canLayout && {
-            left: containerSize.width / 2 - CARD_WIDTH / 2,
-            top: containerSize.height / 2 - CARD_HEIGHT / 2,
-            width: CARD_WIDTH,
-            height: CARD_HEIGHT,
-          },
+          layout && { left: layout.match.left, top: layout.match.top, width: layout.match.width, height: layout.match.height },
           {
             transform: [
               { translateX: cardPosition.x },
@@ -862,8 +810,18 @@ export default function MatchPicturesScreen() {
             pointerEvents="none"
           >
             {showWord && (
-              <SFProText weight="semibold" style={[styles.cardText, { fontSize: CARD_TEXT_SIZE }]}>
-                {gameState.matchCard.text}
+              <SFProText
+                weight="semibold"
+                style={[
+                  styles.cardText,
+                  settings.largeText && { fontSize: CARD_TEXT_SIZE * 1.2 },
+                  !settings.largeText && { fontSize: CARD_TEXT_SIZE },
+                ]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.6}
+              >
+                {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : ((gameState.matchCard.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (gameState.matchCard.text ?? '').slice(1))}
               </SFProText>
             )}
           </Animated.View>
@@ -876,21 +834,23 @@ export default function MatchPicturesScreen() {
   return (
     <View style={styles.screen}>
       {/* Top (VStack's first view): Game area containerView */}
-      <View
-        style={styles.containerView}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          setContainerSize({ width, height });
-        }}
-      >
-        {/* Static cards */}
-        {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
-        {/* Middle matchCard */}
-        {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
-      </View>
+      <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+        <View
+          style={styles.containerView}
+          onLayout={(e) => {
+            const { width, height } = e.nativeEvent.layout;
+            setContainerSize({ width, height });
+          }}
+        >
+          {/* Static cards */}
+          {canLayout && gameState.staticCards.map((card, i) => renderStaticCard(card, i))}
+          {/* Middle matchCard */}
+          {canLayout && gameState.matchCard.image && gameState.matchCard.text && renderMatchCard()}
+        </View>
+      </SafeAreaView>
 
       {/* Bottom (VStack's second view): Responsive height */}
-      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT }]}>
+      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}> 
         <View style={styles.toolbar}>
           {/* Left group: to-start-icon and previous-icon */}
           <View style={styles.toolbarGroup}>
@@ -979,7 +939,7 @@ const styles = StyleSheet.create({
   // Full screen, ignore safe area
   screen: {
     flex: 1,
-    backgroundColor: '#279095',
+    backgroundColor: '#fff',
   },
 
   // Top area (game area, containerView)
@@ -1002,7 +962,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingHorizontal: 21,
-    paddingTop: 18,
+    paddingTop: isCurrentlyLandscape() ? 10 : 18,
   },
 
   toolbarGroup: {
@@ -1069,7 +1029,6 @@ const styles = StyleSheet.create({
   cardText: {
     color: '#000',
     textAlign: 'center',
-    textTransform: 'capitalize',
   },
 
   questionIcon: {

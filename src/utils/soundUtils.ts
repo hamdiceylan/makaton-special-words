@@ -1,4 +1,5 @@
 import { Audio } from 'expo-av';
+import * as Speech from 'expo-speech';
 
 // Sound mapping for words - using en-GB/child directory for child voices
 export const WORD_SOUNDS: { [key: string]: any } = {
@@ -139,6 +140,15 @@ export const stopCurrentSound = async () => {
   }
 };
 
+/** Stop TTS if speaking */
+export const stopCurrentSpeech = async () => {
+  try {
+    Speech.stop();
+  } catch (error) {
+    // ignore
+  }
+};
+
 /**
  * Play a word sound
  * @param wordKey - The word key (e.g., 'ball', 'cat')
@@ -147,6 +157,7 @@ export const playWordSound = async (wordKey: string) => {
   try {
     // Stop any currently playing sound
     await stopCurrentSound();
+    await stopCurrentSpeech();
 
     const soundSource = WORD_SOUNDS[wordKey];
     if (!soundSource) {
@@ -174,26 +185,52 @@ export const playWordSound = async (wordKey: string) => {
 };
 
 /**
+ * Play a word using recorded sound if available; otherwise fall back to TTS if enabled.
+ */
+export const playWord = async (
+  wordKey: string,
+  options?: { ttsEnabled?: boolean; locale?: string; text?: string }
+) => {
+  const hasRecording = Boolean(WORD_SOUNDS[wordKey]);
+  if (hasRecording) {
+    await playWordSound(wordKey);
+    return;
+  }
+  if (options?.ttsEnabled) {
+    try {
+      await stopCurrentSound();
+      await stopCurrentSpeech();
+      const speakText = options.text ?? wordKey;
+      Speech.speak(speakText, {
+        language: options.locale,
+        rate: 1.0,
+        pitch: 1.0,
+      });
+    } catch (error) {
+      console.warn('TTS speak error:', error);
+    }
+  }
+};
+
+/**
  * Play the reward sound for successful matches
  */
-export const playRewardSound = async () => {
+export const playRewardSound = async (): Promise<void> => {
   try {
-    // Stop any currently playing sound
     await stopCurrentSound();
-
     const { sound } = await Audio.Sound.createAsync(REWARD_SOUND);
     currentSoundInstance = sound;
-
     await sound.playAsync();
-
-    // Auto-unload when finished
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync();
-        if (currentSoundInstance === sound) {
-          currentSoundInstance = null;
+    await new Promise<void>((resolve) => {
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          sound.unloadAsync();
+          if (currentSoundInstance === sound) {
+            currentSoundInstance = null;
+          }
+          resolve();
         }
-      }
+      });
     });
   } catch (error) {
     console.warn('Error playing reward sound:', error);

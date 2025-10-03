@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Alert, FlatList, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES, words } from '../src/constants/words';
+import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
 
@@ -39,6 +40,7 @@ const WordItem: React.FC<WordItemProps> = ({ item, index }) => {
 export default function WordListScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const { settings } = useSettings();
 
   // Header button functions
   const handleAddWord = () => {
@@ -57,11 +59,18 @@ export default function WordListScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: isTablet() ? 30 : 20}}>
+        <View style={{ 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          gap: isTablet() ? 30 : 20,
+          paddingLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+          paddingRight: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+        }}>
           <Pressable 
-            onPress={handleAddWord}
+            onPress={settings.enableEditing ? handleAddWord : undefined}
+            disabled={!settings.enableEditing}
             style={({ pressed }) => ({
-              opacity: pressed ? 0.5 : 1,
+              opacity: !settings.enableEditing ? 0.4 : (pressed ? 0.5 : 1),
             })}
           >
             <Image 
@@ -70,9 +79,10 @@ export default function WordListScreen() {
             />
           </Pressable>
           <Pressable 
-            onPress={handleEditMode}
+            onPress={settings.enableEditing ? handleEditMode : undefined}
+            disabled={!settings.enableEditing}
             style={({ pressed }) => ({
-              opacity: pressed ? 0.5 : 1,
+              opacity: !settings.enableEditing ? 0.4 : (pressed ? 0.5 : 1),
             })}
           >
             <Image 
@@ -94,7 +104,7 @@ export default function WordListScreen() {
         </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, settings.enableEditing]);
   
   return (
     <View style={styles.container}>
