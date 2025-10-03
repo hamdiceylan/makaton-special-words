@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import {
@@ -172,7 +173,7 @@ export default function Settings() {
           id: 'version',
           title: 'Version',
           type: 'info',
-          value: '4.4.5 (881) (Debug)',
+          value: `${Constants.expoConfig?.version || '1.0.0'} (${Constants.expoConfig?.ios?.buildNumber || Constants.expoConfig?.android?.versionCode || '1'})`,
         },
         {
           id: 'acknowledgements',
