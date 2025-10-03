@@ -4,10 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { WORD_IMAGES, words } from '../src/constants/words';
+import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
+
+interface WordItem {
+  image: string;
+  text: string;
+}
 
 interface WordItemProps {
   item: { image: string; text: string };
@@ -77,9 +82,8 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
 export default function WordListScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { settings } = useSettings();
+  const { settings, wordList, setWordList, resetWordList, isWordListEdited } = useSettings();
   const [isEditMode, setIsEditMode] = useState(false);
-  const [wordList, setWordList] = useState(words);
 
   // Header button functions
   const handleAddWord = () => {
@@ -92,6 +96,24 @@ export default function WordListScreen() {
 
   const handleSettings = () => {
     Alert.alert('Settings', 'List settings function');
+  };
+
+  const handleReset = () => {
+    Alert.alert(
+      'Reset Word List',
+      'Are you sure you want to reset the word list to its original order? This will undo all your changes.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Reset', 
+          style: 'destructive',
+          onPress: () => {
+            resetWordList();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          }
+        }
+      ]
+    );
   };
 
   const handleRemoveWord = (index: number) => {
@@ -112,7 +134,7 @@ export default function WordListScreen() {
     );
   };
 
-  const handleReorder = ({ data }: { data: typeof words }) => {
+  const handleReorder = ({ data }: { data: WordItem[] }) => {
     setWordList(data);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };

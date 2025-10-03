@@ -1,5 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { words as originalWords } from '../constants/words';
+
+interface WordItem {
+  image: string;
+  text: string;
+}
 
 interface SettingsContextType {
   profileId: string;
@@ -27,6 +33,11 @@ interface SettingsContextType {
     enableDebugging: boolean;
   };
   toggleSetting: (key: keyof SettingsContextType['settings']) => void;
+  // Word list management
+  wordList: WordItem[];
+  setWordList: (words: WordItem[]) => void;
+  resetWordList: () => void;
+  isWordListEdited: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -66,11 +77,26 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     enableDebugging: false,
   });
 
+  // Word list management
+  const [wordList, setWordListState] = useState<WordItem[]>(originalWords);
+  const [isWordListEdited, setIsWordListEdited] = useState(false);
+
   const toggleSetting = (key: keyof typeof settings) => {
     setSettings(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  // Word list functions
+  const setWordList = (words: WordItem[]) => {
+    setWordListState(words);
+    setIsWordListEdited(true);
+  };
+
+  const resetWordList = () => {
+    setWordListState(originalWords);
+    setIsWordListEdited(false);
   };
 
   // Namespaced storage keys per profile
@@ -81,6 +107,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     shuffleMode: `settings:${profileId}:shuffleMode`,
     switchCount: `settings:${profileId}:switchCount`,
     flags: `settings:${profileId}:flags`,
+    wordList: `settings:${profileId}:wordList`,
+    isWordListEdited: `settings:${profileId}:isWordListEdited`,
   }), [profileId]);
 
   // Load persisted data when profile changes (or on mount)
@@ -88,13 +116,15 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     let cancelled = false;
     (async () => {
       try {
-        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedSwitchCount, storedFlags] = await Promise.all([
+        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedSwitchCount, storedFlags, storedWordList, storedIsWordListEdited] = await Promise.all([
           AsyncStorage.getItem(storageKeys.locale),
           AsyncStorage.getItem(storageKeys.animationSpeed),
           AsyncStorage.getItem(storageKeys.cardsPerPage),
           AsyncStorage.getItem(storageKeys.shuffleMode),
           AsyncStorage.getItem(storageKeys.switchCount),
           AsyncStorage.getItem(storageKeys.flags),
+          AsyncStorage.getItem(storageKeys.wordList),
+          AsyncStorage.getItem(storageKeys.isWordListEdited),
         ]);
         if (!cancelled) {
           if (storedLocale) setLocale(storedLocale);
@@ -126,6 +156,15 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
               const parsedFlags = JSON.parse(storedFlags);
               setSettings(prev => ({ ...prev, ...parsedFlags }));
             } catch {}
+          }
+          if (storedWordList) {
+            try {
+              const parsedWordList = JSON.parse(storedWordList);
+              setWordListState(parsedWordList);
+            } catch {}
+          }
+          if (storedIsWordListEdited) {
+            setIsWordListEdited(storedIsWordListEdited === 'true');
           }
         }
       } catch (error) {
@@ -193,6 +232,24 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     })();
   }, [settings, storageKeys]);
 
+  // Persist word list per profile
+  useEffect(() => {
+    (async () => {
+      try {
+        await AsyncStorage.setItem(storageKeys.wordList, JSON.stringify(wordList));
+      } catch {}
+    })();
+  }, [wordList, storageKeys]);
+
+  // Persist word list edited flag per profile
+  useEffect(() => {
+    (async () => {
+      try {
+        await AsyncStorage.setItem(storageKeys.isWordListEdited, String(isWordListEdited));
+      } catch {}
+    })();
+  }, [isWordListEdited, storageKeys]);
+
   // Wrapped setter to clamp to [0,1] and step by 0.1 increments
   const setAnimationSpeed = (value: number) => {
     const clamped = Math.max(0, Math.min(1, value));
@@ -215,6 +272,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setSwitchCount,
     settings,
     toggleSetting,
+    wordList,
+    setWordList,
+    resetWordList,
+    isWordListEdited,
   };
 
   return (

@@ -12,7 +12,7 @@ import {
   View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { WORD_IMAGES, words } from '../src/constants/words';
+import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
@@ -43,7 +43,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, wordList } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -178,13 +178,13 @@ export default function MatchPicturesScreen() {
     cleanupCurrentRound();
     
     // Get current group based on cards-per-page
-    const endIndex = Math.min(startIndex + cardsPerPage, words.length);
-    let currentGroup = words.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + cardsPerPage, wordList.length);
+    let currentGroup = wordList.slice(startIndex, endIndex);
     
     // Apply shuffle mode logic
     if (shuffleMode === 'all') {
-      // All: shuffle the entire words array globally
-      const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+      // All: shuffle the entire wordList array globally
+      const shuffledWords = [...wordList].sort(() => Math.random() - 0.5);
       currentGroup = shuffledWords.slice(startIndex, endIndex);
     } else if (shuffleMode === 'page') {
       // Page: shuffle only the current page's words
@@ -540,7 +540,7 @@ export default function MatchPicturesScreen() {
       // Auto-advance to next page if enabled
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;
-        if (newStart < words.length) {
+        if (newStart < wordList.length) {
           cleanupCurrentRound();
           initializeGame(newStart);
           return;
@@ -597,7 +597,7 @@ export default function MatchPicturesScreen() {
     cleanupCurrentRound();
     const { currentGroupStart } = gameState;
     const newStart = currentGroupStart + cardsPerPage;
-    if (newStart < words.length) {
+    if (newStart < wordList.length) {
       initializeGame(newStart);
     }
   };
@@ -606,13 +606,13 @@ export default function MatchPicturesScreen() {
     cleanupCurrentRound();
     // Find the last complete group based on cards-per-page
     const size = cardsPerPage;
-    const lastGroupStart = Math.max(0, words.length - (words.length % size === 0 ? size : words.length % size));
+    const lastGroupStart = Math.max(0, wordList.length - (wordList.length % size === 0 ? size : wordList.length % size));
     initializeGame(lastGroupStart);
   };
 
   // Check if we're at the start or end of the list
   const isAtStart = gameState.currentGroupStart === 0;
-  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= words.length;
+  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= wordList.length;
 
   // Lock button handlers
   const handleLockPress = () => {

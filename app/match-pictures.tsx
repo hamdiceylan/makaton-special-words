@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SwitchInput from '../src/components/SwitchInput';
-import { WORD_IMAGES, words } from '../src/constants/words';
+import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { useSwitchControl } from '../src/hooks/useSwitchControl';
 import { SFProText } from '../src/theme/typography';
@@ -60,7 +60,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount, wordList } = useSettings();
 
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
@@ -178,13 +178,13 @@ export default function MatchPicturesScreen() {
     cleanupCurrentRound();
 
     const groupSize = cardsPerPage;
-    const endIndex = Math.min(startIndex + groupSize, words.length);
-    let currentGroup = words.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + groupSize, wordList.length);
+    let currentGroup = wordList.slice(startIndex, endIndex);
     
     // Apply shuffle mode logic
     if (shuffleMode === 'all') {
-      // All: shuffle the entire words array globally
-      const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+      // All: shuffle the entire wordList array globally
+      const shuffledWords = [...wordList].sort(() => Math.random() - 0.5);
       currentGroup = shuffledWords.slice(startIndex, endIndex);
     } else if (shuffleMode === 'page') {
       // Page: shuffle only the current page's words
@@ -433,7 +433,7 @@ export default function MatchPicturesScreen() {
       // Auto-advance to next page if enabled
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;
-        if (newStart < words.length) {
+        if (newStart < wordList.length) {
           cleanupCurrentRound();
           initializeGame(newStart);
           return;
@@ -478,20 +478,20 @@ export default function MatchPicturesScreen() {
     const { currentGroupStart } = gameState;
     const size = cardsPerPage;
     const newStart = currentGroupStart + size;
-    if (newStart < words.length) initializeGame(newStart);
+    if (newStart < wordList.length) initializeGame(newStart);
   };
   const handleToEnd = () => {
     cleanupCurrentRound();
     const size = cardsPerPage;
-    const remainder = words.length % size;
-    const lastStart = Math.max(0, words.length - (remainder === 0 ? size : remainder));
+    const remainder = wordList.length % size;
+    const lastStart = Math.max(0, wordList.length - (remainder === 0 ? size : remainder));
     initializeGame(lastStart);
   };
 
   const isAtStart = gameState.currentGroupStart === 0;
   const isAtEnd = (() => {
     const size = cardsPerPage;
-    return gameState.currentGroupStart + size >= words.length;
+    return gameState.currentGroupStart + size >= wordList.length;
   })();
 
   const handleLockPress = () => Alert.alert('Info', 'Kilitlemek için 3 saniye basılı tut.');
