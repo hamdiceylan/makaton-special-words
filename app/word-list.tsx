@@ -20,11 +20,12 @@ interface WordItemProps {
   index: number;
   isEditMode: boolean;
   onRemove: (index: number) => void;
+  onInfo: (index: number) => void;
   drag: () => void;
   isActive: boolean;
 }
 
-const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode, onRemove, drag, isActive }) => {
+const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode, onRemove, onInfo, drag, isActive }) => {
   const tablet = isTablet();
   const cellHeight = tablet ? 60 : 50;
   
@@ -68,13 +69,17 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
           </View>
         </Pressable>
       ) : (
-        <View style={styles.infoButton}>
+        <Pressable 
+          style={styles.infoButton}
+          onPress={() => onInfo(index)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Image
             source={require('../assets/images/info-icon.png')}
             style={styles.infoIcon}
             resizeMode="contain"
           />
-        </View>
+        </Pressable>
       )}
     </View>
   );
@@ -88,7 +93,7 @@ export default function WordListScreen() {
 
   // Header button functions
   const handleAddWord = () => {
-    Alert.alert('Add Word', 'Add new word function');
+    router.push({ pathname: '/word-editor' as any, params: { mode: 'add' } });
   };
 
   const handleEditMode = () => {
@@ -139,6 +144,12 @@ export default function WordListScreen() {
     setWordList(data);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
+  const handleOpenWord = (index: number) => {
+    const item = wordList[index];
+    if (!item) return;
+    router.push({ pathname: '/word-editor' as any, params: { mode: 'edit', index: String(index), text: item.text, image: item.image } });
+  };
+
 
   const handleDragBegin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -221,11 +232,12 @@ export default function WordListScreen() {
         index={index} 
         isEditMode={isEditMode}
         onRemove={handleRemoveWord}
+        onInfo={handleOpenWord}
         drag={drag}
         isActive={isActive}
       />
     );
-  }, [isEditMode, handleRemoveWord]);
+  }, [isEditMode, handleRemoveWord, handleOpenWord]);
 
   return (
     <View style={styles.container}>
@@ -258,6 +270,7 @@ export default function WordListScreen() {
               index={index} 
               isEditMode={false}
               onRemove={() => {}}
+              onInfo={handleOpenWord}
               drag={() => {}}
               isActive={false}
             />
