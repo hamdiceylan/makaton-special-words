@@ -35,10 +35,10 @@ export default function WordEditorScreen() {
           onPress={() => router.back()}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
-            marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+            paddingHorizontal: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 4 : 0,
           })}
         >
-          <SFProText weight="semibold" style={{ color: '#007AFF', fontSize: 16 }}>
+          <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
             Cancel
           </SFProText>
         </Pressable>
@@ -48,10 +48,10 @@ export default function WordEditorScreen() {
           onPress={handleSave}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
-            marginRight: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+            paddingHorizontal: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 4 : 0,
           })}
         >
-          <SFProText weight="semibold" style={{ color: '#007AFF', fontSize: 16 }}>
+          <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
             Save
           </SFProText>
         </Pressable>
