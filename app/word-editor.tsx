@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
@@ -23,7 +23,9 @@ export default function WordEditorScreen() {
     isEditMode ? ((image as string) ?? 'ball') : null
   );
 
+  const { width, height } = useWindowDimensions();
   const onTablet = isTablet();
+  const onPhoneLandscape = !onTablet && width > height;
 
   useEffect(() => {
     navigation.setOptions({
@@ -78,56 +80,114 @@ export default function WordEditorScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={[styles.container, !onTablet && styles.containerPhone, { paddingBottom: insets.bottom + 12 }]}>
-        <View style={[!onTablet && styles.contentPhone]}>
-      <View style={styles.group}>
-        <SFProText weight="semibold" style={styles.label}>Word</SFProText>
-        <TextInput
-          value={wordText}
-          onChangeText={setWordText}
-          placeholder="Type here"
-          placeholderTextColor="#757575"
-          style={[styles.input, !onTablet && styles.inputPhone, { fontFamily: getSFProFontFamily('semibold') }]}
-        />
-      </View>
-
-      <View style={styles.group}>
-        <SFProText weight="semibold" style={styles.label}>Picture</SFProText>
-        <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone]}>
-          {imageKey ? (
-            <Image
-              source={WORD_IMAGES[imageKey] || WORD_IMAGES['ball']}
-              style={onTablet ? { width: 90, height: 70 } : { width: 207, height: 159 }}
-              resizeMode="contain"
-            />
+        <View style={[!onTablet && !onPhoneLandscape && styles.contentPhone]}>
+          {onPhoneLandscape ? (
+            <View style={styles.landscapeRow}>
+              <View style={styles.landCol}>
+                <View style={styles.group}>
+                  <SFProText weight="semibold" style={styles.label}>Word</SFProText>
+                  <TextInput
+                    value={wordText}
+                    onChangeText={setWordText}
+                    placeholder="Type here"
+                    placeholderTextColor="#757575"
+                    style={[styles.input, !onTablet && styles.inputPhone, { fontFamily: getSFProFontFamily('semibold') }]}
+                  />
+                </View>
+                <View style={styles.group}>
+                  <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                  <View style={[styles.row, !onTablet && styles.rowPhone]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                      <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>Record</SFProText>
+                    </Pressable>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                      <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.landCol}>
+                <View style={styles.group}>
+                  <SFProText weight="semibold" style={styles.label}>Picture</SFProText>
+                  <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone]}>
+                    {imageKey ? (
+                      <Image
+                        source={WORD_IMAGES[imageKey] || WORD_IMAGES['ball']}
+                        style={onTablet ? { width: 90, height: 70 } : { width: 207, height: 159 }}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <Image source={require('../assets/images/upload-icon.png')} style={{ width: 60, height: 60 }} resizeMode="contain" />
+                    )}
+                  </View>
+                  <View style={[styles.row, !onTablet && styles.rowPhone]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                      <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
+                    </Pressable>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                      <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </View>
           ) : (
-            <Image source={require('../assets/images/upload-icon.png')} style={{ width: 60, height: 60 }} resizeMode="contain" />
-          )}
-        </View>
-        <View style={[styles.row, !onTablet && styles.rowPhone]}>
-          <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
-            <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
-            <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
-          </Pressable>
-          <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
-            <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
-            <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
-          </Pressable>
-        </View>
-      </View>
+            <>
+              <View style={styles.group}>
+                <SFProText weight="semibold" style={styles.label}>Word</SFProText>
+                <TextInput
+                  value={wordText}
+                  onChangeText={setWordText}
+                  placeholder="Type here"
+                  placeholderTextColor="#757575"
+                  style={[styles.input, !onTablet && styles.inputPhone, { fontFamily: getSFProFontFamily('semibold') }]}
+                />
+              </View>
 
-      <View style={styles.group}>
-        <SFProText weight="medium" style={styles.label}>Sound</SFProText>
-        <View style={[styles.row, !onTablet && styles.rowPhone]}>
-          <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
-            <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-            <SFProText weight="semibold" style={styles.actionText}>Record</SFProText>
-          </Pressable>
-          <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
-            <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
-            <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
-          </Pressable>
-        </View>
-      </View>
+              <View style={styles.group}>
+                <SFProText weight="semibold" style={styles.label}>Picture</SFProText>
+                <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone]}>
+                  {imageKey ? (
+                    <Image
+                      source={WORD_IMAGES[imageKey] || WORD_IMAGES['ball']}
+                      style={onTablet ? { width: 90, height: 70 } : { width: 207, height: 159 }}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <Image source={require('../assets/images/upload-icon.png')} style={{ width: 60, height: 60 }} resizeMode="contain" />
+                  )}
+                </View>
+                <View style={[styles.row, !onTablet && styles.rowPhone]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
+                    <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
+                  </Pressable>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
+                    <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={styles.group}>
+                <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                <View style={[styles.row, !onTablet && styles.rowPhone]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
+                    <SFProText weight="semibold" style={styles.actionText}>Record</SFProText>
+                  </Pressable>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
+                    <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                  </Pressable>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -145,6 +205,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentPhone: {
+    width: 207,
+  },
+  landscapeRow: {
+    flexDirection: 'row',
+    gap: 16,
+    justifyContent: 'center',
+  },
+  landCol: {
     width: 207,
   },
   group: {
