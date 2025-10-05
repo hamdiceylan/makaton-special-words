@@ -12,9 +12,10 @@ interface ActionItemProps {
   title: string;
   onPress: () => void;
   isDestructive?: boolean;
+  showChevron?: boolean;
 }
 
-const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestructive = false }) => {
+const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestructive = false, showChevron = true }) => {
   const tablet = isTablet();
   const itemHeight = tablet ? 60 : 50;
   
@@ -32,7 +33,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestruc
     >
       <Image source={icon} style={styles.actionIcon} resizeMode="contain" />
       <SFProText 
-        weight="semibold" 
+        weight="regular" 
         style={[
           styles.actionText,
           isDestructive && styles.destructiveText
@@ -40,11 +41,13 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestruc
       >
         {title}
       </SFProText>
-      <Image 
-        source={require('../assets/images/chevron-right.png')} 
-        style={styles.chevronIcon} 
-        resizeMode="contain" 
-      />
+      {showChevron && (
+        <Image 
+          source={require('../assets/images/chevron-right-black.png')} 
+          style={styles.chevronIcon} 
+          resizeMode="contain" 
+        />
+      )}
     </Pressable>
   );
 };
@@ -98,34 +101,35 @@ export default function ExtraActionsScreen() {
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.content}>
         <ActionItem
-          icon={require('../assets/images/info-icon.png')}
+          icon={require('../assets/images/documentation-icon.png')}
           title="View Online Documentation"
           onPress={handleViewDocumentation}
         />
         
         <ActionItem
-          icon={require('../assets/images/settings-icon.png')}
+          icon={require('../assets/images/profile-icon.png')}
           title="Manage Profiles"
           onPress={handleManageProfiles}
         />
         
         <ActionItem
-          icon={require('../assets/images/plus-icon.png')}
+          icon={require('../assets/images/export-icon.png')}
           title="Export Word List"
           onPress={handleExportWordList}
         />
         
         <ActionItem
-          icon={require('../assets/images/info-icon.png')}
+          icon={require('../assets/images/import-icon.png')}
           title="Import Word List"
           onPress={handleImportWordList}
         />
         
         <ActionItem
-          icon={require('../assets/images/refresh-icon.png')}
+          icon={require('../assets/images/reset-icon.png')}
           title="Reset"
           onPress={handleReset}
           isDestructive={true}
+          showChevron={false}
         />
       </View>
     </View>
@@ -157,8 +161,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   destructiveItem: {
-    backgroundColor: '#FF3B30',
-    marginTop: 20,
+    backgroundColor: '#F54B4B',
   },
   actionIcon: {
     width: 24,
@@ -166,16 +169,15 @@ const styles = StyleSheet.create({
   },
   actionText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 14,
     color: '#000000',
-    paddingLeft: 12,
+    paddingLeft: 8,
   },
   destructiveText: {
     color: '#FFFFFF',
   },
   chevronIcon: {
-    width: 16,
-    height: 16,
-    opacity: 0.5,
+    width: 12,
+    height: 12,
   },
 });
