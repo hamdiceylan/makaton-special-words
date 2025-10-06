@@ -1,4 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
+import { Audio } from 'expo-av';
+import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
@@ -7,6 +9,7 @@ import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText, getSFProFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
+import { initializeAudio, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
 export default function WordEditorScreen() {
   const navigation = useNavigation();
@@ -15,17 +18,154 @@ export default function WordEditorScreen() {
   const isEditMode = mode === 'edit';
   const editIndex = useMemo(() => (typeof index === 'string' ? parseInt(index, 10) : undefined), [index]);
 
-  const { wordList, setWordList } = useSettings();
+  const { wordList, setWordList, settings, locale } = useSettings();
 
   const [wordText, setWordText] = useState<string>(isEditMode ? (text as string) ?? '' : '');
   // If adding a new word, start with no image so we can show the upload icon
   const [imageKey, setImageKey] = useState<string | null>(
     isEditMode ? ((image as string) ?? 'ball') : null
   );
+  const [isRecording, setIsRecording] = useState(false);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [recordedSoundUri, setRecordedSoundUri] = useState<string | null>(null);
 
   const { width, height } = useWindowDimensions();
   const onTablet = isTablet();
   const onPhoneLandscape = !onTablet && width > height;
+
+  useEffect(() => {
+    initializeAudio();
+  }, []);
+
+  useEffect(() => {
+    if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
+      const existing: any = wordList[editIndex];
+      if (existing?.sound) {
+        setRecordedSoundUri(existing.sound);
+      }
+    }
+  }, [isEditMode, editIndex, wordList]);
+
+  const canSave = useMemo(() => {
+    const t = (wordText || '').trim();
+    const hasText = t.length > 0;
+    const hasImage = !!imageKey;
+    const needSound = !isEditMode && !!settings?.recordNewSounds;
+    const hasSound = !needSound || !!recordedSoundUri;
+    return hasText && hasImage && hasSound;
+  }, [wordText, imageKey, isEditMode, settings?.recordNewSounds, recordedSoundUri]);
+
+  const resolveImageSource = (key: string | null) => {
+    if (!key) return undefined;
+    const mapped = WORD_IMAGES[key as string];
+    if (mapped) return mapped;
+    // Treat as URI fallback (gallery/camera)
+    return { uri: key as string } as const;
+  };
+
+  const pickFromGallery = async () => {
+    try {
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (perm.status !== 'granted') return;
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.9,
+        allowsEditing: true,
+      });
+      if (!result.canceled && result.assets && result.assets[0]?.uri) {
+        setImageKey(result.assets[0].uri);
+      }
+    } catch {}
+  };
+
+  const takePhoto = async () => {
+    try {
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (perm.status !== 'granted') return;
+      const result = await ImagePicker.launchCameraAsync({
+        quality: 0.9,
+        allowsEditing: true,
+      });
+      if (!result.canceled && result.assets && result.assets[0]?.uri) {
+        setImageKey(result.assets[0].uri);
+      }
+    } catch {}
+  };
+
+  const toggleRecord = async () => {
+    try {
+      if (isRecording && recording) {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        setRecordedSoundUri(uri ?? null);
+        setIsRecording(false);
+        setRecording(null);
+        await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+        return;
+      }
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status !== 'granted') return;
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
+      const created = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      setRecording(created.recording);
+      setIsRecording(true);
+    } catch {}
+  };
+
+  const playRecorded = async () => {
+    try {
+      await stopCurrentSpeech();
+      await stopCurrentSound();
+      await initializeAudio();
+      if (recordedSoundUri) {
+        const looksLikeUri = recordedSoundUri.startsWith('http') || recordedSoundUri.startsWith('file:');
+        if (looksLikeUri) {
+          const { sound } = await Audio.Sound.createAsync({ uri: recordedSoundUri });
+          await sound.playAsync();
+          sound.setOnPlaybackStatusUpdate((status: any) => {
+            if (!status.isLoaded || (status as any).didJustFinish) {
+              sound.unloadAsync();
+            }
+          });
+          return;
+        } else {
+          await playWord(recordedSoundUri, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
+          return;
+        }
+      }
+
+      // If editing an existing word, prefer its saved sound
+      const fromList = (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length)
+        ? (wordList[editIndex] as any)
+        : null;
+      if (fromList?.sound) {
+        const s = String(fromList.sound);
+        const looksLikeUri = s.startsWith('http') || s.startsWith('file:');
+        if (looksLikeUri) {
+          const { sound } = await Audio.Sound.createAsync({ uri: s });
+          await sound.playAsync();
+          sound.setOnPlaybackStatusUpdate((status: any) => {
+            if (!status.isLoaded || (status as any).didJustFinish) {
+              sound.unloadAsync();
+            }
+          });
+          return;
+        } else {
+          await playWord(s, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
+          return;
+        }
+      }
+
+      // Fallback to bundled sound by the word's image key or text
+      const textKey = (wordText || '').trim().toLowerCase();
+      const imageKeyCandidate = fromList?.image || imageKey || '';
+      const looksLikeUri = typeof imageKeyCandidate === 'string' && (imageKeyCandidate.startsWith('http') || imageKeyCandidate.startsWith('file:'));
+      const finalKey = (!looksLikeUri && imageKeyCandidate) ? imageKeyCandidate : textKey;
+      if (finalKey) {
+        await playWord(finalKey, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
+      }
+    } catch (e) {}
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -45,9 +185,9 @@ export default function WordEditorScreen() {
       ),
       headerRight: () => (
         <Pressable
-          onPress={handleSave}
+          onPress={canSave ? handleSave : undefined}
           style={({ pressed }) => ({
-            opacity: pressed ? 0.5 : 1,
+            opacity: canSave ? (pressed ? 0.5 : 1) : 0.4,
             paddingHorizontal: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 4 : 0,
           })}
         >
@@ -57,7 +197,7 @@ export default function WordEditorScreen() {
         </Pressable>
       ),
     });
-  }, [navigation, isEditMode, wordText]);
+  }, [navigation, isEditMode, wordText, imageKey, canSave]);
 
   const handleSave = () => {
     const trimmed = wordText.trim();
@@ -68,10 +208,11 @@ export default function WordEditorScreen() {
 
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const updated = [...wordList];
-      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed };
+      const prev: any = updated[editIndex];
+      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: recordedSoundUri ?? prev?.sound ?? null } as any;
       setWordList(updated);
     } else {
-      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed }]);
+      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: recordedSoundUri ?? null } as any]);
     }
 
     router.back();
@@ -97,11 +238,11 @@ export default function WordEditorScreen() {
                 <View style={styles.group}>
                   <SFProText weight="medium" style={styles.label}>Sound</SFProText>
                   <View style={[styles.row, !onTablet && styles.rowPhone]}>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={toggleRecord}>
                       <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>Record</SFProText>
+                      <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
                     </Pressable>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={playRecorded}>
                       <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
                       <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
                     </Pressable>
@@ -114,20 +255,20 @@ export default function WordEditorScreen() {
                 <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone, onTablet && styles.imageBoxTablet]}>
                   {imageKey ? (
                     <Image
-                      source={WORD_IMAGES[imageKey] || WORD_IMAGES['ball']}
+                      source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
                       style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
-                        resizeMode="contain"
-                      />
-                    ) : (
+                      resizeMode="contain"
+                    />
+                  ) : (
                       <Image source={require('../assets/images/upload-icon.png')} style={{ width: onTablet ? 78 : 60, height: onTablet ? 78 : 60 }} resizeMode="contain" />
                     )}
                   </View>
                   <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={pickFromGallery}>
                       <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
                       <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
                     </Pressable>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={takePhoto}>
                       <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
                       <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
                     </Pressable>
@@ -153,20 +294,20 @@ export default function WordEditorScreen() {
                 <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone, onTablet && styles.imageBoxTablet]}>
                   {imageKey ? (
                     <Image
-                      source={WORD_IMAGES[imageKey] || WORD_IMAGES['ball']}
+                      source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
                       style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
-                      resizeMode= "cover"
+                      resizeMode="cover"
                     />
                   ) : (
                     <Image source={require('../assets/images/upload-icon.png')} style={{ width: onTablet ? 78 : 60, height: onTablet ? 78 : 60 }} resizeMode="contain" />
                   )}
                 </View>
                 <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={pickFromGallery}>
                     <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
                     <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
                   </Pressable>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={takePhoto}>
                     <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
                     <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
                   </Pressable>
@@ -176,11 +317,11 @@ export default function WordEditorScreen() {
               <View style={styles.group}>
                 <SFProText weight="medium" style={styles.label}>Sound</SFProText>
                 <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={toggleRecord}>
                     <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                    <SFProText weight="semibold" style={styles.actionText}>Record</SFProText>
+                    <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
                   </Pressable>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={playRecorded}>
                     <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
                     <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
                   </Pressable>

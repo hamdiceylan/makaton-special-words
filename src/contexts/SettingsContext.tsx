@@ -5,6 +5,7 @@ import { words as originalWords } from '../constants/words';
 interface WordItem {
   image: string;
   text: string;
+  sound?: string | null;
 }
 
 interface SettingsContextType {

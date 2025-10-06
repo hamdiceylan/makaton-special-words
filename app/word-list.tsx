@@ -48,7 +48,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
       )}
       
       <Image
-        source={WORD_IMAGES[item.image] || WORD_IMAGES['ball']} // Fallback to ball image
+        source={WORD_IMAGES[item.image] || { uri: item.image } || WORD_IMAGES['ball']} // Support custom URI, then fallback
         style={styles.wordImage}
         resizeMode="contain"
       />

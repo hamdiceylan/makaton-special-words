@@ -621,7 +621,7 @@ export default function MatchPicturesScreen() {
                 adjustsFontSizeToFit
                 minimumFontScale={0.6}
               >
-                {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : ((gameState.matchCard.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (gameState.matchCard.text ?? '').slice(1))}
+                {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : gameState.matchCard.text }
               </SFProText>
             )}
           </Animated.View>
