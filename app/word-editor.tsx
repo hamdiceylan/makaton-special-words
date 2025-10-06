@@ -41,7 +41,15 @@ export default function WordEditorScreen() {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const existing: any = wordList[editIndex];
       if (existing?.sound) {
-        setRecordedSoundUri(existing.sound);
+        // Only set as recordedSoundUri if it's a file URI, not a bundled key
+        const isFileUri = existing.sound.startsWith('file://') || existing.sound.startsWith('http://') || existing.sound.startsWith('https://');
+        if (isFileUri) {
+          setRecordedSoundUri(existing.sound);
+        } else {
+          setRecordedSoundUri(null);
+        }
+      } else {
+        setRecordedSoundUri(null);
       }
     }
   }, [isEditMode, editIndex, wordList]);
@@ -92,24 +100,30 @@ export default function WordEditorScreen() {
     } catch {}
   };
 
-  const toggleRecord = async () => {
+  const startRecording = async () => {
     try {
-      if (isRecording && recording) {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        setRecordedSoundUri(uri ?? null);
-        setIsRecording(false);
-        setRecording(null);
-        await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
-        return;
-      }
       const perm = await Audio.requestPermissionsAsync();
       if (perm.status !== 'granted') return;
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
       const created = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
       setRecording(created.recording);
       setIsRecording(true);
-    } catch {}
+    } catch (e) {}
+  };
+
+  const stopRecording = async () => {
+    try {
+      if (recording) {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        if (uri) {
+          setRecordedSoundUri(uri);
+        }
+        setIsRecording(false);
+        setRecording(null);
+        await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+      }
+    } catch (e) {}
   };
 
   const playRecorded = async () => {
@@ -117,13 +131,15 @@ export default function WordEditorScreen() {
       await stopCurrentSpeech();
       await stopCurrentSound();
       await initializeAudio();
+      
+      // First priority: recorded sound (current session)
       if (recordedSoundUri) {
         const looksLikeUri = recordedSoundUri.startsWith('http') || recordedSoundUri.startsWith('file:');
         if (looksLikeUri) {
           const { sound } = await Audio.Sound.createAsync({ uri: recordedSoundUri });
           await sound.playAsync();
           sound.setOnPlaybackStatusUpdate((status: any) => {
-            if (!status.isLoaded || (status as any).didJustFinish) {
+            if (status.isLoaded && (status as any).didJustFinish) {
               sound.unloadAsync();
             }
           });
@@ -134,31 +150,31 @@ export default function WordEditorScreen() {
         }
       }
 
-      // If editing an existing word, prefer its saved sound
-      const fromList = (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length)
-        ? (wordList[editIndex] as any)
-        : null;
-      if (fromList?.sound) {
-        const s = String(fromList.sound);
-        const looksLikeUri = s.startsWith('http') || s.startsWith('file:');
-        if (looksLikeUri) {
-          const { sound } = await Audio.Sound.createAsync({ uri: s });
-          await sound.playAsync();
-          sound.setOnPlaybackStatusUpdate((status: any) => {
-            if (!status.isLoaded || (status as any).didJustFinish) {
-              sound.unloadAsync();
-            }
-          });
-          return;
-        } else {
-          await playWord(s, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
-          return;
+      // Second priority: saved sound from wordList (for edit mode)
+      if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
+        const fromList = wordList[editIndex] as any;
+        if (fromList?.sound) {
+          const s = String(fromList.sound);
+          const looksLikeUri = s.startsWith('http') || s.startsWith('file:');
+          if (looksLikeUri) {
+            const { sound } = await Audio.Sound.createAsync({ uri: s });
+            await sound.playAsync();
+            sound.setOnPlaybackStatusUpdate((status: any) => {
+              if (status.isLoaded && (status as any).didJustFinish) {
+                sound.unloadAsync();
+              }
+            });
+            return;
+          } else {
+            await playWord(s, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
+            return;
+          }
         }
       }
 
-      // Fallback to bundled sound by the word's image key or text
+      // Fallback: bundled sound by image key or text
       const textKey = (wordText || '').trim().toLowerCase();
-      const imageKeyCandidate = fromList?.image || imageKey || '';
+      const imageKeyCandidate = imageKey || '';
       const looksLikeUri = typeof imageKeyCandidate === 'string' && (imageKeyCandidate.startsWith('http') || imageKeyCandidate.startsWith('file:'));
       const finalKey = (!looksLikeUri && imageKeyCandidate) ? imageKeyCandidate : textKey;
       if (finalKey) {
@@ -197,7 +213,7 @@ export default function WordEditorScreen() {
         </Pressable>
       ),
     });
-  }, [navigation, isEditMode, wordText, imageKey, canSave]);
+  }, [navigation, isEditMode, wordText, imageKey, recordedSoundUri, canSave]);
 
   const handleSave = () => {
     const trimmed = wordText.trim();
@@ -209,7 +225,8 @@ export default function WordEditorScreen() {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const updated = [...wordList];
       const prev: any = updated[editIndex];
-      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: recordedSoundUri ?? prev?.sound ?? null } as any;
+      const newSound = recordedSoundUri ?? prev?.sound ?? null;
+      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: newSound } as any;
       setWordList(updated);
     } else {
       setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: recordedSoundUri ?? null } as any]);
@@ -238,7 +255,7 @@ export default function WordEditorScreen() {
                 <View style={styles.group}>
                   <SFProText weight="medium" style={styles.label}>Sound</SFProText>
                   <View style={[styles.row, !onTablet && styles.rowPhone]}>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={toggleRecord}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={isRecording ? stopRecording : startRecording}>
                       <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
                       <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
                     </Pressable>
@@ -317,7 +334,7 @@ export default function WordEditorScreen() {
               <View style={styles.group}>
                 <SFProText weight="medium" style={styles.label}>Sound</SFProText>
                 <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={toggleRecord}>
+                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={isRecording ? stopRecording : startRecording}>
                     <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
                     <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
                   </Pressable>

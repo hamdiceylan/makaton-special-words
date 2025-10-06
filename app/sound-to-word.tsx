@@ -696,7 +696,7 @@ export default function MatchPicturesScreen() {
                 adjustsFontSizeToFit
                 minimumFontScale={0.6}
               >
-                {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : ((card.text ?? '').slice(0,1).toLocaleUpperCase(locale) + (card.text ?? '').slice(1))}
+                {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : card.text }
               </SFProText>
             </View>
           )}

@@ -6,22 +6,22 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { isLandscape, isTablet } from '../src/utils/device';
 
 // Grid configuration based on device and orientation
-const getGridConfig = (screenWidth: number, screenHeight: number) => {
+const getGridConfig = (contentWidth: number, screenHeight: number) => {
   const tablet = isTablet();
-  const landscape = isLandscape(screenWidth, screenHeight);
+  const landscape = isLandscape(contentWidth, screenHeight);
   
   if (landscape) {
     if (tablet) {
-      // Tablet Landscape - we should use screenWidth (widest dimension)
+      // Tablet Landscape - we should use contentWidth (widest dimension)
       const SQUARE_RATIO = 309 / 1400; // 0.221 - Square width / device width ratio
       const GAP_RATIO = 100 / 1400;    // 0.071 - Gap / device width ratio
       const ROW_GAP_RATIO = 75 / 1024; // 0.073 - Row gap / device height ratio
       
-      const calculatedSquareSize = screenWidth * SQUARE_RATIO; // Square proportional to device width
+      const calculatedSquareSize = contentWidth * SQUARE_RATIO; // Square proportional to device width
       const squareSize = Math.max(240, calculatedSquareSize); // Min 240
-      const gapSize = screenWidth * GAP_RATIO;       // Gap proportional to device width
+      const gapSize = contentWidth * GAP_RATIO;       // Gap proportional to device width
       const rowGapSize = screenHeight * ROW_GAP_RATIO; // Row gap proportional to device height
-      const leftMargin = (screenWidth - (3 * squareSize + 2 * gapSize)) / 2; // 2 gaps for 3 columns
+      const leftMargin = (contentWidth - (3 * squareSize + 2 * gapSize)) / 2; // 2 gaps for 3 columns
       
       return {
         LEFT: leftMargin,
@@ -32,16 +32,18 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
         SQUARE_SIZE: squareSize, // Proportional square size
       };
     } else {
-      // Phone Landscape - use screenWidth (wider dimension)
-      const usableWidth = screenWidth - 40; // Left + Right margins
-      const gapTotal = 2 * 20; // 2 gaps for 3 columns
-      const squareSize = (usableWidth - gapTotal) / 3;
+      // Phone Landscape - use contentWidth (wider dimension) with proper margins
+      const margin = 20; // Left + Right margins
+      const gap = 15; // Gap between cards
+      const usableWidth = contentWidth - (2 * margin); // Available width
+      const gapTotal = 2 * gap; // 2 gaps for 3 columns
+      const squareSize = Math.max(120, (usableWidth - gapTotal) / 3); // Min 120px
       
       return {
-        LEFT: 20,
-        RIGHT: 20,
-        COL_GAP: 20,
-        ROW_GAP: 30,
+        LEFT: margin,
+        RIGHT: margin,
+        COL_GAP: gap,
+        ROW_GAP: 20,
         COLUMNS: 3,
         SQUARE_SIZE: squareSize,
       };
@@ -60,8 +62,8 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
       const cardWidth = cardHeight * CARD_ASPECT_RATIO; // Width based on height
       const squareSize = Math.max(240, Math.max(cardWidth, cardHeight)); // Min 240, whichever is larger between width/height
       
-      const gapSize = screenWidth * GAP_RATIO;       // Gap proportional to device width
-      const leftMargin = (screenWidth - (2 * squareSize + gapSize)) / 2; // Margin for centering
+      const gapSize = contentWidth * GAP_RATIO;       // Gap proportional to device width
+      const leftMargin = (contentWidth - (2 * squareSize + gapSize)) / 2; // Margin for centering
       
       return {
         LEFT: leftMargin,
@@ -73,7 +75,7 @@ const getGridConfig = (screenWidth: number, screenHeight: number) => {
       };
     } else {
       // Phone Portrait - Normal grid
-      const usableWidth = screenWidth - 15 - 18; // Left + Right margins
+      const usableWidth = contentWidth - 15 - 18; // Left + Right margins
       const gapTotal = 17; // 1 gap for 2 columns
       const squareSize = (usableWidth - gapTotal) / 2;
       
@@ -129,11 +131,10 @@ export default function Home() {
   }, []);
   
   const contentWidth = Math.max(0, screenDimensions.width - insets.left - insets.right);
+  const isTabletDevice = isTablet();
+  const isLandscapeMode = isLandscape(contentWidth, screenDimensions.height);
   const gridConfig = getGridConfig(contentWidth, screenDimensions.height);
   const { LEFT, RIGHT, COL_GAP, ROW_GAP, COLUMNS, SQUARE_SIZE } = gridConfig;
-  
-  const isTabletDevice = isTablet();
-  const isLandscapeMode = isLandscape(screenDimensions.width, screenDimensions.height);
 
   const items: Item[] = [
     { title: 'Match Pictures',  color: '#279095', image: 'match-pictures', route: '/match-pictures' },
@@ -145,8 +146,7 @@ export default function Home() {
     { title: 'Word list',       color: '#6675AA', image: 'word-list', route: '/word-list' },
   ];
 
-  const usableW = layout.w - LEFT - RIGHT - (COL_GAP * (COLUMNS - 1));
-  const cellW = SQUARE_SIZE || usableW / COLUMNS;
+  const cellW = SQUARE_SIZE;
 
   const rows = Math.ceil(items.length / COLUMNS);
   const normalRows = rows - 1; // Excluding last row

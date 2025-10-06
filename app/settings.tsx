@@ -2,14 +2,14 @@ import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import {
-    Dimensions,
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    View,
+  Dimensions,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
@@ -269,7 +269,7 @@ export default function Settings() {
   const switchCountOptions = [0, 1, 2, 3];
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {sections.map((section, sectionIndex) => (
           <View key={sectionIndex} style={styles.section}>
