@@ -1,7 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
-import React from 'react';
-import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Alert, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
@@ -57,6 +58,26 @@ export default function ExtraActionsScreen() {
   const navigation = useNavigation();
   const { resetWordList, isWordListEdited } = useSettings();
 
+  // Set navigation header with settings button
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={() => router.push('/settings')}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+            marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
+          })}
+        >
+          <Image
+            source={require('../assets/images/settings-icon.png')}
+            style={{ width: 24, height: 24 }}
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
   const handleViewDocumentation = () => {
     Alert.alert('Documentation', 'View online documentation feature');
   };
@@ -98,7 +119,13 @@ export default function ExtraActionsScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[
+      styles.container, 
+      { 
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }
+    ]}>
       <View style={styles.content}>
         <ActionItem
           icon={require('../assets/images/documentation-icon.png')}
@@ -139,7 +166,7 @@ export default function ExtraActionsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FBFBFE',
+    backgroundColor: '#ffffff',
   },
   content: {
     flex: 1,
