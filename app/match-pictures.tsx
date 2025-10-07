@@ -14,14 +14,13 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SwitchInput from '../src/components/SwitchInput';
-import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { useSwitchControl } from '../src/hooks/useSwitchControl';
 import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
-import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 import { resolveImageSource } from '../src/utils/imageUtils';
+import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 
 // ==============================
 // CONFIG
@@ -41,6 +40,7 @@ interface GameCard {
   id: string;
   image: string;
   text: string;
+  sound?: string;
   isMatched: boolean;
 }
 interface GameState {
@@ -201,6 +201,7 @@ export default function MatchPicturesScreen() {
       id: `static-${i}`,
       image: w.image,
       text: w.text,
+      sound: w.sound || undefined,
       isMatched: false,
     }));
 
@@ -233,6 +234,7 @@ export default function MatchPicturesScreen() {
       id: 'match',
       image: target.image,
       text: target.text,
+      sound: target.sound,
       isMatched: false,
     };
 
@@ -250,7 +252,7 @@ export default function MatchPicturesScreen() {
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      if (settings.playBeforeMatch && newMatchCard.image) playWord(newMatchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+      if (settings.playBeforeMatch && newMatchCard.sound) playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
     });
   };
 
@@ -302,7 +304,7 @@ export default function MatchPicturesScreen() {
       if (gameState.isAnimating) return;
       const tap = Math.abs(g.dx) < 10 && Math.abs(g.dy) < 10;
       if (tap) {
-        if (settings.playBeforeMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        if (settings.playBeforeMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         Animated.parallel([
           Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
           Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
@@ -356,7 +358,7 @@ export default function MatchPicturesScreen() {
       }),
       Animated.timing(cardScale, { toValue: 1, duration: 300, useNativeDriver: true }),
     ]).start(() => {
-      if (settings.playAfterMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+      if (settings.playAfterMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
       setGameState(prev => {
         const updated = prev.staticCards.map((c, i) => (i === matchedIndex ? { ...c, isMatched: true } : c));
         const revealed = { ...prev.revealedMap, [matchedCard.image]: true };
@@ -408,7 +410,7 @@ export default function MatchPicturesScreen() {
         }),
         Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
       ]).start(() => {
-        if (settings.playAfterMatch && gameState.matchCard.image) playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        if (settings.playAfterMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         setGameState(prev => {
           const updated = prev.staticCards.map((c, i) => (i === idx ? { ...c, isMatched: true } : c));
           const revealed = { ...prev.revealedMap, [card.image]: true };
