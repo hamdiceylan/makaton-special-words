@@ -162,7 +162,7 @@ export default function Home() {
   const isOdd = items.length % COLUMNS === 1;
 
   const handleCardPress = (route: string) => {
-    router.push(route as any);
+    router.navigate(route as any);
   };
 
   return (

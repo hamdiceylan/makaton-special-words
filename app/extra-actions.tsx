@@ -63,7 +63,7 @@ export default function ExtraActionsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
-          onPress={() => router.push('/settings')}
+          onPress={() => router.navigate('/settings')}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
             marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,

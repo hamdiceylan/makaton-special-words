@@ -93,7 +93,7 @@ export default function WordListScreen() {
 
   // Header button functions
   const handleAddWord = () => {
-    router.push({ pathname: '/word-editor' as any, params: { mode: 'add' } });
+    router.navigate({ pathname: '/word-editor' as any, params: { mode: 'add' } });
   };
 
   const handleEditMode = () => {
@@ -101,7 +101,7 @@ export default function WordListScreen() {
   };
 
   const handleSettings = () => {
-    router.push('/extra-actions');
+    router.navigate('/extra-actions');
   };
 
   const handleReset = () => {
@@ -147,7 +147,7 @@ export default function WordListScreen() {
   const handleOpenWord = (index: number) => {
     const item = wordList[index];
     if (!item) return;
-    router.push({ pathname: '/word-editor' as any, params: { mode: 'edit', index: String(index), text: item.text, image: item.image } });
+    router.navigate({ pathname: '/word-editor' as any, params: { mode: 'edit', index: String(index), text: item.text, image: item.image } });
   };
 
 
