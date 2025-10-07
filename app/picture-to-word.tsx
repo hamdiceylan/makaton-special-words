@@ -20,6 +20,7 @@ import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
+import { resolveImageSource } from '../src/utils/imageUtils';
 
 // Toolbar height provided by shared layout utils
 
@@ -734,13 +735,7 @@ export default function MatchPicturesScreen() {
         >
           <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
             {card.isMatched ? (
-              WORD_IMAGES[card.image] ? (
-                <Image
-                  source={WORD_IMAGES[card.image]}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-              ) : null
+                <Image source={resolveImageSource(card.image)} style={styles.cardImage} resizeMode="cover"/>
             ) : (
               <SFProText
                 weight="semibold"
@@ -813,13 +808,7 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            {WORD_IMAGES[gameState.matchCard.image] && (
-              <Image
-                source={WORD_IMAGES[gameState.matchCard.image]}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
-            )}
+            <Image source={resolveImageSource(gameState.matchCard.image)} style={styles.cardImage} resizeMode="cover"/>
           </Animated.View>
 
           {/* Back side - Word text (after first flip) */}

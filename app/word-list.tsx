@@ -9,6 +9,7 @@ import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
+import { resolveImageSource } from '../src/utils/imageUtils';
 
 interface WordItem {
   image: string;
@@ -48,7 +49,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
       )}
       
       <Image
-        source={WORD_IMAGES[item.image] || { uri: item.image } || WORD_IMAGES['ball']} // Support custom URI, then fallback
+        source={resolveImageSource(item.image)}
         style={styles.wordImage}
         resizeMode="contain"
       />

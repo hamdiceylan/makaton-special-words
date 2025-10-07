@@ -21,6 +21,7 @@ import { SFProText } from '../src/theme/typography';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
+import { resolveImageSource } from '../src/utils/imageUtils';
 
 // ==============================
 // CONFIG
@@ -566,9 +567,7 @@ export default function MatchPicturesScreen() {
               </SFProText>
             </View>
           ) : (
-            WORD_IMAGES[card.image] && (
-              <Image source={WORD_IMAGES[card.image]} style={styles.cardImage} resizeMode="cover" />
-            )
+            <Image source={resolveImageSource(card.image)} style={styles.cardImage} resizeMode="cover"/>
           )}
         </TouchableOpacity>
       </Animated.View>
@@ -601,9 +600,7 @@ export default function MatchPicturesScreen() {
             style={[styles.cardSide, { transform: [{ perspective: PERSPECTIVE }, { rotateY: frontRotateY }] }]}
             pointerEvents="none"
           >
-            {WORD_IMAGES[gameState.matchCard.image] && (
-              <Image source={WORD_IMAGES[gameState.matchCard.image]} style={styles.cardImage} resizeMode="cover" />
-            )}
+            <Image source={resolveImageSource(gameState.matchCard.image)} style={styles.cardImage} resizeMode="cover" />
           </Animated.View>
           {/* BACK: text */}
           <Animated.View
