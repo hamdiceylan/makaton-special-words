@@ -110,13 +110,8 @@ export default function MatchPicturesScreen() {
     move: Math.round(1000 / speedFactor),
     scale: Math.round(600 / speedFactor),
   };
-  // Shake animation states for each card
-  const [cardShakeAnimations] = useState([
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]);
+  // Shake animation states for each card - dynamic based on cardsPerPage
+  const [cardShakeAnimations, setCardShakeAnimations] = useState<Animated.Value[]>([]);
 
   // Game area (containerView) dimensions
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -167,7 +162,7 @@ export default function MatchPicturesScreen() {
 
   // Shake all cards when a group is completed
   const shakeAllCards = () => {
-    cardShakeAnimations.forEach((_, index) => {
+    gameState.staticCards.forEach((_, index) => {
       shakeCard(index, 1);
     });
   };
@@ -179,6 +174,12 @@ export default function MatchPicturesScreen() {
     };
     setupAudio();
   }, []);
+
+  // Initialize shake animations when cardsPerPage changes
+  useEffect(() => {
+    const animations = Array.from({ length: cardsPerPage }, () => new Animated.Value(0));
+    setCardShakeAnimations(animations);
+  }, [cardsPerPage]);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
