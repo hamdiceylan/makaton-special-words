@@ -12,11 +12,11 @@ import {
   View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
+import { resolveImageSource } from '../src/utils/imageUtils';
 import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
 
 // Layout via shared layout utils
@@ -25,6 +25,7 @@ interface GameCard {
   id: string;
   image: string;
   text: string;
+  sound?: string;
   isMatched: boolean;
 }
 
@@ -201,6 +202,7 @@ export default function MatchPicturesScreen() {
       id: `static-${i}`,
       image: w.image,
       text: w.text,
+      sound: w.sound || undefined,
       isMatched: false,
     }));
 
@@ -236,6 +238,7 @@ export default function MatchPicturesScreen() {
       id: 'match',
       image: target.image,
       text: target.text,
+      sound: target.sound,
       isMatched: false,
     };
 
@@ -256,8 +259,8 @@ export default function MatchPicturesScreen() {
       useNativeDriver: true,
     }).start(() => {
       // Play the word sound after card appears
-      if (settings.playBeforeMatch && newMatchCard.image) {
-        playWord(newMatchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+      if (settings.playBeforeMatch && newMatchCard.sound) {
+        playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
       }
     });
   };
@@ -312,7 +315,7 @@ export default function MatchPicturesScreen() {
       if (isTab) {
         // It's a tap - play sound and return card to center
         if (settings.playBeforeMatch && gameState.matchCard.image) {
-          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+          if (gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
         Animated.parallel([
           Animated.spring(cardPosition, {
@@ -503,7 +506,7 @@ export default function MatchPicturesScreen() {
       ]).start(() => {
         // Play the matched word sound for successful match
         if (settings.playAfterMatch && gameState.matchCard.image) {
-          playWord(gameState.matchCard.image, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+          if (gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
         }
 
         // Mark the static card as matched (show its text) right before flip
@@ -692,13 +695,7 @@ export default function MatchPicturesScreen() {
             </View>
           ) : (
             <View style={[styles.cardSide, styles.cardBack]} pointerEvents="none">
-              {WORD_IMAGES[card.image] && (
-                <Image
-                  source={WORD_IMAGES[card.image]}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-              )}
+                <Image source={resolveImageSource(card.image)} style={styles.cardImage} resizeMode="cover"/>
             </View>
           )}
         </TouchableOpacity>
@@ -781,12 +778,8 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            {canShowText && WORD_IMAGES[gameState.matchCard.image] && (
-              <Image
-                source={WORD_IMAGES[gameState.matchCard.image]}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
+            {canShowText && (
+            <Image source={resolveImageSource(gameState.matchCard.image)} style={styles.cardImage} resizeMode="cover"/>
             )}
           </Animated.View>
 

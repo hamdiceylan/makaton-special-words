@@ -191,11 +191,53 @@ export const playWord = async (
   wordKey: string,
   options?: { ttsEnabled?: boolean; locale?: string; text?: string }
 ) => {
+  // Check if it's a custom sound file (file:// URI) and not an image
+  if (wordKey.startsWith('file://') && !wordKey.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
+    try {
+      await stopCurrentSound();
+      await stopCurrentSpeech();
+      
+      const { sound } = await Audio.Sound.createAsync({ uri: wordKey });
+      currentSoundInstance = sound;
+      await sound.playAsync();
+      
+      // Auto-unload when finished
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          sound.unloadAsync();
+          if (currentSoundInstance === sound) {
+            currentSoundInstance = null;
+          }
+        }
+      });
+      return;
+    } catch (error) {
+      console.warn(`Error playing custom sound for ${wordKey}:`, error);
+      // Fall back to TTS if custom sound fails
+      if (options?.ttsEnabled) {
+        try {
+          const speakText = options.text ?? wordKey;
+          Speech.speak(speakText, {
+            language: options.locale,
+            rate: 1.0,
+            pitch: 1.0,
+          });
+        } catch (ttsError) {
+          console.warn('TTS speak error:', ttsError);
+        }
+      }
+      return;
+    }
+  }
+
+  // Check for bundled sound
   const hasRecording = Boolean(WORD_SOUNDS[wordKey]);
   if (hasRecording) {
     await playWordSound(wordKey);
     return;
   }
+  
+  // Fall back to TTS if enabled
   if (options?.ttsEnabled) {
     try {
       await stopCurrentSound();
