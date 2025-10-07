@@ -186,6 +186,7 @@ export default function WordEditorScreen() {
   useEffect(() => {
     navigation.setOptions({
       title: isEditMode ? 'Edit word' : 'Add new word',
+      headerTitleAlign: 'center', // Align center
       headerLeft: () => (
         <Pressable
           onPress={() => router.back()}

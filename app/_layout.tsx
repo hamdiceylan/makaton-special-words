@@ -213,6 +213,7 @@ export default function RootLayout() {
            name="word-list"
            options={{
              title: 'Word List',
+             headerTitleAlign: 'center', // Align center
              headerTintColor: '#4664CD', // button/back color
              headerTitleStyle: {
                fontFamily: 'SF-Pro-Display-Semibold',
@@ -226,6 +227,7 @@ export default function RootLayout() {
            name="settings"
            options={{
              title: 'Settings',
+             headerTitleAlign: 'center',
              headerTintColor: '#4664CD',
              headerTitleStyle: {
                fontFamily: 'SF-Pro-Display-Medium',
@@ -247,6 +249,7 @@ export default function RootLayout() {
            name="extra-actions"
            options={{
              title: 'Extra Actions',
+             headerTitleAlign: 'center',
              headerTintColor: '#4664CD',
              headerTitleStyle: {
                fontFamily: 'SF-Pro-Display-Semibold',
