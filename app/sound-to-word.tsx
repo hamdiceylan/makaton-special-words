@@ -1,8 +1,9 @@
-import { useNavigation } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
+  BackHandler,
   Dimensions,
   Image,
   PanResponder,
@@ -139,6 +140,20 @@ export default function MatchPicturesScreen() {
     };
     setupAudio();
   }, []);
+
+  // Prevent hardware back button only when locked
+  useFocusEffect(
+    useCallback(() => {
+      // Donanım geri tuşunu sadece kilitliyken engelle
+      const backSub = BackHandler.addEventListener("hardwareBackPress", () => {
+        return isLocked; // Sadece kilitliyken true döndür (engelle)
+      });
+
+      return () => {
+        backSub.remove();
+      };
+    }, [isLocked])
+  );
 
   // Initialize shake animations when cardsPerPage changes
   useEffect(() => {

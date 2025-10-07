@@ -83,6 +83,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
@@ -105,6 +106,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
@@ -127,6 +129,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
@@ -149,6 +152,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
@@ -171,6 +175,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
@@ -193,6 +198,7 @@ export default function RootLayout() {
             title: '',
             headerTitle: '',
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => (
               <Pressable
                 onPress={() => router.back()}
