@@ -6,18 +6,21 @@
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "makaton",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "light"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff",
-        "foregroundImage": "./assets/images/icon.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "userInterfaceStyle": "light"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.Makaton"
     },
     "web": {
       "output": "static",
