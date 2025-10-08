@@ -269,7 +269,7 @@ export default function Settings() {
   const switchCountOptions = [0, 1, 2, 3];
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {sections.map((section, sectionIndex) => (
           <View key={sectionIndex} style={styles.section}>
