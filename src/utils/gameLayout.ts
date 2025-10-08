@@ -1,5 +1,5 @@
 import { isLandscape, isTablet } from './device';
-
+import { Platform } from 'react-native';
 export type Rect = { left: number; top: number; width: number; height: number };
 export type LayoutResult = {
   match: Rect;
@@ -45,6 +45,9 @@ export function computeLayout(
   isPad: boolean,
   isPortrait: boolean
 ): LayoutResult {
+  const horizontalPadding = Platform.OS === 'android' && isPad && !isPortrait ? 100 : 0;
+  playW = playW - horizontalPadding;
+  playH = playH;
   const magnification = isPad ? Math.max(playW, playH) / 1024 : Math.min(playW, playH) / 320;
 
   let marginTop = 0, marginLeft = 0;
