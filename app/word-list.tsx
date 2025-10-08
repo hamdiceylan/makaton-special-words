@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
@@ -241,7 +240,7 @@ export default function WordListScreen() {
   }, [isEditMode, handleRemoveWord, handleOpenWord]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={[...(Platform.OS === 'android' ? ['bottom' as const] : []),'left', 'right']}>
       {isEditMode ? (
         <DraggableFlatList
           data={wordList}

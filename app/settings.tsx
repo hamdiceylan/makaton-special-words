@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import {
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -269,7 +270,7 @@ export default function Settings() {
   const switchCountOptions = [0, 1, 2, 3];
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right', ...(Platform.OS === 'android' ? ['bottom' as const] : [])]}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {sections.map((section, sectionIndex) => (
           <View key={sectionIndex} style={styles.section}>

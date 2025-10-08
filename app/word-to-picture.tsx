@@ -15,7 +15,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
-import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
+import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { resolveImageSource } from '../src/utils/imageUtils';
 import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
@@ -824,7 +824,7 @@ export default function MatchPicturesScreen() {
 
       {/* Bottom (VStack's second view): Responsive height */}
       <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}>
-       <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <View style={[styles.toolbarContainer]}>
                 <View style={styles.toolbar}>
                   {/* Left group: to-start-icon and previous-icon */}
@@ -938,7 +938,6 @@ const styles = StyleSheet.create({
      justifyContent: 'space-between',
      alignItems: 'center',
      width: '100%',
-     maxWidth: 600,
      paddingHorizontal: 21,
    },
 
