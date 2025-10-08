@@ -440,28 +440,21 @@ export default function MatchPicturesScreen() {
       duration: DURATION.flipSingle,
       useNativeDriver: true,
     }).start(() => {
-      // After showing image, advance to next round
+      // After showing image, advance to next round (no fade-out)
       const timeout1 = setTimeout(() => {
-        // Hide the card temporarily before advancing
-        Animated.timing(cardOpacity, {
-          toValue: 0,
-          duration: DURATION.fadeOut,
-          useNativeDriver: true,
-        }).start(() => {
-          setShowMatchBorder(false);
-          setFlippingStaticIndex(null);
-          setGameState(prev => ({ 
-            ...prev, 
-            matchCard: { ...prev.matchCard, image: '', text: '' },
-            isAnimating: true 
-          }));
-          
-          // Small delay to ensure card is hidden before resetting position
-          const timeout2 = setTimeout(() => {
-            advanceOrFinish();
-          }, Math.max(100, Math.round(100 * m)));
-          ongoingTimeouts.current.push(timeout2);
-        });
+        setShowMatchBorder(false);
+        setFlippingStaticIndex(null);
+        setGameState(prev => ({ 
+          ...prev, 
+          matchCard: { ...prev.matchCard, image: '', text: '' },
+          isAnimating: true 
+        }));
+        
+        // Small delay to ensure state update before advancing
+        const timeout2 = setTimeout(() => {
+          advanceOrFinish();
+        }, Math.max(100, Math.round(100 * m)));
+        ongoingTimeouts.current.push(timeout2);
       }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(timeout1);
     });

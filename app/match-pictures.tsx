@@ -270,13 +270,9 @@ export default function MatchPicturesScreen() {
       currentIndex,
     }));
 
-    Animated.timing(cardOpacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      if (settings.playBeforeMatch && newMatchCard.sound) playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
-    });
+    // Show immediately (no fade-in)
+    cardOpacity.setValue(1);
+    if (settings.playBeforeMatch && newMatchCard.sound) playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
   };
 
   // ==============================
@@ -398,17 +394,16 @@ export default function MatchPicturesScreen() {
       // Flip finished → remove temporary border from static card
       setFlippingStaticIndex(null);
       const t1 = setTimeout(() => {
-        Animated.timing(cardOpacity, { toValue: 0, duration: DURATION.fadeOut, useNativeDriver: true }).start(() => {
-          setGameState(prev => ({
-            ...prev,
-            matchCard: { ...prev.matchCard, image: '', text: '' },
-            isAnimating: true,
-          }));
-          const t2 = setTimeout(() => {
-            advanceOrFinish();
-          }, Math.max(100, Math.round(100 * m)));
-          ongoingTimeouts.current.push(t2);
-        });
+        // Skip fade-out; switch immediately to next state
+        setGameState(prev => ({
+          ...prev,
+          matchCard: { ...prev.matchCard, image: '', text: '' },
+          isAnimating: true,
+        }));
+        const t2 = setTimeout(() => {
+          advanceOrFinish();
+        }, Math.max(100, Math.round(100 * m)));
+        ongoingTimeouts.current.push(t2);
       }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(t1 as unknown as number);
     });

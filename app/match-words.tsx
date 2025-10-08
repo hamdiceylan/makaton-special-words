@@ -315,17 +315,12 @@ export default function MatchPicturesScreen() {
       currentIndex,
     }));
     
-    // Fade in the new card and play its sound
-    Animated.timing(cardOpacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      // Play the word sound after card appears
-      if (settings.playBeforeMatch && newMatchCard.sound) {
-        playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
-      }
-    });
+    // Show immediately (no fade-in)
+    cardOpacity.setValue(1);
+    // Play the word sound after card appears
+    if (settings.playBeforeMatch && newMatchCard.sound) {
+      playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+    }
   };
 
   // Don't calculate until container dimensions are obtained
@@ -481,25 +476,19 @@ export default function MatchPicturesScreen() {
       setShowWord(true);
       // After a short delay, advance through the first 5 targets
       const timeout1 = setTimeout(() => {
-        // Hide the card temporarily before advancing
-        Animated.timing(cardOpacity, {
-          toValue: 0,
-          duration: DURATION.fadeOut,
-          useNativeDriver: true,
-        }).start(() => {
-          setFlippingStaticIndex(null);
-          setGameState(prev => ({ 
-            ...prev, 
-            matchCard: { ...prev.matchCard, image: '', text: '' },
-            isAnimating: true 
-          }));
-          
-          // Small delay to ensure card is hidden before resetting position
-          const timeout2 = setTimeout(() => {
-            advanceOrFinish();
-          }, Math.max(100, Math.round(100 * m)));
-          ongoingTimeouts.current.push(timeout2);
-        });
+        // Skip fade-out; switch immediately
+        setFlippingStaticIndex(null);
+        setGameState(prev => ({ 
+          ...prev, 
+          matchCard: { ...prev.matchCard, image: '', text: '' },
+          isAnimating: true 
+        }));
+        
+        // Small delay to ensure state update before advancing
+        const timeout2 = setTimeout(() => {
+          advanceOrFinish();
+        }, Math.max(100, Math.round(100 * m)));
+        ongoingTimeouts.current.push(timeout2);
       }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(timeout1);
     });

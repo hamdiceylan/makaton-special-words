@@ -308,17 +308,12 @@ export default function MatchPicturesScreen() {
       currentIndex,
     }));
     
-    // Fade in the new card and play its sound
-    Animated.timing(cardOpacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      // Play the word sound after card appears
-      if (settings.playBeforeMatch && newMatchCard.sound) {
-        playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
-      }
-    });
+    // Show immediately (no fade-in)
+    cardOpacity.setValue(1);
+    // Play the word sound after card appears
+    if (settings.playBeforeMatch && newMatchCard.sound) {
+      playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+    }
   };
 
   // Don't calculate until container dimensions are obtained
@@ -480,30 +475,21 @@ export default function MatchPicturesScreen() {
           duration: DURATION.flipSingle,
           useNativeDriver: true,
         }).start(() => {
-          // After showing image, advance to next round
+          // After showing image, advance to next round (no fade-out)
           const timeout2 = setTimeout(() => {
-            // Hide the card temporarily before advancing
-            Animated.timing(cardOpacity, {
-              toValue: 0,
-              duration: DURATION.fadeOut,
-              useNativeDriver: true,
-            }).start(() => {
-              setGameState(prev => ({ 
-                ...prev, 
-                matchCard: { ...prev.matchCard, image: '', text: '' },
-                isAnimating: true 
-              }));
-              
-              // Small delay to ensure card is hidden before resetting position
-              const timeout3 = setTimeout(() => {
-                advanceOrFinish();
-              }, Math.max(100, Math.round(100 * m)));
-              ongoingTimeouts.current.push(timeout3);
-            });
-          }, 1000);
+            setGameState(prev => ({ 
+              ...prev, 
+              matchCard: { ...prev.matchCard, image: '', text: '' },
+              isAnimating: true 
+            }));
+            const timeout3 = setTimeout(() => {
+              advanceOrFinish();
+            }, Math.max(100, Math.round(100 * m)));
+            ongoingTimeouts.current.push(timeout3);
+          }, Math.max(600, Math.round(1000 * m)));
           ongoingTimeouts.current.push(timeout2);
         });
-      }, 500);
+      }, Math.max(500, Math.round(500 * m)));
       ongoingTimeouts.current.push(timeout1);
     });
   };
