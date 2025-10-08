@@ -1,4 +1,4 @@
-import { Text, TextProps } from 'react-native';
+import { Text, TextProps, Platform } from 'react-native';
 
 type FontWeight = 'regular' | 'normal' | 'medium' | 'semibold' | 'bold' | 'heavy' | 'black';
 
@@ -27,6 +27,10 @@ const sfProFontFamilyMap: Record<FontWeight, string> = {
 // Legacy font family map (for Jost backward compatibility)
 const fontFamilyMap = jostFontFamilyMap;
 
+const androidFontDefaultPaddingFix = Platform.OS === 'android' ? {
+  includeFontPadding: false
+} : {};
+
 // Helper functions to get font family based on weight
 export const getJostFontFamily = (weight: FontWeight = 'regular') => jostFontFamilyMap[weight];
 export const getSFProFontFamily = (weight: FontWeight = 'regular') => sfProFontFamilyMap[weight];
@@ -41,6 +45,7 @@ export function BaseText(props: TextProps) {
       {...props}
       style={[
         { fontFamily: fontFamilyMap.regular },
+        androidFontDefaultPaddingFix,
         props.style,
       ]}
     />
@@ -54,6 +59,7 @@ export function JostText({ style, weight = 'regular', ...props }: TextProps & { 
       {...props}
       style={[
         { fontFamily: getJostFontFamily(weight) },
+        androidFontDefaultPaddingFix,
         style,
       ]}
     />
@@ -67,6 +73,7 @@ export function SFProBaseText(props: TextProps) {
       {...props}
       style={[
         { fontFamily: sfProFontFamilyMap.regular },
+        androidFontDefaultPaddingFix,
         props.style,
       ]}
     />
@@ -80,6 +87,7 @@ export function SFProText({ style, weight = 'regular', ...props }: TextProps & {
       {...props}
       style={[
         { fontFamily: getSFProFontFamily(weight) },
+        androidFontDefaultPaddingFix,
         style,
       ]}
     />
