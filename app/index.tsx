@@ -302,7 +302,9 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
         { 
           backgroundColor: item.color,
           height: cardHeight ? 
-            (isTablet() ? cardHeight * TABLET_TEXT_BAR_RATIO : cardHeight * TEXT_BAR_RATIO) : 
+            (isTablet() 
+              ? (cardHeight * TABLET_TEXT_BAR_RATIO) 
+              : Math.max(30, cardHeight * TEXT_BAR_RATIO)) : 
             42
         }
       ]}>
