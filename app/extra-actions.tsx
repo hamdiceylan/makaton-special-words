@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Alert, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Image, Platform, Pressable, StyleSheet, View, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
@@ -126,39 +126,44 @@ export default function ExtraActionsScreen() {
         paddingRight: insets.right,
       }
     ]}>
-      <View style={styles.content}>
-        <ActionItem
-          icon={require('../assets/images/documentation-icon.png')}
-          title="View Online Documentation"
-          onPress={handleViewDocumentation}
-        />
-        
-        <ActionItem
-          icon={require('../assets/images/profile-icon.png')}
-          title="Manage Profiles"
-          onPress={handleManageProfiles}
-        />
-        
-        <ActionItem
-          icon={require('../assets/images/export-icon.png')}
-          title="Export Word List"
-          onPress={handleExportWordList}
-        />
-        
-        <ActionItem
-          icon={require('../assets/images/import-icon.png')}
-          title="Import Word List"
-          onPress={handleImportWordList}
-        />
-        
-        <ActionItem
-          icon={require('../assets/images/reset-icon.png')}
-          title="Reset"
-          onPress={handleReset}
-          isDestructive={true}
-          showChevron={false}
-        />
-      </View>
+      <ScrollView
+              contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+              showsVerticalScrollIndicator={false}
+      >
+          <View style={styles.content}>
+            <ActionItem
+              icon={require('../assets/images/documentation-icon.png')}
+              title="View Online Documentation"
+              onPress={handleViewDocumentation}
+            />
+
+            <ActionItem
+              icon={require('../assets/images/profile-icon.png')}
+              title="Manage Profiles"
+              onPress={handleManageProfiles}
+            />
+
+            <ActionItem
+              icon={require('../assets/images/export-icon.png')}
+              title="Export Word List"
+              onPress={handleExportWordList}
+            />
+
+            <ActionItem
+              icon={require('../assets/images/import-icon.png')}
+              title="Import Word List"
+              onPress={handleImportWordList}
+            />
+
+            <ActionItem
+              icon={require('../assets/images/reset-icon.png')}
+              title="Reset"
+              onPress={handleReset}
+              isDestructive={true}
+              showChevron={false}
+            />
+          </View>
+      </ScrollView>
     </View>
   );
 }

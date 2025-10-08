@@ -15,7 +15,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
-import { isCurrentlyLandscape, isLandscape, isTablet } from '../src/utils/device';
+import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { resolveImageSource } from '../src/utils/imageUtils';
 import { initializeAudio, playRewardSound, playWord } from '../src/utils/soundUtils';
@@ -817,86 +817,90 @@ export default function MatchPicturesScreen() {
       </SafeAreaView>
 
       {/* Bottom (VStack's second view): Responsive height */}
-      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}> 
-        <View style={styles.toolbar}>
-          {/* Left group: to-start-icon and previous-icon */}
-          <View style={styles.toolbarGroup}>
-            <TouchableOpacity 
-              style={[styles.toolbarButton, (isAtStart || isLocked) && styles.toolbarButtonDisabled]} 
-              onPress={(isAtStart || isLocked) ? undefined : handleToStart}
-              disabled={isAtStart || isLocked}
-            >
-              <Image 
-                source={require('../assets/images/to-start-icon.png')} 
-                style={[styles.toolbarIcon, (isAtStart || isLocked) && styles.toolbarIconDisabled]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <View style={{ width: 15 }} />
-            <TouchableOpacity 
-              style={[styles.toolbarButton, isAtStart && styles.toolbarButtonDisabled]} 
-              onPress={isAtStart ? undefined : handlePrevious}
-              disabled={isAtStart}
-            >
-              <Image  
-                source={require('../assets/images/previous-icon.png')}
-                style={[styles.toolbarIcon, isAtStart && styles.toolbarIconDisabled]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
+      <View style={[styles.bottomBar, { height: TOOLBAR_HEIGHT + insets.bottom }]}>
+       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
+        <View style={[styles.toolbarContainer]}>
+                <View style={styles.toolbar}>
+                  {/* Left group: to-start-icon and previous-icon */}
+                  <View style={styles.toolbarGroup}>
+                    <TouchableOpacity
+                      style={[styles.toolbarButton, (isAtStart || isLocked) && styles.toolbarButtonDisabled]}
+                      onPress={(isAtStart || isLocked) ? undefined : handleToStart}
+                      disabled={isAtStart || isLocked}
+                    >
+                      <Image
+                        source={require('../assets/images/to-start-icon.png')}
+                        style={[styles.toolbarIcon, (isAtStart || isLocked) && styles.toolbarIconDisabled]}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                    <View style={{ width: 15 }} />
+                    <TouchableOpacity
+                      style={[styles.toolbarButton, isAtStart && styles.toolbarButtonDisabled]}
+                      onPress={isAtStart ? undefined : handlePrevious}
+                      disabled={isAtStart}
+                    >
+                      <Image
+                        source={require('../assets/images/previous-icon.png')}
+                        style={[styles.toolbarIcon, isAtStart && styles.toolbarIconDisabled]}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-          {/* Middle group: lock-icon and refresh-icon */}
-          <View style={styles.toolbarGroup}>
-            <TouchableOpacity 
-              style={styles.toolbarButton}
-              onPress={handleLockPress}
-              onLongPress={handleLockLongPress}
-              delayLongPress={3000}
-            >
-              <Image 
-                source={isLocked ? require('../assets/images/unlock.png') : require('../assets/images/lock-icon.png')} 
-                style={styles.toolbarIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <View style={{ width: 16 }} />
-            <TouchableOpacity style={styles.toolbarButton} onPress={handleRefresh}>
-              <Image 
-                source={require('../assets/images/refresh-icon.png')} 
-                style={styles.toolbarIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
+                  {/* Middle group: lock-icon and refresh-icon */}
+                  <View style={styles.toolbarGroup}>
+                    <TouchableOpacity
+                      style={styles.toolbarButton}
+                      onPress={handleLockPress}
+                      onLongPress={handleLockLongPress}
+                      delayLongPress={3000}
+                    >
+                      <Image
+                        source={isLocked ? require('../assets/images/unlock.png') : require('../assets/images/lock-icon.png')}
+                        style={styles.toolbarIcon}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                    <View style={{ width: 16 }} />
+                    <TouchableOpacity style={styles.toolbarButton} onPress={handleRefresh}>
+                      <Image
+                        source={require('../assets/images/refresh-icon.png')}
+                        style={styles.toolbarIcon}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                  </View>
 
-          {/* Right group: next-icon and to-end-icon */}
-          <View style={styles.toolbarGroup}>
-            <TouchableOpacity 
-              style={[styles.toolbarButton, isAtEnd && styles.toolbarButtonDisabled]} 
-              onPress={isAtEnd ? undefined : handleNext}
-              disabled={isAtEnd}
-            >
-              <Image 
-                source={require('../assets/images/next-icon.png')}
-                style={[styles.toolbarIcon, isAtEnd && styles.toolbarIconDisabled]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <View style={{ width: 15 }} />
-            <TouchableOpacity 
-              style={[styles.toolbarButton, (isAtEnd || isLocked) && styles.toolbarButtonDisabled]} 
-              onPress={(isAtEnd || isLocked) ? undefined : handleToEnd}
-              disabled={isAtEnd || isLocked}
-            >
-              <Image  
-                source={require('../assets/images/to-end-icon.png')}
-                style={[styles.toolbarIcon, (isAtEnd || isLocked) && styles.toolbarIconDisabled]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
+                  {/* Right group: next-icon and to-end-icon */}
+                  <View style={styles.toolbarGroup}>
+                    <TouchableOpacity
+                      style={[styles.toolbarButton, isAtEnd && styles.toolbarButtonDisabled]}
+                      onPress={isAtEnd ? undefined : handleNext}
+                      disabled={isAtEnd}
+                    >
+                      <Image
+                        source={require('../assets/images/next-icon.png')}
+                        style={[styles.toolbarIcon, isAtEnd && styles.toolbarIconDisabled]}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                    <View style={{ width: 15 }} />
+                    <TouchableOpacity
+                      style={[styles.toolbarButton, (isAtEnd || isLocked) && styles.toolbarButtonDisabled]}
+                      onPress={(isAtEnd || isLocked) ? undefined : handleToEnd}
+                      disabled={isAtEnd || isLocked}
+                    >
+                      <Image
+                        source={require('../assets/images/to-end-icon.png')}
+                        style={[styles.toolbarIcon, (isAtEnd || isLocked) && styles.toolbarIconDisabled]}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
         </View>
+       </SafeAreaView>
       </View>
     </View>
   );
@@ -917,20 +921,19 @@ const styles = StyleSheet.create({
   },
 
   // Bottom responsive toolbar
-  bottomBar: {
-    backgroundColor: '#F3F3F3',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-
-  toolbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 21,
-    paddingTop: isCurrentlyLandscape() ? 10 : 18,
-  },
+   bottomBar: { backgroundColor: '#F3F3F3' },
+   toolbarContainer: {
+     flex: 1,
+     justifyContent: 'center',
+     alignItems: 'center',
+   },
+   toolbar: {
+     flexDirection: 'row',
+     justifyContent: 'space-between',
+     alignItems: 'center',
+     width: '100%',
+     paddingHorizontal: 21,
+   },
 
   toolbarGroup: {
     flexDirection: 'row',
