@@ -45,7 +45,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, wordList } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, wordList, speedMultiplier } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -68,14 +68,20 @@ export default function MatchPicturesScreen() {
   const [cardOpacity] = useState(new Animated.Value(1));
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
+  const [showMatchBorder, setShowMatchBorder] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [flippingStaticIndex, setFlippingStaticIndex] = useState<number | null>(null);
   
-  // Animation speed factor: higher slider -> faster animations
-  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  // Unified speed model like match-pictures
+  const m = speedMultiplier;
   const DURATION = {
-    move: Math.round(1000 / speedFactor),
-    scale: Math.round(600 / speedFactor),
-  };
+    move: Math.round(1000 * m),
+    scale: Math.round(600 * m),
+    flipSingle: Math.round(2000 * m),
+    flipDouble: Math.round(4000 * m),
+    fadeOut: Math.round(500 * m),
+    wait: Math.round(1000 * m),
+  } as const;
   // Shake animation states for each card - dynamic based on cardsPerPage
   const [cardShakeAnimations, setCardShakeAnimations] = useState<Animated.Value[]>([]);
 
@@ -310,12 +316,7 @@ export default function MatchPicturesScreen() {
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
 
-    onPanResponderGrant: () => {
-      Animated.spring(cardScale, {
-        toValue: 1.1,
-        useNativeDriver: true,
-      }).start();
-    },
+    onPanResponderGrant: () => {},
 
     onPanResponderMove: Animated.event(
       [null, { dx: cardPosition.x, dy: cardPosition.y }],
@@ -398,12 +399,12 @@ export default function MatchPicturesScreen() {
           x: target.x - initialPosition.current.x,
           y: target.y - initialPosition.current.y,
         },
-        duration: 300,
+      duration: DURATION.move,
         useNativeDriver: false,
       }),
       Animated.timing(cardScale, {
         toValue: 1,
-        duration: 300,
+      duration: DURATION.scale,
         useNativeDriver: true,
       }),
     ]).start(() => {
@@ -420,7 +421,8 @@ export default function MatchPicturesScreen() {
         const nextRevealed = { ...prev.revealedMap, [matchedCard.image]: true };
         return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
       });
-
+      setShowMatchBorder(true);
+      setFlippingStaticIndex(matchedIndex);
       performFlipAnimation();
     });
   };
@@ -428,12 +430,14 @@ export default function MatchPicturesScreen() {
   const performFlipAnimation = () => {
     // Enable text visibility right before starting the flip
     setCanShowText(true);
+    // Turn on gray border exactly when flip starts
+    setShowMatchBorder(true);
     setShowWord(true);
     
     // Single flip: show image
     Animated.timing(flipAnimation, {
       toValue: 1,
-      duration: 1500,
+      duration: DURATION.flipSingle,
       useNativeDriver: true,
     }).start(() => {
       // After showing image, advance to next round
@@ -441,9 +445,11 @@ export default function MatchPicturesScreen() {
         // Hide the card temporarily before advancing
         Animated.timing(cardOpacity, {
           toValue: 0,
-          duration: 200,
+          duration: DURATION.fadeOut,
           useNativeDriver: true,
         }).start(() => {
+          setShowMatchBorder(false);
+          setFlippingStaticIndex(null);
           setGameState(prev => ({ 
             ...prev, 
             matchCard: { ...prev.matchCard, image: '', text: '' },
@@ -453,10 +459,10 @@ export default function MatchPicturesScreen() {
           // Small delay to ensure card is hidden before resetting position
           const timeout2 = setTimeout(() => {
             advanceOrFinish();
-          }, 100);
+          }, Math.max(100, Math.round(100 * m)));
           ongoingTimeouts.current.push(timeout2);
         });
-      }, 1000);
+      }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(timeout1);
     });
   };
@@ -688,6 +694,7 @@ export default function MatchPicturesScreen() {
               width: CARD_WIDTH,
               height: CARD_HEIGHT,
             },
+            flippingStaticIndex === index && { borderWidth: 0 },
           ]}
           onPress={handleCardTap}
           activeOpacity={0.8}
@@ -746,6 +753,7 @@ export default function MatchPicturesScreen() {
               { translateY: cardPosition.y },
             ],
           },
+          { borderWidth: 0 },
         ]}
         onLayout={(e) => {
           // matchCard's center within container:
@@ -776,11 +784,12 @@ export default function MatchPicturesScreen() {
             ]}
             pointerEvents="none"
           >
-            <Image
-              source={require('../assets/images/question-circle-icon.png')}
-              style={styles.questionIcon}
-              resizeMode="contain"
-            />
+          <Image
+            source={require('../assets/images/question-circle-icon.png')}
+            style={styles.questionIcon}
+            resizeMode="contain"
+          />
+          {showMatchBorder && <View pointerEvents="none" style={styles.faceBorderOverlayGray} />}
           </Animated.View>
 
           {/* Back side - Image (after flip) */}
@@ -799,6 +808,7 @@ export default function MatchPicturesScreen() {
                 resizeMode="cover"
               />
             )}
+            {showMatchBorder && <View pointerEvents="none" style={styles.faceBorderOverlayGray} />}
           </Animated.View>
 
         </Animated.View>
@@ -922,6 +932,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     backgroundColor: '#fff',
+    overflow: 'visible',
   },
 
   // Bottom responsive toolbar
@@ -966,8 +977,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
+    borderWidth: 0,
+    borderColor: '#E1E1E1',
     shadowColor: '#000',
-    overflow: 'hidden',
+    overflow: 'visible',
     zIndex: 2,
   },
 
@@ -1004,6 +1017,28 @@ const styles = StyleSheet.create({
   cardText: {
     color: '#000',
     textAlign: 'center',
+  },
+
+  faceBorderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 6,
+  },
+
+  faceBorderOverlayGray: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 6,
   },
 
   questionIcon: {

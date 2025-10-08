@@ -5,6 +5,7 @@ import {
   Animated,
   BackHandler,
   Dimensions,
+  Easing,
   Image,
   PanResponder,
   Platform,
@@ -47,7 +48,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount, wordList } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount, wordList, speedMultiplier } = useSettings();
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
     matchCard: { id: '', image: '', text: '', isMatched: false },
@@ -71,6 +72,7 @@ export default function MatchPicturesScreen() {
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [flippingStaticIndex, setFlippingStaticIndex] = useState<number | null>(null);
 
   // Switch control for accessibility
   const switchControl = useSwitchControl({
@@ -105,12 +107,22 @@ export default function MatchPicturesScreen() {
     autoAdvanceDelay: 2000,
   });
   
-  // Animation speed factor: higher slider -> faster animations
-  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  // Unified speed multiplier across the app
+  const m = speedMultiplier; // multiplier = 2.0 * (1.1 - slider)
   const DURATION = {
-    move: Math.round(1000 / speedFactor),
-    scale: Math.round(600 / speedFactor),
-  };
+    // Eş zamanlı kayma: 1.0 × m (ms)
+    move: Math.round(1000 * m),
+    // Scale: 0.6 × 1.0 × m (ms)
+    scale: Math.round(600 * m),
+    // Tek flip: 2.0 × m (ms)
+    flipSingle: Math.round(2000 * m),
+    // Çift flip: 4.0 × m (ms) – not used yet, reserved
+    flipDouble: Math.round(4000 * m),
+    // Ses modunda fade-out: 0.5 × m (ms)
+    fadeOut: Math.round(500 * m),
+    // Genel bekleme: 1.0 × m (ms)
+    wait: Math.round(1000 * m),
+  } as const;
   // Shake animation states for each card - dynamic based on cardsPerPage
   const [cardShakeAnimations, setCardShakeAnimations] = useState<Animated.Value[]>([]);
 
@@ -345,12 +357,7 @@ export default function MatchPicturesScreen() {
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
 
-    onPanResponderGrant: () => {
-      Animated.spring(cardScale, {
-        toValue: 1.1,
-        useNativeDriver: true,
-      }).start();
-    },
+    onPanResponderGrant: () => {},
 
     onPanResponderMove: Animated.event(
       [null, { dx: cardPosition.x, dy: cardPosition.y }],
@@ -433,12 +440,13 @@ export default function MatchPicturesScreen() {
           x: target.x - initialPosition.current.x,
           y: target.y - initialPosition.current.y,
         },
-        duration: 300,
+        duration: DURATION.move,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }),
       Animated.timing(cardScale, {
         toValue: 1,
-        duration: 300,
+        duration: DURATION.scale,
         useNativeDriver: true,
       }),
     ]).start(() => {
@@ -456,6 +464,7 @@ export default function MatchPicturesScreen() {
         return { ...prev, staticCards: updatedStatics, revealedMap: nextRevealed };
       });
 
+      setFlippingStaticIndex(matchedIndex);
       performFlipAnimation();
     });
   };
@@ -466,7 +475,7 @@ export default function MatchPicturesScreen() {
     
     Animated.timing(flipAnimation, {
       toValue: 1,
-      duration: 2000,
+      duration: DURATION.flipSingle,
       useNativeDriver: true,
     }).start(() => {
       setShowWord(true);
@@ -475,9 +484,10 @@ export default function MatchPicturesScreen() {
         // Hide the card temporarily before advancing
         Animated.timing(cardOpacity, {
           toValue: 0,
-          duration: 200,
+          duration: DURATION.fadeOut,
           useNativeDriver: true,
         }).start(() => {
+          setFlippingStaticIndex(null);
           setGameState(prev => ({ 
             ...prev, 
             matchCard: { ...prev.matchCard, image: '', text: '' },
@@ -487,10 +497,10 @@ export default function MatchPicturesScreen() {
           // Small delay to ensure card is hidden before resetting position
           const timeout2 = setTimeout(() => {
             advanceOrFinish();
-          }, 100);
+          }, Math.max(100, Math.round(100 * m)));
           ongoingTimeouts.current.push(timeout2);
         });
-      }, 1200);
+      }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(timeout1);
     });
   };
@@ -535,6 +545,7 @@ export default function MatchPicturesScreen() {
             y: target.y - initialPosition.current.y,
           },
           duration: DURATION.move,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
         Animated.timing(cardScale, {
@@ -725,6 +736,7 @@ export default function MatchPicturesScreen() {
               width: CARD_WIDTH,
               height: CARD_HEIGHT,
             },
+            flippingStaticIndex === index && { borderWidth: 0 },
             isHighlighted && {
               borderWidth: 4,
               borderColor: '#4664CD',
@@ -791,6 +803,7 @@ export default function MatchPicturesScreen() {
               { translateY: cardPosition.y },
             ],
           },
+          canShowText && { borderWidth: 0 },
         ]}
         onLayout={(e) => {
           // matchCard's center within container:
@@ -831,6 +844,7 @@ export default function MatchPicturesScreen() {
             >
               {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : gameState.matchCard.text }
             </SFProText>
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
           </Animated.View>
 
           {/* Back side - Image */}
@@ -848,6 +862,7 @@ export default function MatchPicturesScreen() {
                 resizeMode="cover"
               />
             )}
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
           </Animated.View>
         </Animated.View>
       </Animated.View>
@@ -1019,10 +1034,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
-    borderWidth: 3,
-    borderColor: '#B1D8F2',
+    // faint outer outline so an edge is always visible during flip
+    borderWidth: 1,
+    borderColor: '#E6EEF8',
     shadowColor: '#000',
-    overflow: 'hidden',
+    overflow: 'visible',
     zIndex: 2,
   },
 
@@ -1059,5 +1075,15 @@ const styles = StyleSheet.create({
   cardText: {
     color: '#000',
     textAlign: 'center',
+  },
+  faceBorderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 3,
+    borderColor: '#B1D8F2',
+    borderRadius: 6,
   },
 });

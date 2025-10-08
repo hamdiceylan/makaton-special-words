@@ -5,6 +5,7 @@ import {
   Animated,
   BackHandler,
   Dimensions,
+  Easing,
   Image,
   LayoutChangeEvent,
   PanResponder,
@@ -62,7 +63,7 @@ interface GameState {
 export default function MatchPicturesScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount, wordList } = useSettings();
+  const { cardsPerPage, settings, animationSpeed, locale, shuffleMode, switchCount, wordList, speedMultiplier } = useSettings();
 
   const [gameState, setGameState] = useState<GameState>({
     level: 1,
@@ -88,6 +89,7 @@ export default function MatchPicturesScreen() {
   const [showWord, setShowWord] = useState(false);
   const [canShowText, setCanShowText] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [flippingStaticIndex, setFlippingStaticIndex] = useState<number | null>(null);
 
   // Switch control for accessibility
   const switchControl = useSwitchControl({
@@ -122,12 +124,16 @@ export default function MatchPicturesScreen() {
     autoAdvanceDelay: 2000,
   });
 
-  // Animation speed factor: higher slider -> faster animations
-  const speedFactor = 0.25 + 0.75 * (animationSpeed ?? 0.5);
+  // Unified speed multiplier across the app
+  const m = speedMultiplier;
   const DURATION = {
-    move: Math.round(1000 / speedFactor),
-    scale: Math.round(600 / speedFactor),
-  };
+    move: Math.round(1000 * m),
+    scale: Math.round(600 * m),
+    flipSingle: Math.round(2000 * m),
+    flipDouble: Math.round(4000 * m),
+    fadeOut: Math.round(500 * m),
+    wait: Math.round(1000 * m),
+  } as const;
   // Shake animation states for each card - dynamic based on cardsPerPage
   const [cardShakeAnimations, setCardShakeAnimations] = useState<Animated.Value[]>([]);
 
@@ -313,9 +319,7 @@ export default function MatchPicturesScreen() {
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
-    onPanResponderGrant: () => {
-      Animated.spring(cardScale, { toValue: 1.1, useNativeDriver: true }).start();
-    },
+    onPanResponderGrant: () => {},
     onPanResponderMove: Animated.event([null, { dx: cardPosition.x, dy: cardPosition.y }], { useNativeDriver: false }),
     onPanResponderRelease: (e, g) => {
       if (gameState.isAnimating) return;
@@ -370,10 +374,11 @@ export default function MatchPicturesScreen() {
     Animated.parallel([
       Animated.timing(cardPosition, {
         toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
-        duration: 300,
+        duration: DURATION.move,
+        easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }),
-      Animated.timing(cardScale, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
     ]).start(() => {
       if (settings.playAfterMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
       setGameState(prev => {
@@ -381,16 +386,19 @@ export default function MatchPicturesScreen() {
         const revealed = { ...prev.revealedMap, [matchedCard.image]: true };
         return { ...prev, staticCards: updated, revealedMap: revealed };
       });
+      setFlippingStaticIndex(matchedIndex);
       performFlipAnimation();
     });
   };
 
   const performFlipAnimation = () => {
     setCanShowText(true);
-    Animated.timing(flipAnimation, { toValue: 1, duration: 2000, useNativeDriver: true }).start(() => {
+    Animated.timing(flipAnimation, { toValue: 1, duration: DURATION.flipSingle, useNativeDriver: true }).start(() => {
       setShowWord(true);
+      // Flip finished → remove temporary border from static card
+      setFlippingStaticIndex(null);
       const t1 = setTimeout(() => {
-        Animated.timing(cardOpacity, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
+        Animated.timing(cardOpacity, { toValue: 0, duration: DURATION.fadeOut, useNativeDriver: true }).start(() => {
           setGameState(prev => ({
             ...prev,
             matchCard: { ...prev.matchCard, image: '', text: '' },
@@ -398,10 +406,10 @@ export default function MatchPicturesScreen() {
           }));
           const t2 = setTimeout(() => {
             advanceOrFinish();
-          }, 100);
+          }, Math.max(100, Math.round(100 * m)));
           ongoingTimeouts.current.push(t2);
         });
-      }, 1200);
+      }, Math.max(600, Math.round(1000 * m)));
       ongoingTimeouts.current.push(t1 as unknown as number);
     });
   };
@@ -423,6 +431,7 @@ export default function MatchPicturesScreen() {
         Animated.timing(cardPosition, {
           toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
           duration: DURATION.move,
+          easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
         Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
@@ -433,6 +442,7 @@ export default function MatchPicturesScreen() {
           const revealed = { ...prev.revealedMap, [card.image]: true };
           return { ...prev, staticCards: updated, revealedMap: revealed };
         });
+        setFlippingStaticIndex(idx);
         performFlipAnimation();
       });
     });
@@ -557,6 +567,8 @@ export default function MatchPicturesScreen() {
           style={[
             styles.staticCard, 
             { width: r.width, height: r.height },
+            // Hide base gray border while flip is happening to avoid double-border
+            flippingStaticIndex === index && { borderWidth: 0 },
             isHighlighted && {
               borderWidth: 4,
               borderColor: '#4664CD',
@@ -607,6 +619,7 @@ export default function MatchPicturesScreen() {
           styles.matchCard,
           { left: r.left, top: r.top, width: r.width, height: r.height },
           { transform: [{ translateX: cardPosition.x }, { translateY: cardPosition.y }] },
+          canShowText && { borderWidth: 0 },
         ]}
         onLayout={e => {
           const { x, y, width, height } = e.nativeEvent.layout;
@@ -620,6 +633,7 @@ export default function MatchPicturesScreen() {
             pointerEvents="none"
           >
             <Image source={resolveImageSource(gameState.matchCard.image)} style={styles.cardImage} resizeMode="cover" />
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
           </Animated.View>
           {/* BACK: text */}
           <Animated.View
@@ -640,6 +654,7 @@ export default function MatchPicturesScreen() {
                 {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : gameState.matchCard.text }
               </SFProText>
             )}
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
           </Animated.View>
         </Animated.View>
       </Animated.View>
@@ -752,11 +767,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
+    // faint outer outline so an edge is always visible during flip
+    borderWidth: 1,
+    borderColor: '#E6EEF8',
+    shadowColor: '#000',
+    overflow: 'visible',
+    zIndex: 2,
+  },
+  cardBorder: {
     borderWidth: 3,
     borderColor: '#B1D8F2',
-    shadowColor: '#000',
-    overflow: 'hidden',
-    zIndex: 2,
+    borderRadius: 6,
   },
   staticCard: {
     position: 'absolute',
@@ -777,4 +798,14 @@ const styles = StyleSheet.create({
   cardBack: { backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center' },
   cardImage: { width: '100%', height: '100%', borderRadius: 6 },
   cardText: { color: '#000', textAlign: 'center' },
+  faceBorderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderWidth: 3,
+    borderColor: '#B1D8F2',
+    borderRadius: 6,
+  },
 });

@@ -19,6 +19,7 @@ interface SettingsContextType {
   setShuffleMode: (value: 'off' | 'page' | 'all') => void;
   animationSpeed: number;
   setAnimationSpeed: (value: number) => void;
+  speedMultiplier: number; // derived: 2.0 * (1.1 - animationSpeed)
   switchCount: number;
   setSwitchCount: (value: number) => void;
   settings: {
@@ -258,6 +259,14 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     internalSetAnimationSpeed(stepped);
   };
 
+  // Derived speed multiplier used by animations across the app
+  const speedMultiplier = useMemo(() => {
+    // multiplier = 2.0 * (1.1 - slider)
+    const raw = 2.0 * (1.1 - animationSpeed);
+    // Guard rails (expected range given slider in [0,1])
+    return Math.max(0.2, Math.min(2.2, Math.round(raw * 100) / 100));
+  }, [animationSpeed]);
+
   const value = {
     profileId,
     setProfileId,
@@ -269,6 +278,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setShuffleMode,
     animationSpeed,
     setAnimationSpeed,
+    speedMultiplier,
     switchCount,
     setSwitchCount,
     settings,
