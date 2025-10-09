@@ -18,6 +18,7 @@ import SwitchInput from '../src/components/SwitchInput';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { useSwitchControl } from '../src/hooks/useSwitchControl';
 import { SFProText } from '../src/theme/typography';
+import { createFlipAnimations, createShakeAnimation, createShakeTransform } from '../src/utils/animationUtils';
 import { isLandscape, isTablet } from '../src/utils/device';
 import { computeLayout, getToolbarHeight } from '../src/utils/gameLayout';
 import { resolveImageSource } from '../src/utils/imageUtils';
@@ -139,38 +140,7 @@ export default function MatchPicturesScreen() {
   const shakeCard = (cardIndex: number, speedMultiplier: number = 1) => {
     const shakeAnimation = cardShakeAnimations[cardIndex];
     if (!shakeAnimation) return;
-
-    // Determine sign based on card position (similar to Objective-C logic)
-    // For 4 cards: first and fourth cards get +1, second and third get -1
-    const sign = ((cardIndex === 0 || cardIndex === 3) ? +1 : -1);
-
-    // Reset animation value
-    shakeAnimation.setValue(0);
-
-    // First rotation: -M_PI/8 * sign
-    Animated.timing(shakeAnimation, {
-      toValue: -Math.PI / 8 * sign,
-      duration: 500 * speedMultiplier,
-      useNativeDriver: true,
-    }).start((finished) => {
-      if (!finished) return;
-
-      // Second rotation: +M_PI/8 * sign
-      Animated.timing(shakeAnimation, {
-        toValue: Math.PI / 8 * sign,
-        duration: 1000 * speedMultiplier,
-        useNativeDriver: true,
-      }).start((finished) => {
-        if (!finished) return;
-
-        // Final rotation: back to 0
-        Animated.timing(shakeAnimation, {
-          toValue: 0,
-          duration: 500 * speedMultiplier,
-          useNativeDriver: true,
-        }).start();
-      });
-    });
+    createShakeAnimation(shakeAnimation, cardIndex, speedMultiplier);
   };
 
   // Shake all cards when a group is completed
@@ -723,14 +693,7 @@ export default function MatchPicturesScreen() {
     };
 
     const shakeAnimation = cardShakeAnimations[index];
-    const shakeTransform = shakeAnimation ? {
-      transform: [{ 
-        rotate: shakeAnimation.interpolate({
-          inputRange: [-Math.PI, Math.PI],
-          outputRange: ['-180deg', '180deg'],
-        })
-      }]
-    } : {};
+    const shakeTransform = createShakeTransform(shakeAnimation);
 
     // Check if this card is highlighted by switch control
     const isHighlighted = switchControl.isHighlighted && switchControl.highlightedIndex === index;
@@ -802,17 +765,11 @@ export default function MatchPicturesScreen() {
   };
 
   const renderMatchCard = () => {
-    const frontRotateY = flipAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '180deg'],
-    });
+    const flipAnimations = createFlipAnimations(flipAnimation);
 
-    const backRotateY = flipAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['180deg', '360deg'],
-    });
-
-    return (
+    if (flipAnimations.use2D) {
+      // 2D flip for Android < 28
+      return (
       <Animated.View
         {...panResponder.panHandlers}
         style={[
@@ -848,7 +805,8 @@ export default function MatchPicturesScreen() {
             style={[
               styles.cardSide,
               styles.cardBack,
-              { transform: [{ perspective: PERSPECTIVE }, { rotateY: frontRotateY }] },
+              styles.cardSide2D,
+              flipAnimations.frontScaleX ? { transform: [{ scaleX: flipAnimations.frontScaleX }] } : {},
             ]}
             pointerEvents="none"
           >
@@ -872,7 +830,8 @@ export default function MatchPicturesScreen() {
           <Animated.View
             style={[
               styles.cardSide,
-              { transform: [{ perspective: PERSPECTIVE }, { rotateY: backRotateY }] },
+              styles.cardSide2D,
+              flipAnimations.backScaleX ? { transform: [{ scaleX: flipAnimations.backScaleX }] } : {},
             ]}
             pointerEvents="none"
           >
@@ -887,7 +846,86 @@ export default function MatchPicturesScreen() {
           </Animated.View>
         </Animated.View>
       </Animated.View>
-    );
+      );
+    } else {
+      // 3D flip for iOS and Android >= 28
+      return (
+      <Animated.View
+        {...panResponder.panHandlers}
+        style={[
+          styles.matchCard,
+          layout && { left: layout.match.left, top: layout.match.top, width: layout.match.width, height: layout.match.height },
+          {
+            transform: [
+              { translateX: cardPosition.x },
+              { translateY: cardPosition.y },
+            ],
+          },
+          canShowText && { borderWidth: 0 },
+        ]}
+        onLayout={(e) => {
+          // matchCard's center within container:
+          const layout = e.nativeEvent.layout;
+          initialPosition.current = {
+            x: layout.x + CARD_WIDTH / 2,
+            y: layout.y + CARD_HEIGHT / 2,
+          };
+        }}
+      >
+        <Animated.View
+          style={{
+            width: '100%',
+            height: '100%',
+            transform: [{ scale: cardScale }],
+            opacity: cardOpacity,
+          }}
+        >
+          {/* Front side - Word text */}
+          <Animated.View
+            style={[
+              styles.cardSide,
+              styles.cardBack,
+              flipAnimations.frontRotateY ? { transform: [{ perspective: PERSPECTIVE }, { rotateY: flipAnimations.frontRotateY }] } : {},
+            ]}
+            pointerEvents="none"
+          >
+            <SFProText
+              weight="semibold"
+              style={[
+                styles.cardText,
+                settings.largeText && { fontSize: CARD_TEXT_SIZE * 1.2 },
+                !settings.largeText && { fontSize: CARD_TEXT_SIZE },
+              ]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.6}
+            >
+              {settings.capitalLetters ? gameState.matchCard.text.toLocaleUpperCase(locale) : gameState.matchCard.text }
+            </SFProText>
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
+          </Animated.View>
+
+          {/* Back side - Image */}
+          <Animated.View
+            style={[
+              styles.cardSide,
+              flipAnimations.backRotateY ? { transform: [{ perspective: PERSPECTIVE }, { rotateY: flipAnimations.backRotateY }] } : {},
+            ]}
+            pointerEvents="none"
+          >
+            {canShowText && (
+              <Image
+                source={resolveImageSource(gameState.matchCard.image)}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            )}
+            <View pointerEvents="none" style={styles.faceBorderOverlay} />
+          </Animated.View>
+        </Animated.View>
+      </Animated.View>
+      );
+    }
   };
 
   return (
@@ -1083,6 +1121,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     overflow: 'hidden',
     backfaceVisibility: 'hidden',
+  },
+  cardSide2D: {
+    // 2D flip version - no backfaceVisibility for Android < 28
+    backfaceVisibility: 'visible',
   },
 
   cardBack: {
