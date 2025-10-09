@@ -1,18 +1,18 @@
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Alert,
-  Animated,
-  BackHandler,
-  Dimensions,
-  Easing,
-  Image,
-  LayoutChangeEvent,
-  PanResponder,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    BackHandler,
+    Dimensions,
+    Easing,
+    Image,
+    LayoutChangeEvent,
+    PanResponder,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SwitchInput from '../src/components/SwitchInput';
@@ -272,7 +272,17 @@ export default function MatchPicturesScreen() {
 
     // Show immediately (no fade-in)
     cardOpacity.setValue(1);
-    if (settings.playBeforeMatch && newMatchCard.sound) playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+    if (settings.playBeforeMatch) {
+      if (newMatchCard.sound) {
+        playWord(newMatchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+      } else {
+        // Fallback to TTS using text or image key
+        const fallbackKey = newMatchCard.text?.toLowerCase() || newMatchCard.image;
+        if (fallbackKey) {
+          playWord(fallbackKey, { ttsEnabled: settings.textToSpeech, locale, text: newMatchCard.text });
+        }
+      }
+    }
   };
 
   // ==============================
@@ -321,7 +331,17 @@ export default function MatchPicturesScreen() {
       if (gameState.isAnimating) return;
       const tap = Math.abs(g.dx) < 10 && Math.abs(g.dy) < 10;
       if (tap) {
-        if (settings.playBeforeMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        if (settings.playBeforeMatch) {
+          if (gameState.matchCard.sound) {
+            playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+          } else {
+            // Fallback to TTS using text or image key
+            const fallbackKey = gameState.matchCard.text?.toLowerCase() || gameState.matchCard.image;
+            if (fallbackKey) {
+              playWord(fallbackKey, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+            }
+          }
+        }
         Animated.parallel([
           Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
           Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
@@ -376,7 +396,17 @@ export default function MatchPicturesScreen() {
       }),
       Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
     ]).start(() => {
-      if (settings.playAfterMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+      if (settings.playAfterMatch) {
+        if (gameState.matchCard.sound) {
+          playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        } else {
+          // Fallback to TTS using text or image key
+          const fallbackKey = gameState.matchCard.text?.toLowerCase() || gameState.matchCard.image;
+          if (fallbackKey) {
+            playWord(fallbackKey, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+          }
+        }
+      }
       setGameState(prev => {
         const updated = prev.staticCards.map((c, i) => (i === matchedIndex ? { ...c, isMatched: true } : c));
         const revealed = { ...prev.revealedMap, [matchedCard.image]: true };
@@ -431,7 +461,17 @@ export default function MatchPicturesScreen() {
         }),
         Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
       ]).start(() => {
-        if (settings.playAfterMatch && gameState.matchCard.sound) playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        if (settings.playAfterMatch) {
+        if (gameState.matchCard.sound) {
+          playWord(gameState.matchCard.sound, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+        } else {
+          // Fallback to TTS using text or image key
+          const fallbackKey = gameState.matchCard.text?.toLowerCase() || gameState.matchCard.image;
+          if (fallbackKey) {
+            playWord(fallbackKey, { ttsEnabled: settings.textToSpeech, locale, text: gameState.matchCard.text });
+          }
+        }
+      }
         setGameState(prev => {
           const updated = prev.staticCards.map((c, i) => (i === idx ? { ...c, isMatched: true } : c));
           const revealed = { ...prev.revealedMap, [card.image]: true };

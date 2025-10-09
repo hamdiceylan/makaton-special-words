@@ -191,6 +191,27 @@ export const playWord = async (
   wordKey: string,
   options?: { ttsEnabled?: boolean; locale?: string; text?: string }
 ) => {
+  // Handle null, undefined, or empty wordKey - fall back to TTS
+  if (!wordKey || wordKey.trim() === '') {
+    if (options?.ttsEnabled) {
+      try {
+        await stopCurrentSound();
+        await stopCurrentSpeech();
+        const speakText = options.text ?? '';
+        if (speakText) {
+          Speech.speak(speakText, {
+            language: options.locale,
+            rate: 1.0,
+            pitch: 1.0,
+          });
+        }
+      } catch (error) {
+        console.warn('TTS speak error:', error);
+      }
+    }
+    return;
+  }
+
   // Check if it's a custom sound file (file:// URI) and not an image
   if (wordKey.startsWith('file://') && !wordKey.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
     try {
