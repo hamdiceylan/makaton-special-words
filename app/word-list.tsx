@@ -23,9 +23,10 @@ interface WordItemProps {
   onInfo: (index: number) => void;
   drag: () => void;
   isActive: boolean;
+  enableEditing: boolean;
 }
 
-const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode, onRemove, onInfo, drag, isActive }) => {
+const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode, onRemove, onInfo, drag, isActive, enableEditing }) => {
   const tablet = isTablet();
   const cellHeight = tablet ? 60 : 50;
   
@@ -68,7 +69,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
             <View style={styles.dragLine} />
           </View>
         </Pressable>
-      ) : (
+      ) : enableEditing ? (
         <Pressable 
           style={styles.infoButton}
           onPress={() => onInfo(index)}
@@ -80,7 +81,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
             resizeMode="contain"
           />
         </Pressable>
-      )}
+      ) : null}
     </View>
   );
 });
@@ -235,9 +236,10 @@ export default function WordListScreen() {
         onInfo={handleOpenWord}
         drag={drag}
         isActive={isActive}
+        enableEditing={settings.enableEditing}
       />
     );
-  }, [isEditMode, handleRemoveWord, handleOpenWord]);
+  }, [isEditMode, handleRemoveWord, handleOpenWord, settings.enableEditing]);
 
   return (
     <SafeAreaView style={styles.container} edges={[...(Platform.OS === 'android' ? ['bottom' as const] : []),'left', 'right']}>
@@ -273,6 +275,7 @@ export default function WordListScreen() {
               onInfo={handleOpenWord}
               drag={() => {}}
               isActive={false}
+              enableEditing={settings.enableEditing}
             />
           )}
           keyExtractor={(item: { image: string; text: string }, index: number) => `${item.text}-${index}`}
