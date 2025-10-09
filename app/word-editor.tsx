@@ -253,19 +253,21 @@ export default function WordEditorScreen() {
                     style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
                   />
                 </View>
-                <View style={styles.group}>
-                  <SFProText weight="medium" style={styles.label}>Sound</SFProText>
-                  <View style={[styles.row, !onTablet && styles.rowPhone]}>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={isRecording ? stopRecording : startRecording}>
-                      <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
-                    </Pressable>
-                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={playRecorded}>
-                      <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
-                    </Pressable>
+                {settings?.recordNewSounds && (
+                  <View style={styles.group}>
+                    <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                    <View style={[styles.row, !onTablet && styles.rowPhone]}>
+                      <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={isRecording ? stopRecording : startRecording}>
+                        <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
+                        <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
+                      </Pressable>
+                      <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={playRecorded}>
+                        <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
+                        <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                      </Pressable>
+                    </View>
                   </View>
-                </View>
+                )}
               </View>
               <View style={styles.landCol}>
                 <View style={styles.group}>
@@ -332,19 +334,21 @@ export default function WordEditorScreen() {
                 </View>
               </View>
 
-              <View style={styles.group}>
-                <SFProText weight="medium" style={styles.label}>Sound</SFProText>
-                <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={isRecording ? stopRecording : startRecording}>
-                    <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                    <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
-                  </Pressable>
-                  <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={playRecorded}>
-                    <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
-                    <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
-                  </Pressable>
+              {settings?.recordNewSounds && (
+                <View style={styles.group}>
+                  <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                  <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={isRecording ? stopRecording : startRecording}>
+                      <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
+                    </Pressable>
+                    <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={playRecorded}>
+                      <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
+                      <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
+              )}
             </>
           )}
         </View>
