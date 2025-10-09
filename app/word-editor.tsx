@@ -250,7 +250,7 @@ export default function WordEditorScreen() {
                     onChangeText={setWordText}
                     placeholder="Type here"
                     placeholderTextColor="#757575"
-                    style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
+                    style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, Platform.OS === 'android' ? { includeFontPadding: false, fontFamily: getSFProFontFamily('semibold') } : { fontFamily: getSFProFontFamily('semibold') }]}
                   />
                 </View>
                 <View style={styles.group}>
@@ -303,7 +303,7 @@ export default function WordEditorScreen() {
                   onChangeText={setWordText}
                   placeholder="Type here"
                   placeholderTextColor="#757575"
-                  style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
+                  style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet,  Platform.OS === 'android' ? { includeFontPadding: false, fontFamily: getSFProFontFamily('semibold') } : { fontFamily: getSFProFontFamily('semibold') } ]}
                 />
               </View>
 
