@@ -49,7 +49,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
       )}
       
       <Image
-        source={resolveImageSource(item.image)}
+        source={resolveImageSource(item.image, true)}
         style={styles.wordImage}
         resizeMode="contain"
       />
