@@ -24,3 +24,12 @@ export const isCurrentlyLandscape = () => {
 
 // Check if current device is tablet
 export const isCurrentlyTablet = () => isTablet();
+
+// Check if Android version is below API 28 (Android 9.0)
+export const isAndroidBelow28 = () => {
+  if (Platform.OS !== 'android') return false;
+  
+  // For Android, Platform.Version gives the API level
+  const apiLevel = Platform.Version as number;
+  return apiLevel < 28;
+};
