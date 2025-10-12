@@ -19,13 +19,14 @@ export const createFlipAnimations = (flipAnimation: Animated.Value) => {
   if (use2D) {
     // 2D flip for Android < 28 using scaleX only
     return {
+      // Support continuous double flip (0→2) while keeping single flip (→1) working
       frontScaleX: flipAnimation.interpolate({ 
-        inputRange: [0, 0.5, 1], 
-        outputRange: [1, 0, 0] 
+        inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
+        outputRange: [1, 0, 0, 0, 1] 
       }),
       backScaleX: flipAnimation.interpolate({ 
-        inputRange: [0, 0.5, 1], 
-        outputRange: [0, 0, 1] 
+        inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
+        outputRange: [0, 1, 1, 0, 0] 
       }),
       frontRotateY: undefined,
       backRotateY: undefined,
@@ -36,13 +37,14 @@ export const createFlipAnimations = (flipAnimation: Animated.Value) => {
     return {
       frontScaleX: undefined,
       backScaleX: undefined,
+      // Map 0→2 to 0°→360° for front, and 180°→540° for back to preserve direction
       frontRotateY: flipAnimation.interpolate({ 
-        inputRange: [0, 1], 
-        outputRange: ['0deg', '180deg'] 
+        inputRange: [0, 2], 
+        outputRange: ['0deg', '360deg'] 
       }),
       backRotateY: flipAnimation.interpolate({ 
-        inputRange: [0, 1], 
-        outputRange: ['180deg', '360deg'] 
+        inputRange: [0, 2], 
+        outputRange: ['180deg', '540deg'] 
       }),
       use2D: false
     };

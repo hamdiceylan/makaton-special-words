@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { Audio } from 'expo-av';
+import { AudioModule, RecordingPresets, createAudioPlayer, requestRecordingPermissionsAsync, setAudioModeAsync, setIsAudioActiveAsync } from 'expo-audio';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -26,7 +26,7 @@ export default function WordEditorScreen() {
     isEditMode ? ((image as string) ?? 'ball') : null
   );
   const [isRecording, setIsRecording] = useState(false);
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [recorder, setRecorder] = useState<InstanceType<typeof AudioModule.AudioRecorder> | null>(null);
   const [recordedSoundUri, setRecordedSoundUri] = useState<string | null>(null);
 
   const { width, height } = useWindowDimensions();
@@ -102,26 +102,27 @@ export default function WordEditorScreen() {
 
   const startRecording = async () => {
     try {
-      const perm = await Audio.requestPermissionsAsync();
+      const perm = await requestRecordingPermissionsAsync();
       if (perm.status !== 'granted') return;
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
-      const created = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-      setRecording(created.recording);
+      await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true });
+      const r = new AudioModule.AudioRecorder({ ...RecordingPresets.HIGH_QUALITY });
+      await r.prepareToRecordAsync();
+      r.record();
+      setRecorder(r);
       setIsRecording(true);
     } catch (e) {}
   };
 
   const stopRecording = async () => {
     try {
-      if (recording) {
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        if (uri) {
-          setRecordedSoundUri(uri);
-        }
+      if (recorder) {
+        await recorder.stop();
+        const state = recorder.getStatus();
+        const uri = state.url;
+        if (uri) setRecordedSoundUri(uri);
         setIsRecording(false);
-        setRecording(null);
-        await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+        setRecorder(null);
+        await setAudioModeAsync({ allowsRecording: false });
       }
     } catch (e) {}
   };
@@ -132,15 +133,17 @@ export default function WordEditorScreen() {
       await stopCurrentSound();
       await initializeAudio();
       
+      await setIsAudioActiveAsync(true);
       // First priority: recorded sound (current session)
       if (recordedSoundUri) {
         const looksLikeUri = recordedSoundUri.startsWith('http') || recordedSoundUri.startsWith('file:');
         if (looksLikeUri) {
-          const { sound } = await Audio.Sound.createAsync({ uri: recordedSoundUri });
-          await sound.playAsync();
-          sound.setOnPlaybackStatusUpdate((status: any) => {
-            if (status.isLoaded && (status as any).didJustFinish) {
-              sound.unloadAsync();
+          const player = createAudioPlayer({ uri: recordedSoundUri }, { keepAudioSessionActive: true });
+          player.play();
+          const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+            if (status?.isLoaded && status?.didJustFinish) {
+              try { player.remove(); } catch {}
+              sub.remove();
             }
           });
           return;
@@ -157,11 +160,12 @@ export default function WordEditorScreen() {
           const s = String(fromList.sound);
           const looksLikeUri = s.startsWith('http') || s.startsWith('file:');
           if (looksLikeUri) {
-            const { sound } = await Audio.Sound.createAsync({ uri: s });
-            await sound.playAsync();
-            sound.setOnPlaybackStatusUpdate((status: any) => {
-              if (status.isLoaded && (status as any).didJustFinish) {
-                sound.unloadAsync();
+            const player = createAudioPlayer({ uri: s }, { keepAudioSessionActive: true });
+            player.play();
+            const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+              if (status?.isLoaded && status?.didJustFinish) {
+                try { player.remove(); } catch {}
+                sub.remove();
               }
             });
             return;

@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { AudioModule, createAudioPlayer, setAudioModeAsync, setIsAudioActiveAsync } from 'expo-audio';
 import * as Speech from 'expo-speech';
 
 // Sound mapping for words - using en-GB/child directory for child voices
@@ -105,19 +105,20 @@ export const WORD_SOUNDS: { [key: string]: any } = {
 export const REWARD_SOUND = require('../../assets/sounds/_Reward_.m4a');
 
 // Sound instance tracking to prevent multiple instances
-let currentSoundInstance: Audio.Sound | null = null;
+let currentSoundInstance: InstanceType<typeof AudioModule.AudioPlayer> | null = null;
 
 /**
  * Initialize audio settings
  */
 export const initializeAudio = async () => {
   try {
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
+    await setAudioModeAsync({
+      allowsRecording: false,
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+      interruptionModeAndroid: 'duckOthers',
+      shouldRouteThroughEarpiece: false,
+      interruptionMode: 'mixWithOthers',
     });
   } catch (error) {
     console.warn('Failed to initialize audio:', error);
@@ -130,8 +131,8 @@ export const initializeAudio = async () => {
 export const stopCurrentSound = async () => {
   if (currentSoundInstance) {
     try {
-      await currentSoundInstance.stopAsync();
-      await currentSoundInstance.unloadAsync();
+      currentSoundInstance.pause();
+      currentSoundInstance.remove();
     } catch (error) {
       console.warn('Error stopping sound:', error);
     } finally {
@@ -158,6 +159,7 @@ export const playWordSound = async (wordKey: string) => {
     // Stop any currently playing sound
     await stopCurrentSound();
     await stopCurrentSpeech();
+    await setIsAudioActiveAsync(true);
 
     const soundSource = WORD_SOUNDS[wordKey];
     if (!soundSource) {
@@ -165,23 +167,134 @@ export const playWordSound = async (wordKey: string) => {
       return;
     }
 
-    const { sound } = await Audio.Sound.createAsync(soundSource);
-    currentSoundInstance = sound;
-
-    await sound.playAsync();
-
-    // Auto-unload when finished
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync();
-        if (currentSoundInstance === sound) {
+    const player = createAudioPlayer(soundSource, { keepAudioSessionActive: true });
+    currentSoundInstance = player;
+    let attemptedRestart = false;
+    player.play();
+    const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+      if (status?.isLoaded && !status?.playing && status?.currentTime === 0 && !attemptedRestart) {
+        attemptedRestart = true;
+        try { player.play(); } catch {}
+      }
+      if (status?.isLoaded && status?.didJustFinish) {
+        try { player.remove(); } catch {}
+        if (currentSoundInstance === player) {
           currentSoundInstance = null;
         }
+        sub.remove();
       }
     });
   } catch (error) {
     console.warn(`Error playing sound for ${wordKey}:`, error);
   }
+};
+
+/**
+ * Play a word sound and resolve when playback finishes. Ensures a minimum wait if provided.
+ */
+export const playWordAndWait = async (
+  wordKey: string,
+  options?: { ttsEnabled?: boolean; locale?: string; text?: string },
+  minWaitMs: number = 0
+): Promise<void> => {
+  const minWaitPromise = new Promise<void>((resolve) => setTimeout(resolve, Math.max(0, minWaitMs)));
+
+  // Empty or missing key → TTS (if enabled); otherwise just wait min
+  if (!wordKey || wordKey.trim() === '') {
+    if (options?.ttsEnabled) {
+      try {
+        await stopCurrentSound();
+        await stopCurrentSpeech();
+        const speakText = options.text ?? '';
+        if (speakText) {
+          await setIsAudioActiveAsync(true);
+          await new Promise<void>((resolve) => {
+            Speech.speak(speakText, {
+              language: options.locale,
+              rate: 1.0,
+              pitch: 1.0,
+              onDone: () => resolve(),
+              onStopped: () => resolve(),
+              onError: (_e: any) => resolve(),
+            });
+          });
+        }
+      } catch {}
+    }
+    await minWaitPromise;
+    return;
+  }
+
+  // Local custom file (not an image)
+  if (wordKey.startsWith('file://') && !wordKey.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
+    try {
+      await stopCurrentSound();
+      await stopCurrentSpeech();
+      await setIsAudioActiveAsync(true);
+
+      const player = createAudioPlayer({ uri: wordKey }, { keepAudioSessionActive: true });
+      currentSoundInstance = player;
+      const finishedPromise = new Promise<void>((resolve) => {
+        const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+          if (status?.isLoaded && status?.didJustFinish) {
+            try { player.remove(); } catch {}
+            if (currentSoundInstance === player) currentSoundInstance = null;
+            sub.remove();
+            resolve();
+          }
+        });
+      });
+      player.play();
+      await Promise.all([finishedPromise, minWaitPromise]);
+      return;
+    } catch (error) {
+      // Fall through to TTS fallback below
+    }
+  }
+
+  // Bundled recording
+  if (WORD_SOUNDS[wordKey]) {
+    try {
+      await stopCurrentSound();
+      await stopCurrentSpeech();
+      await setIsAudioActiveAsync(true);
+      const player = createAudioPlayer(WORD_SOUNDS[wordKey], { keepAudioSessionActive: true });
+      currentSoundInstance = player;
+      const finishedPromise = new Promise<void>((resolve) => {
+        const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+          if (status?.isLoaded && status?.didJustFinish) {
+            try { player.remove(); } catch {}
+            if (currentSoundInstance === player) currentSoundInstance = null;
+            sub.remove();
+            resolve();
+          }
+        });
+      });
+      player.play();
+      await Promise.all([finishedPromise, minWaitPromise]);
+      return;
+    } catch (error) {
+      // Fall through to TTS fallback
+    }
+  }
+
+  // Fallback to TTS if enabled; otherwise just wait minimum
+  if (options?.ttsEnabled) {
+    try {
+      const speakText = options.text ?? wordKey;
+      await new Promise<void>((resolve) => {
+        Speech.speak(speakText, {
+          language: options.locale,
+          rate: 1.0,
+          pitch: 1.0,
+          onDone: () => resolve(),
+          onStopped: () => resolve(),
+          onError: (_e: any) => resolve(),
+        });
+      });
+    } catch {}
+  }
+  await minWaitPromise;
 };
 
 /**
@@ -217,18 +330,23 @@ export const playWord = async (
     try {
       await stopCurrentSound();
       await stopCurrentSpeech();
+      await setIsAudioActiveAsync(true);
       
-      const { sound } = await Audio.Sound.createAsync({ uri: wordKey });
-      currentSoundInstance = sound;
-      await sound.playAsync();
-      
-      // Auto-unload when finished
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync();
-          if (currentSoundInstance === sound) {
+      const player = createAudioPlayer({ uri: wordKey }, { keepAudioSessionActive: true });
+      currentSoundInstance = player;
+      let attemptedRestart = false;
+      player.play();
+      const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+        if (status?.isLoaded && !status?.playing && status?.currentTime === 0 && !attemptedRestart) {
+          attemptedRestart = true;
+          try { player.play(); } catch {}
+        }
+        if (status?.isLoaded && status?.didJustFinish) {
+          try { player.remove(); } catch {}
+          if (currentSoundInstance === player) {
             currentSoundInstance = null;
           }
+          sub.remove();
         }
       });
       return;
@@ -281,16 +399,17 @@ export const playWord = async (
 export const playRewardSound = async (): Promise<void> => {
   try {
     await stopCurrentSound();
-    const { sound } = await Audio.Sound.createAsync(REWARD_SOUND);
-    currentSoundInstance = sound;
-    await sound.playAsync();
+    const player = createAudioPlayer(REWARD_SOUND);
+    currentSoundInstance = player;
+    player.play();
     await new Promise<void>((resolve) => {
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync();
-          if (currentSoundInstance === sound) {
+      const sub = player.addListener('playbackStatusUpdate', (status: any) => {
+        if (status?.isLoaded && status?.didJustFinish) {
+          try { player.remove(); } catch {}
+          if (currentSoundInstance === player) {
             currentSoundInstance = null;
           }
+          sub.remove();
           resolve();
         }
       });
