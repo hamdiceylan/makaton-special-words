@@ -467,7 +467,6 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       });
     } else {
       // Double flip animation
-      setCanShowText(true);
       const total = DURATION.flipDouble;
       const d0 = Math.max(1, Math.round(total / 4));
       const d1 = Math.max(1, Math.round(total / 5));
@@ -481,6 +480,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         useNativeDriver: true,
       }).start(() => {
         if (myRoundId !== roundIdRef.current) return;
+        setCanShowText(true);
         setShowWord(true);
         Animated.timing(flipAnimation, {
           toValue: 1.0,
@@ -871,7 +871,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     if (!layout || !matchCardVisible || !gameState.matchCard.image || !gameState.matchCard.text) return null;
 
     const r = layout.match;
-    const flipAnimations = createFlipAnimations(flipAnimation);
+    const flipAnimations = createFlipAnimations(flipAnimation, config.flipType);
     
     const commonStyle = [
       styles.matchCard,

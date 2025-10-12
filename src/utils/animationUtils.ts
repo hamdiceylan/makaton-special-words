@@ -11,43 +11,79 @@ export const use2DAnimations = () => isAndroidBelow28();
 
 /**
  * Creates flip animation interpolations
- * Returns different interpolations based on Android version
+ * Returns different interpolations based on Android version and flip type
+ * @param flipAnimation The animated value for the flip
+ * @param flipType Type of flip: 'single' (0→1) or 'double' (0→2)
  */
-export const createFlipAnimations = (flipAnimation: Animated.Value) => {
+export const createFlipAnimations = (flipAnimation: Animated.Value, flipType: 'single' | 'double' = 'single') => {
   const use2D = use2DAnimations();
   
   if (use2D) {
     // 2D flip for Android < 28 using scaleX only
-    return {
-      // Support continuous double flip (0→2) while keeping single flip (→1) working
-      frontScaleX: flipAnimation.interpolate({ 
-        inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
-        outputRange: [1, 0, 0, 0, 1] 
-      }),
-      backScaleX: flipAnimation.interpolate({ 
-        inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
-        outputRange: [0, 1, 1, 0, 0] 
-      }),
-      frontRotateY: undefined,
-      backRotateY: undefined,
-      use2D: true
-    };
+    if (flipType === 'single') {
+      // Single flip: 0 → 1
+      return {
+        frontScaleX: flipAnimation.interpolate({ 
+          inputRange: [0, 0.5, 1], 
+          outputRange: [1, 0, 0] 
+        }),
+        backScaleX: flipAnimation.interpolate({ 
+          inputRange: [0, 0.5, 1], 
+          outputRange: [0, 0, 1] 
+        }),
+        frontRotateY: undefined,
+        backRotateY: undefined,
+        use2D: true
+      };
+    } else {
+      // Double flip: 0 → 2
+      return {
+        frontScaleX: flipAnimation.interpolate({ 
+          inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
+          outputRange: [1, 0, 0, 0, 1] 
+        }),
+        backScaleX: flipAnimation.interpolate({ 
+          inputRange: [0, 0.5, 1.0, 1.5, 2.0], 
+          outputRange: [0, 0, 1, 0, 0] 
+        }),
+        frontRotateY: undefined,
+        backRotateY: undefined,
+        use2D: true
+      };
+    }
   } else {
     // 3D flip for iOS and Android >= 28
-    return {
-      frontScaleX: undefined,
-      backScaleX: undefined,
-      // Map 0→2 to 0°→360° for front, and 180°→540° for back to preserve direction
-      frontRotateY: flipAnimation.interpolate({ 
-        inputRange: [0, 2], 
-        outputRange: ['0deg', '360deg'] 
-      }),
-      backRotateY: flipAnimation.interpolate({ 
-        inputRange: [0, 2], 
-        outputRange: ['180deg', '540deg'] 
-      }),
-      use2D: false
-    };
+    if (flipType === 'single') {
+      // Single flip: 0 → 1 (0° → 180° front, 180° → 360° back)
+      return {
+        frontScaleX: undefined,
+        backScaleX: undefined,
+        frontRotateY: flipAnimation.interpolate({ 
+          inputRange: [0, 1], 
+          outputRange: ['0deg', '180deg'] 
+        }),
+        backRotateY: flipAnimation.interpolate({ 
+          inputRange: [0, 1], 
+          outputRange: ['180deg', '360deg'] 
+        }),
+        use2D: false
+      };
+    } else {
+      // Double flip: 0 → 2 (0° → 360° front, 180° → 540° back)
+      return {
+        frontScaleX: undefined,
+        backScaleX: undefined,
+        frontRotateY: flipAnimation.interpolate({ 
+          inputRange: [0, 2], 
+          outputRange: ['0deg', '360deg'] 
+        }),
+        backRotateY: flipAnimation.interpolate({ 
+          inputRange: [0, 2], 
+          outputRange: ['180deg', '540deg'] 
+        }),
+        use2D: false
+      };
+    }
   }
 };
 
