@@ -107,6 +107,30 @@ export const REWARD_SOUND = require('../../assets/sounds/_Reward_.m4a');
 // Sound instance tracking to prevent multiple instances
 let currentSoundInstance: InstanceType<typeof AudioModule.AudioPlayer> | null = null;
 
+type AudioPlayerInstance = InstanceType<typeof AudioModule.AudioPlayer>;
+
+const disposeAudioPlayer = (
+  player: AudioPlayerInstance | null,
+  options: { deactivate?: boolean } = {}
+) => {
+  if (!player) {
+    return;
+  }
+  try {
+    player.pause();
+  } catch {}
+  try {
+    player.remove();
+  } catch {}
+  try {
+    player.release();
+  } catch {}
+
+  if (options.deactivate) {
+    setIsAudioActiveAsync(false).catch(() => {});
+  }
+};
+
 /**
  * Initialize audio settings
  */
@@ -130,14 +154,8 @@ export const initializeAudio = async () => {
  */
 export const stopCurrentSound = async () => {
   if (currentSoundInstance) {
-    try {
-      currentSoundInstance.pause();
-      currentSoundInstance.remove();
-    } catch (error) {
-      console.warn('Error stopping sound:', error);
-    } finally {
-      currentSoundInstance = null;
-    }
+    disposeAudioPlayer(currentSoundInstance);
+    currentSoundInstance = null;
   }
 };
 
@@ -177,7 +195,7 @@ export const playWordSound = async (wordKey: string) => {
         try { player.play(); } catch {}
       }
       if (status?.isLoaded && status?.didJustFinish) {
-        try { player.remove(); } catch {}
+        disposeAudioPlayer(player, { deactivate: true });
         if (currentSoundInstance === player) {
           currentSoundInstance = null;
         }
@@ -237,7 +255,7 @@ export const playWordAndWait = async (
       const finishedPromise = new Promise<void>((resolve) => {
         const sub = player.addListener('playbackStatusUpdate', (status: any) => {
           if (status?.isLoaded && status?.didJustFinish) {
-            try { player.remove(); } catch {}
+            disposeAudioPlayer(player, { deactivate: true });
             if (currentSoundInstance === player) currentSoundInstance = null;
             sub.remove();
             resolve();
@@ -263,7 +281,7 @@ export const playWordAndWait = async (
       const finishedPromise = new Promise<void>((resolve) => {
         const sub = player.addListener('playbackStatusUpdate', (status: any) => {
           if (status?.isLoaded && status?.didJustFinish) {
-            try { player.remove(); } catch {}
+            disposeAudioPlayer(player, { deactivate: true });
             if (currentSoundInstance === player) currentSoundInstance = null;
             sub.remove();
             resolve();
@@ -342,7 +360,7 @@ export const playWord = async (
           try { player.play(); } catch {}
         }
         if (status?.isLoaded && status?.didJustFinish) {
-          try { player.remove(); } catch {}
+          disposeAudioPlayer(player, { deactivate: true });
           if (currentSoundInstance === player) {
             currentSoundInstance = null;
           }
@@ -405,7 +423,7 @@ export const playRewardSound = async (): Promise<void> => {
     await new Promise<void>((resolve) => {
       const sub = player.addListener('playbackStatusUpdate', (status: any) => {
         if (status?.isLoaded && status?.didJustFinish) {
-          try { player.remove(); } catch {}
+          disposeAudioPlayer(player, { deactivate: true });
           if (currentSoundInstance === player) {
             currentSoundInstance = null;
           }

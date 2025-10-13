@@ -143,6 +143,8 @@ export default function WordEditorScreen() {
           const sub = player.addListener('playbackStatusUpdate', (status: any) => {
             if (status?.isLoaded && status?.didJustFinish) {
               try { player.remove(); } catch {}
+              try { player.release(); } catch {}
+              setIsAudioActiveAsync(false).catch(() => {});
               sub.remove();
             }
           });
@@ -165,6 +167,8 @@ export default function WordEditorScreen() {
             const sub = player.addListener('playbackStatusUpdate', (status: any) => {
               if (status?.isLoaded && status?.didJustFinish) {
                 try { player.remove(); } catch {}
+                try { player.release(); } catch {}
+                setIsAudioActiveAsync(false).catch(() => {});
                 sub.remove();
               }
             });
@@ -475,5 +479,4 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
 
