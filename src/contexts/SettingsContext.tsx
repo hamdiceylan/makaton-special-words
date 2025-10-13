@@ -32,6 +32,7 @@ interface SettingsContextType {
     largeText: boolean;
     enableEditing: boolean;
     enableReward: boolean;
+    enableParentLock: boolean;
     enableDebugging: boolean;
   };
   toggleSetting: (key: keyof SettingsContextType['settings']) => void;
@@ -76,6 +77,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     largeText: false,
     enableEditing: true,
     enableReward: true,
+    enableParentLock: false,
     enableDebugging: false,
   });
 
