@@ -94,6 +94,21 @@ export default function WordListScreen() {
   const { settings, wordList, setWordList, resetWordList, isWordListEdited } = useSettings();
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const androidApiLevel = React.useMemo(() => {
+    if (Platform.OS !== 'android') return null;
+    const version = Platform.Version;
+    const parsed = typeof version === 'string' ? parseInt(version, 10) : version;
+    return Number.isNaN(parsed) ? null : parsed;
+  }, []);
+
+  const autoscrollSettings = React.useMemo(() => {
+    if (androidApiLevel !== null && androidApiLevel <= 25) {
+      // Older Android builds struggle to keep up with aggressive auto-scroll animations.
+      return { threshold: 35, speed: 110 };
+    }
+    return { threshold: 50, speed: 200 };
+  }, [androidApiLevel]);
+
   // Header button functions
   const handleAddWord = () => {
     router.navigate({ pathname: '/word-editor' as any, params: { mode: 'add' } });
@@ -272,8 +287,8 @@ export default function WordListScreen() {
           animationConfig={{
             duration: 150,
           }}
-          autoscrollThreshold={50}
-          autoscrollSpeed={200}
+          autoscrollThreshold={autoscrollSettings.threshold}
+          autoscrollSpeed={autoscrollSettings.speed}
         />
       ) : (
         <FlatList
