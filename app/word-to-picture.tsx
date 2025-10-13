@@ -1,16 +1,16 @@
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    BackHandler,
-    Dimensions,
-    Image,
-    PanResponder,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  BackHandler,
+  Dimensions,
+  Image,
+  PanResponder,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';

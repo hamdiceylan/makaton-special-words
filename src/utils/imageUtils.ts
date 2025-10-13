@@ -1,6 +1,6 @@
-import { WORD_IMAGES, WORD_THUMBNAIL_IMAGES } from '../constants/words';
+import { WORD_IMAGES } from '../constants/words';
 
-export const resolveImageSource = (imageKey: string | null | undefined, useThumbnail: boolean = false) => {
+export const resolveImageSource = (imageKey: string | null | undefined) => {
   if (!imageKey) {
     return WORD_IMAGES['ball'];
   }
@@ -9,7 +9,7 @@ export const resolveImageSource = (imageKey: string | null | undefined, useThumb
     return { uri: imageKey };
   }
 
-  const bundledImage = useThumbnail ? WORD_THUMBNAIL_IMAGES[imageKey] : WORD_IMAGES[imageKey];
+  const bundledImage = WORD_IMAGES[imageKey];
 
   if (bundledImage) {
     return bundledImage;

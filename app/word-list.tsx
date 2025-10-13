@@ -49,9 +49,11 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
       )}
       
       <Image
-        source={resolveImageSource(item.image, true)}
+        source={resolveImageSource(item.image)}
         style={styles.wordImage}
         resizeMode="contain"
+        resizeMethod="resize"
+        fadeDuration={0}
       />
       <SFProText weight="semibold" style={styles.wordText}>
         {item.text}
@@ -241,6 +243,16 @@ export default function WordListScreen() {
     );
   }, [isEditMode, handleRemoveWord, handleOpenWord, settings.enableEditing]);
 
+  const getItemLayout = React.useCallback((data: any, index: number) => {
+    const tablet = isTablet();
+    const itemHeight = (tablet ? 60 : 50) + 12; // cellHeight + marginBottom
+    return {
+      length: itemHeight,
+      offset: itemHeight * index,
+      index,
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={[...(Platform.OS === 'android' ? ['bottom' as const] : []),'left', 'right']}>
       {isEditMode ? (
@@ -284,6 +296,11 @@ export default function WordListScreen() {
             { paddingBottom: insets.bottom + 20 }
           ]}
           showsVerticalScrollIndicator={false}
+          getItemLayout={getItemLayout}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          initialNumToRender={10}
         />
       )}
     </SafeAreaView>

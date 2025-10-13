@@ -1,17 +1,17 @@
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    Alert,
-    Animated,
-    BackHandler,
-    Dimensions,
-    Easing,
-    Image,
-    PanResponder,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  BackHandler,
+  Dimensions,
+  Easing,
+  Image,
+  PanResponder,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SwitchInput from '../src/components/SwitchInput';
