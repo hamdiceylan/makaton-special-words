@@ -85,6 +85,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const [flippingStaticIndex, setFlippingStaticIndex] = useState<number | null>(null);
   const [matchCardVisible, setMatchCardVisible] = useState(true);
   const [showMatchBorder, setShowMatchBorder] = useState(false);
+  const [hideMatchCardBorder, setHideMatchCardBorder] = useState(false);
   
   const gameStateRef = useRef<GameState>(gameState);
   const useLegacyAnimations = use2DAnimations();
@@ -437,6 +438,14 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   const performFlipAnimation = () => {
     const myRoundId = roundIdRef.current;
+    const ensureRoundActive = () => {
+      if (myRoundId !== roundIdRef.current) {
+        setHideMatchCardBorder(false);
+        return false;
+      }
+      return true;
+    };
+    setHideMatchCardBorder(config.flipType === 'double' || config.matchCardContent === 'question-icon');
     
     if (config.flipType === 'single') {
       // Single flip animation
@@ -444,7 +453,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       setShowMatchBorder(true);
       
       Animated.timing(flipAnimation, { toValue: 1, duration: DURATION.flipSingle, useNativeDriver: true }).start(async () => {
-        if (myRoundId !== roundIdRef.current) return;
+        if (!ensureRoundActive()) return;
         setShowWord(true);
         setFlippingStaticIndex(null);
         try {
@@ -452,7 +461,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           const waitMin = new Promise<void>((resolve) => setTimeout(resolve, minWaitMs));
           await Promise.all([afterMatchWaitRef.current ?? Promise.resolve(), waitMin]);
         } catch {}
-        if (myRoundId !== roundIdRef.current) return;
+        if (!ensureRoundActive()) return;
         setShowMatchBorder(false);
         setGameState(prev => ({
           ...prev,
@@ -464,6 +473,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           advanceOrFinish();
         }, Math.max(100, Math.round(100 * m)));
         ongoingTimeouts.current.push(t2);
+        setHideMatchCardBorder(false);
       });
     } else {
       // Double flip animation
@@ -479,7 +489,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         easing: Easing.in(Easing.ease),
         useNativeDriver: true,
       }).start(() => {
-        if (myRoundId !== roundIdRef.current) return;
+        if (!ensureRoundActive()) return;
         setCanShowText(true);
         setShowWord(true);
         Animated.timing(flipAnimation, {
@@ -488,22 +498,23 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           easing: Easing.linear,
           useNativeDriver: true,
         }).start(() => {
-          if (myRoundId !== roundIdRef.current) return;
+          if (!ensureRoundActive()) return;
           Animated.timing(flipAnimation, {
             toValue: 1.5,
             duration: d2,
             easing: Easing.linear,
             useNativeDriver: true,
           }).start(() => {
-            if (myRoundId !== roundIdRef.current) return;
+            if (!ensureRoundActive()) return;
             Animated.timing(flipAnimation, {
               toValue: 2.0,
               duration: d3,
               easing: Easing.out(Easing.ease),
               useNativeDriver: true,
             }).start(async () => {
-              if (myRoundId !== roundIdRef.current) return;
+              if (!ensureRoundActive()) return;
               setFlippingStaticIndex(null);
+              setHideMatchCardBorder(false);
               try {
                 const minWaitMs = Math.round(1000 * Math.max(1, m));
                 const waitMin = new Promise<void>((resolve) => setTimeout(resolve, minWaitMs));
@@ -690,6 +701,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     setCanShowText(false);
     setFlippingStaticIndex(null);
     setShowMatchBorder(false);
+    setHideMatchCardBorder(false);
 
     setGameState(prev => ({
       ...prev,
@@ -885,7 +897,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       styles.matchCard,
       { left: r.left, top: r.top, width: r.width, height: r.height },
       { transform: [{ translateX: cardPosition.x }, { translateY: cardPosition.y }] },
-      canShowText && !config.matchCardContent.includes('question') && { borderWidth: 0 },
+      (hideMatchCardBorder || (canShowText && !config.matchCardContent.includes('question'))) && { borderWidth: 0 },
     ];
 
     if (useLegacyAnimations) {
