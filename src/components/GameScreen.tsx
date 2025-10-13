@@ -87,7 +87,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const [showMatchBorder, setShowMatchBorder] = useState(false);
   
   const gameStateRef = useRef<GameState>(gameState);
-  const use2DFlip = use2DAnimations();
+  const useLegacyAnimations = use2DAnimations();
 
   // Switch control for accessibility
   const switchControl = useSwitchControl({
@@ -367,7 +367,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         }
         Animated.parallel([
           Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
-          Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
+          Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
         ]).start();
         return;
       }
@@ -406,7 +406,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         easing: Easing.inOut(Easing.ease),
         useNativeDriver: false,
       }),
-      Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
+      Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
     ]).start(() => {
       if (myRoundId !== roundIdRef.current) return;
       if (settings.playAfterMatch) {
@@ -531,7 +531,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const handleFailedMatch = () => {
     Animated.parallel([
       Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
-      Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
+      Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
     ]).start();
   };
 
@@ -541,8 +541,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     const centers = getStaticCenterPositions();
     const target = centers[idx];
     if (!target) return;
-    
-    Animated.spring(cardScale, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }).start(() => {
+
+    const moveToTarget = () => {
       Animated.parallel([
         Animated.timing(cardPosition, {
           toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
@@ -550,7 +550,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
-        Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: true }),
+        Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
       ]).start(() => {
         if (myRoundId !== roundIdRef.current) return;
         if (settings.playAfterMatch) {
@@ -577,7 +577,15 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         setFlippingStaticIndex(idx);
         performFlipAnimation();
       });
-    });
+    };
+
+    if (useLegacyAnimations) {
+      cardScale.stopAnimation();
+      cardScale.setValue(1);
+      moveToTarget();
+    } else {
+      Animated.spring(cardScale, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }).start(moveToTarget);
+    }
   };
 
   const advanceOrFinish = async () => {
@@ -880,7 +888,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       canShowText && !config.matchCardContent.includes('question') && { borderWidth: 0 },
     ];
 
-    if (use2DFlip) {
+    if (useLegacyAnimations) {
       // 2D flip
       return (
         <Animated.View
@@ -1100,4 +1108,3 @@ const styles = StyleSheet.create({
     height: isTablet() ? 160 : 80,
   },
 });
-
