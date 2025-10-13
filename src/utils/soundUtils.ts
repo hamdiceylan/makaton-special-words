@@ -417,6 +417,8 @@ export const playWord = async (
 export const playRewardSound = async (): Promise<void> => {
   try {
     await stopCurrentSound();
+    await stopCurrentSpeech();
+    await setIsAudioActiveAsync(true);
     const player = createAudioPlayer(REWARD_SOUND);
     currentSoundInstance = player;
     player.play();
