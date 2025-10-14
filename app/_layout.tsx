@@ -1,25 +1,20 @@
 import { useFonts } from 'expo-font';
-import { Stack, router, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useState } from "react";
 import { Image, Platform, Pressable, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SettingsProvider, useSettings } from '../src/contexts/SettingsContext';
-import { JostText } from '../src/theme/typography';
 import CustomAlertDialog from '../src/components/CustomAlertDialog';
-import React, { useState } from "react";
+import { SettingsProvider } from '../src/contexts/SettingsContext';
+import { JostText } from '../src/theme/typography';
 
 function RootLayoutContent() {
-  const { settings } = useSettings();
   const router = useRouter();
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
 
-   const handleParentLock = () => {
-     if(settings.enableParentLock){
-       setShowParentLockDialog(true)
-      }else{
-        router.push("/settings");
-       }
-   };
+  const handleParentLock = () => {
+    setShowParentLockDialog(true);
+  };
 
   const handleSuccess = () => {
     setShowParentLockDialog(false);

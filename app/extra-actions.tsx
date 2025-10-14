@@ -2,12 +2,12 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Platform, Pressable, StyleSheet, View, ScrollView } from 'react-native';
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSettings, SettingsProvider } from '../src/contexts/SettingsContext';
+import CustomAlertDialog from '../src/components/CustomAlertDialog';
+import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
-import CustomAlertDialog from '../src/components/CustomAlertDialog';
 
 interface ActionItemProps {
   icon: any;
@@ -57,17 +57,13 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestruc
 export default function ExtraActionsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { resetWordList, isWordListEdited, settings } = useSettings();
+  const { resetWordList, isWordListEdited } = useSettings();
 
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
 
-   const handleParentLock = () => {
-     if(settings.enableParentLock){
-       setShowParentLockDialog(true)
-      }else{
-        router.push("/settings");
-       }
-   };
+  const handleParentLock = () => {
+    setShowParentLockDialog(true);
+  };
 
   const handleSuccess = () => {
     setShowParentLockDialog(false);

@@ -1,57 +1,158 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal } from "react-native";
+import { Alert, Modal, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SFProText } from '../theme/typography';
+
+interface CustomAlertDialogProps {
+  visible: boolean;
+  onCancel: () => void;
+  onSuccess: () => void;
+  onDisableFeature?: () => void; // Gizli özellik için callback (opsiyonel)
+  title?: string;
+}
 
 const CustomAlertDialog = ({
   visible,
   onCancel,
   onSuccess,
+  onDisableFeature,
   title = "Child Safety Gate",
-}) => {
+}: CustomAlertDialogProps) => {
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState(null);
+  const [gateKey, setGateKey] = useState(0);
 
-  // Rastgele işlem üret
-  useEffect(() => {
-    if (visible) generateQuestion();
-  }, [visible]);
-
-  const generateQuestion = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    const num3 = Math.floor(Math.random() * 10) + 1;
-
-    // Rastgele toplama veya çıkarma işlemleri karıştır
-    const operations = ["+", "-"];
-    const op1 = operations[Math.floor(Math.random() * operations.length)];
-    const op2 = operations[Math.floor(Math.random() * operations.length)];
-
-    const expression = `${num1} ${op1} ${num2} ${op2} ${num3}`;
-
-    // Gerçek sonucu hesapla
-    const result = eval(expression);
-    setQuestion(expression);
-    setAnswer(result);
-    setInput("");
-    setError(false);
-  };
-
-  const handleConfirm = () => {
-    if(!isNaN(parseInt(input))){
-       if (parseInt(input) === answer) {
-         setError(false);
-         onSuccess();
-         setInput("");
-       } else {
-         setError(true);
-         setInput("");
-         generateQuestion(); // Yanlış cevapta yeni soru
-       }
+  // iOS için Alert.prompt göster
+  const showIOSPrompt = (currentQuestion: string, currentGateKey: number, errorMessage?: string) => {
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        title,
+        errorMessage ? `${errorMessage}\n\n${currentQuestion} =` : `${currentQuestion} =`,
+        [
+          {
+            text: 'Cancel',
+            onPress: onCancel,
+            style: 'cancel',
+          },
+          {
+            text: 'Open',
+            onPress: (value?: string) => handleIOSConfirm(value || '', currentGateKey),
+          },
+        ],
+        'plain-text',
+        '',
+        'number-pad'
+      );
     }
   };
 
+  // iOS için doğrulama
+  const handleIOSConfirm = (value: string, currentGateKey: number) => {
+    const userInput = parseInt(value);
+    
+    if (!isNaN(userInput)) {
+      // Normal doğrulama: gateKey ile eşleşme
+      if (userInput === currentGateKey) {
+        onSuccess();
+      }
+      // Yanlış cevap: yeni soru üret ve tekrar göster
+      else {
+        const newQuestion = generateQuestionAndReturn();
+        // Yeni soru üretildikten sonra tekrar göster
+        setTimeout(() => {
+          showIOSPrompt(newQuestion.expression, newQuestion.result, 'Wrong answer. Please try again.');
+        }, 100);
+      }
+    } else {
+      // Geçersiz input: tekrar göster
+      setTimeout(() => {
+        showIOSPrompt(question, currentGateKey, 'Please enter a valid number.');
+      }, 100);
+    }
+  };
+
+  // Yardımcı fonksiyon: Soru üret ve return et
+  const generateQuestionAndReturn = () => {
+    const NMIN = 3;
+    const NMAX = 10;
+    const NTOT = 3;
+
+    // 3 benzersiz sayı seç (3-10 arası)
+    const numbers: number[] = [];
+    while (numbers.length < NTOT) {
+      const num = Math.floor(Math.random() * (NMAX - NMIN + 1)) + NMIN;
+      if (!numbers.includes(num)) {
+        numbers.push(num);
+      }
+    }
+
+    const [n0, n1, n2] = numbers;
+
+    // Format: n2 - n0 + n1
+    const expression = `${n2} - ${n0} + ${n1}`;
+    const result = n2 - n0 + n1;
+
+    setQuestion(expression);
+    setGateKey(result);
+    setInput("");
+    setError(false);
+
+    return { expression, result };
+  };
+
+  // Android için kullanılan wrapper
+  const generateQuestion = () => {
+    generateQuestionAndReturn();
+  };
+
+  // Rastgele işlem üret ve iOS için prompt göster
+  useEffect(() => {
+    if (visible) {
+      const newQuestion = generateQuestionAndReturn();
+      // iOS için ilk prompt'u göster
+      if (Platform.OS === 'ios') {
+        setTimeout(() => {
+          showIOSPrompt(newQuestion.expression, newQuestion.result);
+        }, 50);
+      }
+    }
+  }, [visible]);
+
+  const handleConfirm = () => {
+    const userInput = parseInt(input);
+    
+    if (!isNaN(userInput)) {
+      // // Gizli özellik: gateKey * 1000 girilirse ayarı tamamen kapat
+      // if (userInput === gateKey * 1000) {
+      //   setError(false);
+      //   onSuccess();
+      //   setInput("");
+      //   // Ayarı kapat (eğer callback verilmişse)
+      //   if (onDisableFeature) {
+      //     onDisableFeature();
+      //   }
+      // }
+      // Normal doğrulama: gateKey ile eşleşme
+      if (userInput === gateKey) {
+        setError(false);
+        onSuccess();
+        setInput("");
+      }
+      // Yanlış cevap: yeni soru üret
+      else {
+        setError(true);
+        setInput("");
+        generateQuestion();
+      }
+    }
+  };
+
+  // iOS için Alert.prompt kullanıldığı için Modal render etme
+  if (Platform.OS === 'ios') {
+    return null;
+  }
+
+  // Android için Custom Modal
   return (
     <Modal
       visible={visible}
@@ -59,11 +160,16 @@ const CustomAlertDialog = ({
       animationType="fade"
       supportedOrientations={['portrait', 'landscape', 'landscape-left', 'landscape-right']}
       onRequestClose={onCancel}
+      statusBarTranslucent
     >
       <View
         style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.4)",
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.2)",
           justifyContent: "center",
           alignItems: "center",
         }}

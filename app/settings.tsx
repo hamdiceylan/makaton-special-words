@@ -13,8 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SettingsProvider, useSettings } from '../src/contexts/SettingsContext';
-import CustomAlertDialog from '../src/components/CustomAlertDialog';
+import { useSettings } from '../src/contexts/SettingsContext';
 const { width: screenWidth } = Dimensions.get('window');
 
 interface SettingItem {
@@ -46,24 +45,6 @@ export default function Settings() {
   const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
   const [showShuffleModeModal, setShowShuffleModeModal] = useState(false);
   const [showSwitchCountModal, setShowSwitchCountModal] = useState(false);
-  const [showParentLockDialog, setShowParentLockDialog] = useState(false);
-
-  const handleParentLockToggle = () => {
-    // Eğer Parent Lock açıksa ve kapatmaya çalışıyorsa
-    if (settings.enableParentLock) {
-      // Önce doğrulama iste
-      setShowParentLockDialog(true);
-    } else {
-      // Parent Lock kapalıysa direkt aç
-      toggleSetting('enableParentLock');
-    }
-  };
-
-  const handleParentLockSuccess = () => {
-      // Doğrulama başarılı, Parent Lock'u kapat
-      setShowParentLockDialog(false);
-      toggleSetting('enableParentLock');
-    };
 
   const sections: SettingSection[] = [
     {
@@ -149,12 +130,6 @@ export default function Settings() {
           title: 'Enable Reward',
           type: 'toggle',
           value: settings.enableReward,
-        },
-        {
-          id: 'enableParentLock',
-          title: 'Enable Parent Lock',
-          type: 'toggle',
-          value: settings.enableParentLock,
         },
         {
           id: 'shuffleCards',
@@ -247,14 +222,7 @@ export default function Settings() {
     <View style={styles.toggleContainer}>
       <Switch
         value={item.value as boolean}
-        onValueChange={() => {
-          if(item.id === 'enableParentLock'){
-            handleParentLockToggle()
-          }else{
-            toggleSetting(item.id as keyof typeof settings)
-          }
-         }
-        }
+        onValueChange={() => toggleSetting(item.id as keyof typeof settings)}
         trackColor={{ false: '#E5E5EA', true: '#4664CD' }}
         thumbColor={item.value ? '#FFFFFF' : '#FFFFFF'}
         ios_backgroundColor="#E5E5EA"
@@ -452,12 +420,6 @@ export default function Settings() {
           </Pressable>
         </Pressable>
       </Modal>
-
-      <CustomAlertDialog
-        visible={showParentLockDialog}
-        onCancel={() => setShowParentLockDialog(false)}
-        onSuccess={handleParentLockSuccess}
-      />
     </SafeAreaView>
   );
 }
