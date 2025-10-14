@@ -10,6 +10,7 @@ export const resolveImageSource = (imageKey: string | null | undefined) => {
   }
 
   const bundledImage = WORD_IMAGES[imageKey];
+
   if (bundledImage) {
     return bundledImage;
   }

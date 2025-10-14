@@ -285,7 +285,9 @@ export default function WordEditorScreen() {
                     <Image
                       source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
                       style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
-                      resizeMode="contain"
+                      resizeMode="cover"
+                      resizeMethod="resize"
+                      fadeDuration={0}
                     />
                   ) : (
                       <Image source={require('../assets/images/upload-icon.png')} style={{ width: onTablet ? 78 : 60, height: onTablet ? 78 : 60 }} resizeMode="contain" />
@@ -325,6 +327,8 @@ export default function WordEditorScreen() {
                       source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
                       style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
                       resizeMode="cover"
+                      resizeMethod="resize"
+                      fadeDuration={0}
                     />
                   ) : (
                     <Image source={require('../assets/images/upload-icon.png')} style={{ width: onTablet ? 78 : 60, height: onTablet ? 78 : 60 }} resizeMode="contain" />

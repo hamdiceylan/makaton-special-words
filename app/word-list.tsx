@@ -52,6 +52,8 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
         source={resolveImageSource(item.image)}
         style={styles.wordImage}
         resizeMode="contain"
+        resizeMethod="resize"
+        fadeDuration={0}
       />
       <SFProText weight="semibold" style={styles.wordText}>
         {item.text}
@@ -91,6 +93,21 @@ export default function WordListScreen() {
   const navigation = useNavigation();
   const { settings, wordList, setWordList, resetWordList, isWordListEdited } = useSettings();
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const androidApiLevel = React.useMemo(() => {
+    if (Platform.OS !== 'android') return null;
+    const version = Platform.Version;
+    const parsed = typeof version === 'string' ? parseInt(version, 10) : version;
+    return Number.isNaN(parsed) ? null : parsed;
+  }, []);
+
+  const autoscrollSettings = React.useMemo(() => {
+    if (androidApiLevel !== null && androidApiLevel <= 25) {
+      // Older Android builds struggle to keep up with aggressive auto-scroll animations.
+      return { threshold: 35, speed: 110 };
+    }
+    return { threshold: 50, speed: 200 };
+  }, [androidApiLevel]);
 
   // Header button functions
   const handleAddWord = () => {
@@ -241,6 +258,16 @@ export default function WordListScreen() {
     );
   }, [isEditMode, handleRemoveWord, handleOpenWord, settings.enableEditing]);
 
+  const getItemLayout = React.useCallback((data: any, index: number) => {
+    const tablet = isTablet();
+    const itemHeight = (tablet ? 60 : 50) + 12; // cellHeight + marginBottom
+    return {
+      length: itemHeight,
+      offset: itemHeight * index,
+      index,
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={[...(Platform.OS === 'android' ? ['bottom' as const] : []),'left', 'right']}>
       {isEditMode ? (
@@ -260,8 +287,8 @@ export default function WordListScreen() {
           animationConfig={{
             duration: 150,
           }}
-          autoscrollThreshold={50}
-          autoscrollSpeed={200}
+          autoscrollThreshold={autoscrollSettings.threshold}
+          autoscrollSpeed={autoscrollSettings.speed}
         />
       ) : (
         <FlatList
@@ -284,6 +311,11 @@ export default function WordListScreen() {
             { paddingBottom: insets.bottom + 20 }
           ]}
           showsVerticalScrollIndicator={false}
+          getItemLayout={getItemLayout}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          initialNumToRender={10}
         />
       )}
     </SafeAreaView>
