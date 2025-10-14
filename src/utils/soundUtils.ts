@@ -1,6 +1,31 @@
 import { AudioModule, createAudioPlayer, setAudioModeAsync, setIsAudioActiveAsync } from 'expo-audio';
 import * as Speech from 'expo-speech';
 
+const URI_SCHEME_REGEX = /^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//;
+
+export const normalizeSoundUri = (value: string | null | undefined): string | null => {
+  if (!value) {
+    return null;
+  }
+  if (URI_SCHEME_REGEX.test(value)) {
+    return value;
+  }
+  if (value.startsWith('/')) {
+    return `file://${value}`;
+  }
+  return value;
+};
+
+export const isLikelySoundUri = (value: string | null | undefined): value is string => {
+  if (!value) {
+    return false;
+  }
+  if (value.startsWith('/')) {
+    return true;
+  }
+  return URI_SCHEME_REGEX.test(value);
+};
+
 // Sound mapping for words - using en-GB/child directory for child voices
 export const WORD_SOUNDS: { [key: string]: any } = {
   'ball': require('../../assets/sounds/en-GB/child/ball.m4a'),
@@ -243,14 +268,16 @@ export const playWordAndWait = async (
     return;
   }
 
-  // Local custom file (not an image)
-  if (wordKey.startsWith('file://') && !wordKey.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
+  const normalizedUri = normalizeSoundUri(wordKey);
+
+  // Local or remote custom file (not an image)
+  if (normalizedUri && isLikelySoundUri(normalizedUri) && !normalizedUri.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
     try {
       await stopCurrentSound();
       await stopCurrentSpeech();
       await setIsAudioActiveAsync(true);
 
-      const player = createAudioPlayer({ uri: wordKey }, { keepAudioSessionActive: true });
+      const player = createAudioPlayer({ uri: normalizedUri }, { keepAudioSessionActive: true });
       currentSoundInstance = player;
       const finishedPromise = new Promise<void>((resolve) => {
         const sub = player.addListener('playbackStatusUpdate', (status: any) => {
@@ -343,14 +370,15 @@ export const playWord = async (
     return;
   }
 
-  // Check if it's a custom sound file (file:// URI) and not an image
-  if (wordKey.startsWith('file://') && !wordKey.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
+  // Check if it's a custom sound file (URI or absolute path) and not an image
+  const normalizedUri = normalizeSoundUri(wordKey);
+  if (normalizedUri && isLikelySoundUri(normalizedUri) && !normalizedUri.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i)) {
     try {
       await stopCurrentSound();
       await stopCurrentSpeech();
       await setIsAudioActiveAsync(true);
       
-      const player = createAudioPlayer({ uri: wordKey }, { keepAudioSessionActive: true });
+      const player = createAudioPlayer({ uri: normalizedUri }, { keepAudioSessionActive: true });
       currentSoundInstance = player;
       let attemptedRestart = false;
       player.play();

@@ -9,7 +9,7 @@ import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText, getSFProFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
-import { initializeAudio, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
+import { initializeAudio, isLikelySoundUri, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
 export default function WordEditorScreen() {
   const navigation = useNavigation();
@@ -40,14 +40,9 @@ export default function WordEditorScreen() {
   useEffect(() => {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const existing: any = wordList[editIndex];
-      if (existing?.sound) {
-        // Only set as recordedSoundUri if it's a file URI, not a bundled key
-        const isFileUri = existing.sound.startsWith('file://') || existing.sound.startsWith('http://') || existing.sound.startsWith('https://');
-        if (isFileUri) {
-          setRecordedSoundUri(existing.sound);
-        } else {
-          setRecordedSoundUri(null);
-        }
+      const normalizedSound = normalizeSoundUri(typeof existing?.sound === 'string' ? existing.sound : null);
+      if (normalizedSound && isLikelySoundUri(normalizedSound)) {
+        setRecordedSoundUri(normalizedSound);
       } else {
         setRecordedSoundUri(null);
       }
@@ -118,8 +113,9 @@ export default function WordEditorScreen() {
       if (recorder) {
         await recorder.stop();
         const state = recorder.getStatus();
-        const uri = state.url;
-        if (uri) setRecordedSoundUri(uri);
+        const candidate = typeof recorder.uri === 'string' && recorder.uri ? recorder.uri : (typeof state?.url === 'string' ? state.url : null);
+        const normalized = normalizeSoundUri(candidate);
+        if (normalized) setRecordedSoundUri(normalized);
         setIsRecording(false);
         setRecorder(null);
         await setAudioModeAsync({ allowsRecording: false });
@@ -136,9 +132,9 @@ export default function WordEditorScreen() {
       await setIsAudioActiveAsync(true);
       // First priority: recorded sound (current session)
       if (recordedSoundUri) {
-        const looksLikeUri = recordedSoundUri.startsWith('http') || recordedSoundUri.startsWith('file:');
+        const looksLikeUri = isLikelySoundUri(recordedSoundUri);
         if (looksLikeUri) {
-          const player = createAudioPlayer({ uri: recordedSoundUri }, { keepAudioSessionActive: true });
+          const player = createAudioPlayer({ uri: normalizeSoundUri(recordedSoundUri) || recordedSoundUri }, { keepAudioSessionActive: true });
           player.play();
           const sub = player.addListener('playbackStatusUpdate', (status: any) => {
             if (status?.isLoaded && status?.didJustFinish) {
@@ -159,10 +155,10 @@ export default function WordEditorScreen() {
       if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
         const fromList = wordList[editIndex] as any;
         if (fromList?.sound) {
-          const s = String(fromList.sound);
-          const looksLikeUri = s.startsWith('http') || s.startsWith('file:');
-          if (looksLikeUri) {
-            const player = createAudioPlayer({ uri: s }, { keepAudioSessionActive: true });
+          const rawSound = typeof fromList.sound === 'string' ? fromList.sound : String(fromList.sound);
+          const normalizedFromListSound = normalizeSoundUri(rawSound);
+          if (normalizedFromListSound && isLikelySoundUri(normalizedFromListSound)) {
+            const player = createAudioPlayer({ uri: normalizedFromListSound }, { keepAudioSessionActive: true });
             player.play();
             const sub = player.addListener('playbackStatusUpdate', (status: any) => {
               if (status?.isLoaded && status?.didJustFinish) {
@@ -174,7 +170,8 @@ export default function WordEditorScreen() {
             });
             return;
           } else {
-            await playWord(s, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
+            const fallbackKey = normalizedFromListSound ?? rawSound;
+            await playWord(fallbackKey, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
             return;
           }
         }
@@ -234,11 +231,11 @@ export default function WordEditorScreen() {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const updated = [...wordList];
       const prev: any = updated[editIndex];
-      const newSound = recordedSoundUri ?? prev?.sound ?? null;
+      const newSound = normalizeSoundUri(recordedSoundUri ?? prev?.sound ?? null);
       updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: newSound } as any;
       setWordList(updated);
     } else {
-      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: recordedSoundUri ?? null } as any]);
+      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: normalizeSoundUri(recordedSoundUri) } as any]);
     }
 
     router.back();
@@ -483,4 +480,3 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
