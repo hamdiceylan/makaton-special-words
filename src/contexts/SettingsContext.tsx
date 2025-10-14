@@ -1,11 +1,39 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { words as originalWords } from '../constants/words';
+import { normalizeSoundUri } from '../utils/soundUtils';
 
 interface WordItem {
   image: string;
   text: string;
   sound?: string | null;
+}
+
+function normalizeWordSoundEntry<T extends { sound?: string | null }>(item: T): T {
+  if (!item) {
+    return item;
+  }
+  const currentSound = item.sound ?? null;
+  const normalized = normalizeSoundUri(currentSound);
+  if (normalized === currentSound) {
+    return item;
+  }
+  return {
+    ...item,
+    sound: normalized ?? null,
+  };
+}
+
+function normalizeWordCollection<T extends { sound?: string | null }>(items: T[]): T[] {
+  let changed = false;
+  const normalized = items.map((item) => {
+    const next = normalizeWordSoundEntry(item);
+    if (next !== item) {
+      changed = true;
+    }
+    return next;
+  });
+  return changed ? normalized : items;
 }
 
 interface SettingsContextType {
@@ -80,7 +108,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   });
 
   // Word list management
-  const [wordList, setWordListState] = useState<WordItem[]>(originalWords);
+  const [wordList, setWordListState] = useState<WordItem[]>(normalizeWordCollection(originalWords));
   const [isWordListEdited, setIsWordListEdited] = useState(false);
 
   const toggleSetting = (key: keyof typeof settings) => {
@@ -92,12 +120,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
   // Word list functions
   const setWordList = (words: WordItem[]) => {
-    setWordListState(words);
+    setWordListState(normalizeWordCollection(words));
     setIsWordListEdited(true);
   };
 
   const resetWordList = () => {
-    setWordListState(originalWords);
+    setWordListState(normalizeWordCollection(originalWords));
     setIsWordListEdited(false);
   };
 
@@ -162,7 +190,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
           if (storedWordList) {
             try {
               const parsedWordList = JSON.parse(storedWordList);
-              setWordListState(parsedWordList);
+              if (Array.isArray(parsedWordList)) {
+                setWordListState(normalizeWordCollection(parsedWordList));
+              }
             } catch {}
           }
           if (storedIsWordListEdited) {
