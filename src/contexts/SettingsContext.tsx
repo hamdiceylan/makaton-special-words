@@ -68,6 +68,8 @@ interface SettingsContextType {
   setWordList: (words: WordItem[]) => void;
   resetWordList: () => void;
   isWordListEdited: boolean;
+  shouldScrollToBottom: boolean;
+  setShouldScrollToBottom: (value: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -110,6 +112,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   // Word list management
   const [wordList, setWordListState] = useState<WordItem[]>(normalizeWordCollection(originalWords));
   const [isWordListEdited, setIsWordListEdited] = useState(false);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(false);
 
   const toggleSetting = (key: keyof typeof settings) => {
     setSettings(prev => ({
@@ -317,6 +320,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setWordList,
     resetWordList,
     isWordListEdited,
+    shouldScrollToBottom,
+    setShouldScrollToBottom,
   };
 
   return (

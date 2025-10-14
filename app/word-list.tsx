@@ -91,8 +91,9 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
 export default function WordListScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { settings, wordList, setWordList, resetWordList, isWordListEdited } = useSettings();
+  const { settings, wordList, setWordList, resetWordList, isWordListEdited, shouldScrollToBottom, setShouldScrollToBottom } = useSettings();
   const [isEditMode, setIsEditMode] = useState(false);
+  const flatListRef = React.useRef<FlatList>(null);
 
   const androidApiLevel = React.useMemo(() => {
     if (Platform.OS !== 'android') return null;
@@ -172,6 +173,24 @@ export default function WordListScreen() {
   const handleDragBegin = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
+
+  // Scroll to bottom when shouldScrollToBottom is true
+  useEffect(() => {
+    if (shouldScrollToBottom && flatListRef.current && wordList.length > 0) {
+      // Small delay to ensure list is rendered
+      setTimeout(() => {
+        const tablet = isTablet();
+        const itemHeight = (tablet ? 60 : 50) + 12; // cellHeight + marginBottom
+        const contentHeight = wordList.length * itemHeight;
+        const paddingTop = 21;
+        const paddingBottom = insets.bottom + 20;
+        const totalOffset = contentHeight + paddingTop + paddingBottom;
+        
+        flatListRef.current?.scrollToOffset({ offset: totalOffset, animated: false });
+        setShouldScrollToBottom(false);
+      }, 100);
+    }
+  }, [shouldScrollToBottom, wordList.length, insets.bottom, setShouldScrollToBottom]);
 
   // Add functions to navigation options
   useEffect(() => {
@@ -292,6 +311,7 @@ export default function WordListScreen() {
         />
       ) : (
         <FlatList
+          ref={flatListRef}
           data={wordList}
           renderItem={({ item, index }) => (
             <WordItem 

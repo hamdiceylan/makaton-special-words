@@ -18,7 +18,7 @@ export default function WordEditorScreen() {
   const isEditMode = mode === 'edit';
   const editIndex = useMemo(() => (typeof index === 'string' ? parseInt(index, 10) : undefined), [index]);
 
-  const { wordList, setWordList, settings, locale } = useSettings();
+  const { wordList, setWordList, settings, locale, setShouldScrollToBottom } = useSettings();
 
   const [wordText, setWordText] = useState<string>(isEditMode ? (text as string) ?? '' : '');
   // If adding a new word, start with no image so we can show the upload icon
@@ -188,10 +188,66 @@ export default function WordEditorScreen() {
     } catch (e) {}
   };
 
+  const handleCopy = () => {
+    if (!isEditMode || typeof editIndex !== 'number' || editIndex < 0 || editIndex >= wordList.length) {
+      return;
+    }
+
+    // Copy the current word
+    const wordToCopy = wordList[editIndex] as any;
+    const copiedWord = {
+      image: wordToCopy.image ?? 'ball',
+      text: wordToCopy.text ?? '',
+      sound: normalizeSoundUri(wordToCopy.sound ?? null),
+    };
+
+    // Add to word list
+    setWordList([...wordList, copiedWord]);
+    
+    // Signal to scroll to bottom
+    setShouldScrollToBottom(true);
+    
+    // Go back
+    router.back();
+  };
+
+  const handleSave = () => {
+    const trimmed = wordText.trim();
+    if (!trimmed) {
+      router.back();
+      return;
+    }
+
+    if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
+      const updated = [...wordList];
+      const prev: any = updated[editIndex];
+      const newSound = normalizeSoundUri(recordedSoundUri ?? prev?.sound ?? null);
+      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: newSound } as any;
+      setWordList(updated);
+    } else {
+      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: normalizeSoundUri(recordedSoundUri) } as any]);
+    }
+
+    router.back();
+  };
+
   useEffect(() => {
     navigation.setOptions({
-      title: isEditMode ? 'Edit word' : 'Add new word',
-      headerTitleAlign: 'center', // Align center
+      title: '',
+      headerTitleAlign: 'center',
+      headerTitle: () => (
+        <Pressable
+          onPress={isEditMode ? handleCopy : undefined}
+          disabled={!isEditMode}
+          style={({ pressed }) => ({
+            opacity: !isEditMode ? 0.4 : (pressed ? 0.5 : 1),
+          })}
+        >
+          <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
+            Copy
+          </SFProText>
+        </Pressable>
+      ),
       headerLeft: () => (
         <Pressable
           onPress={() => router.back()}
@@ -220,26 +276,6 @@ export default function WordEditorScreen() {
       ),
     });
   }, [navigation, isEditMode, wordText, imageKey, recordedSoundUri, canSave]);
-
-  const handleSave = () => {
-    const trimmed = wordText.trim();
-    if (!trimmed) {
-      router.back();
-      return;
-    }
-
-    if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
-      const updated = [...wordList];
-      const prev: any = updated[editIndex];
-      const newSound = normalizeSoundUri(recordedSoundUri ?? prev?.sound ?? null);
-      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: newSound } as any;
-      setWordList(updated);
-    } else {
-      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: normalizeSoundUri(recordedSoundUri) } as any]);
-    }
-
-    router.back();
-  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
