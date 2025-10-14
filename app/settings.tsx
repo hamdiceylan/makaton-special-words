@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
-
 const { width: screenWidth } = Dimensions.get('window');
 
 interface SettingItem {
@@ -41,9 +40,8 @@ export default function Settings() {
     shuffleMode,
     setShuffleMode,
     switchCount,
-    setSwitchCount,
+    setSwitchCount
   } = useSettings();
-  
   const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
   const [showShuffleModeModal, setShowShuffleModeModal] = useState(false);
   const [showSwitchCountModal, setShowSwitchCountModal] = useState(false);

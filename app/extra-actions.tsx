@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import React, { useEffect } from 'react';
-import { Alert, Image, Platform, Pressable, StyleSheet, View, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CustomAlertDialog from '../src/components/CustomAlertDialog';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
@@ -58,12 +59,23 @@ export default function ExtraActionsScreen() {
   const navigation = useNavigation();
   const { resetWordList, isWordListEdited } = useSettings();
 
+  const [showParentLockDialog, setShowParentLockDialog] = useState(false);
+
+  const handleParentLock = () => {
+    setShowParentLockDialog(true);
+  };
+
+  const handleSuccess = () => {
+    setShowParentLockDialog(false);
+    router.push("/settings");
+  };
+
   // Set navigation header with settings button
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
-          onPress={() => router.navigate('/settings')}
+          onPress={() => handleParentLock()}
           style={({ pressed }) => ({
             opacity: pressed ? 0.5 : 1,
             marginLeft: Platform.OS === 'ios' && parseInt(Platform.Version as string) >= 26 ? 6 : 0,
@@ -164,6 +176,12 @@ export default function ExtraActionsScreen() {
             />
           </View>
       </ScrollView>
+
+      <CustomAlertDialog
+              visible={showParentLockDialog}
+              onCancel={() => setShowParentLockDialog(false)}
+              onSuccess={handleSuccess}
+      />
     </View>
   );
 }
