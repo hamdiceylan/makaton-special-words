@@ -26,105 +26,139 @@ export const isLikelySoundUri = (value: string | null | undefined): value is str
   return URI_SCHEME_REGEX.test(value);
 };
 
-// Sound mapping for words - using en-GB/child directory for child voices
-export const WORD_SOUNDS: { [key: string]: any } = {
-  'ball': require('../../assets/sounds/en-GB/child/ball.m4a'),
-  'book': require('../../assets/sounds/en-GB/child/book.m4a'),
-  'dolly': require('../../assets/sounds/en-GB/child/dolly.m4a'),
-  'car': require('../../assets/sounds/en-GB/child/car.m4a'),
-  'bird': require('../../assets/sounds/en-GB/child/bird.m4a'),
-  'dog': require('../../assets/sounds/en-GB/child/dog.m4a'),
-  'cat': require('../../assets/sounds/en-GB/child/cat.m4a'),
-  'fish': require('../../assets/sounds/en-GB/child/fish.m4a'),
-  'flower': require('../../assets/sounds/en-GB/child/flower.m4a'),
-  'keys': require('../../assets/sounds/en-GB/child/keys.m4a'),
-  'cup': require('../../assets/sounds/en-GB/child/cup.m4a'),
-  'brush': require('../../assets/sounds/en-GB/child/brush.m4a'),
-  'coat': require('../../assets/sounds/en-GB/child/coat.m4a'),
-  'shoes': require('../../assets/sounds/en-GB/child/shoes.m4a'),
-  'hat': require('../../assets/sounds/en-GB/child/hat.m4a'),
-  'socks': require('../../assets/sounds/en-GB/child/socks.m4a'),
-  'duck': require('../../assets/sounds/en-GB/child/duck.m4a'),
-  'pig': require('../../assets/sounds/en-GB/child/pig.m4a'),
-  'sheep': require('../../assets/sounds/en-GB/child/sheep.m4a'),
-  'cow': require('../../assets/sounds/en-GB/child/cow.m4a'),
-  'apple': require('../../assets/sounds/en-GB/child/apple.m4a'),
-  'banana': require('../../assets/sounds/en-GB/child/banana.m4a'),
-  'biscuit': require('../../assets/sounds/en-GB/child/biscuit.m4a'),
-  'drink': require('../../assets/sounds/en-GB/child/drink.m4a'),
-  'bed': require('../../assets/sounds/en-GB/child/bed.m4a'),
-  'chair': require('../../assets/sounds/en-GB/child/chair.m4a'),
-  'table': require('../../assets/sounds/en-GB/child/table.m4a'),
-  'bath': require('../../assets/sounds/en-GB/child/bath.m4a'),
-  'eyes': require('../../assets/sounds/en-GB/child/eyes.m4a'),
-  'mouth': require('../../assets/sounds/en-GB/child/mouth.m4a'),
-  'hair': require('../../assets/sounds/en-GB/child/hair.m4a'),
-  'nose': require('../../assets/sounds/en-GB/child/nose.m4a'),
-  'spoon': require('../../assets/sounds/en-GB/child/spoon.m4a'),
-  'bag': require('../../assets/sounds/en-GB/child/bag.m4a'),
-  'phone': require('../../assets/sounds/en-GB/child/phone.m4a'),
-  'bricks': require('../../assets/sounds/en-GB/child/bricks.m4a'),
-  'eating': require('../../assets/sounds/en-GB/child/eating.m4a'),
-  'sleeping': require('../../assets/sounds/en-GB/child/sleeping.m4a'),
-  'drinking': require('../../assets/sounds/en-GB/child/drinking.m4a'),
-  'brushing': require('../../assets/sounds/en-GB/child/brushing.m4a'),
-  'sitting': require('../../assets/sounds/en-GB/child/sitting.m4a'),
-  'washing': require('../../assets/sounds/en-GB/child/washing.m4a'),
-  'walking': require('../../assets/sounds/en-GB/child/walking.m4a'),
-  'crying': require('../../assets/sounds/en-GB/child/crying.m4a'),
-  'television': require('../../assets/sounds/en-GB/child/television.m4a'),
-  'light': require('../../assets/sounds/en-GB/child/light.m4a'),
-  'balloon': require('../../assets/sounds/en-GB/child/balloon.m4a'),
-  'box': require('../../assets/sounds/en-GB/child/box.m4a'),
-  'bubbles': require('../../assets/sounds/en-GB/child/bubbles.m4a'),
-  'big': require('../../assets/sounds/en-GB/child/big.m4a'),
-  'splashing': require('../../assets/sounds/en-GB/child/splashing.m4a'),
-  'little': require('../../assets/sounds/en-GB/child/little.m4a'),
-  'garden': require('../../assets/sounds/en-GB/child/garden.m4a'),
-  'star': require('../../assets/sounds/en-GB/child/star.m4a'),
-  'house': require('../../assets/sounds/en-GB/child/house.m4a'),
-  'tree': require('../../assets/sounds/en-GB/child/tree.m4a'),
-  'jumping': require('../../assets/sounds/en-GB/child/jumping.m4a'),
-  'playing': require('../../assets/sounds/en-GB/child/playing.m4a'),
-  'running': require('../../assets/sounds/en-GB/child/running.m4a'),
-  'kissing': require('../../assets/sounds/en-GB/child/kissing.m4a'),
-  'clapping': require('../../assets/sounds/en-GB/child/clapping.m4a'),
-  'reading': require('../../assets/sounds/en-GB/child/reading.m4a'),
-  'cutting': require('../../assets/sounds/en-GB/child/cutting.m4a'),
-  'throwing': require('../../assets/sounds/en-GB/child/throwing.m4a'),
-  'towel': require('../../assets/sounds/en-GB/child/towel.m4a'),
-  'soap': require('../../assets/sounds/en-GB/child/soap.m4a'),
-  'toothbrush': require('../../assets/sounds/en-GB/child/toothbrush.m4a'),
-  'teeth': require('../../assets/sounds/en-GB/child/teeth.m4a'),
-  'bread': require('../../assets/sounds/en-GB/child/bread.m4a'),
-  'dinner': require('../../assets/sounds/en-GB/child/dinner.m4a'),
-  'juice': require('../../assets/sounds/en-GB/child/juice.m4a'),
-  'yogurt': require('../../assets/sounds/en-GB/child/yogurt.m4a'),
-  'chicken': require('../../assets/sounds/en-GB/child/chicken.m4a'),
-  'monkey': require('../../assets/sounds/en-GB/child/monkey.m4a'),
-  'rabbit': require('../../assets/sounds/en-GB/child/rabbit.m4a'),
-  'horse': require('../../assets/sounds/en-GB/child/horse.m4a'),
-  'dress': require('../../assets/sounds/en-GB/child/dress.m4a'),
-  'jumper': require('../../assets/sounds/en-GB/child/jumper.m4a'),
-  'boots': require('../../assets/sounds/en-GB/child/boots.m4a'),
-  'trousers': require('../../assets/sounds/en-GB/child/trousers.m4a'),
-  'foot': require('../../assets/sounds/en-GB/child/foot.m4a'),
-  'tummy': require('../../assets/sounds/en-GB/child/tummy.m4a'),
-  'hand': require('../../assets/sounds/en-GB/child/hand.m4a'),
-  'ear': require('../../assets/sounds/en-GB/child/ear.m4a'),
-  'up': require('../../assets/sounds/en-GB/child/up.m4a'),
-  'down': require('../../assets/sounds/en-GB/child/down.m4a'),
-  'swing': require('../../assets/sounds/en-GB/child/swing.m4a'),
-  'bike': require('../../assets/sounds/en-GB/child/bike.m4a'),
-  'boat': require('../../assets/sounds/en-GB/child/boat.m4a'),
-  'bus': require('../../assets/sounds/en-GB/child/bus.m4a'),
-  'aeroplane': require('../../assets/sounds/en-GB/child/aeroplane.m4a'),
-  'train': require('../../assets/sounds/en-GB/child/train.m4a'),
-  'wet': require('../../assets/sounds/en-GB/child/wet.m4a'),
-  'dirty': require('../../assets/sounds/en-GB/child/dirty.m4a'),
-  'hot': require('../../assets/sounds/en-GB/child/hot.m4a'),
-  'cold': require('../../assets/sounds/en-GB/child/cold.m4a'),
+// Base sound mappings - React Native requires static paths
+// Using a single object to avoid repetition
+const SOUND_FILES = {
+  ball: { enGB: require('../../assets/sounds/en-GB/child/ball.m4a'), tr: require('../../assets/sounds/tr/ball.m4a') },
+  book: { enGB: require('../../assets/sounds/en-GB/child/book.m4a'), tr: require('../../assets/sounds/tr/book.m4a') },
+  dolly: { enGB: require('../../assets/sounds/en-GB/child/dolly.m4a'), tr: require('../../assets/sounds/tr/dolly.m4a') },
+  car: { enGB: require('../../assets/sounds/en-GB/child/car.m4a'), tr: require('../../assets/sounds/tr/car.m4a') },
+  bird: { enGB: require('../../assets/sounds/en-GB/child/bird.m4a'), tr: require('../../assets/sounds/tr/bird.m4a') },
+  dog: { enGB: require('../../assets/sounds/en-GB/child/dog.m4a'), tr: require('../../assets/sounds/tr/dog.m4a') },
+  cat: { enGB: require('../../assets/sounds/en-GB/child/cat.m4a'), tr: require('../../assets/sounds/tr/cat.m4a') },
+  fish: { enGB: require('../../assets/sounds/en-GB/child/fish.m4a'), tr: require('../../assets/sounds/tr/fish.m4a') },
+  flower: { enGB: require('../../assets/sounds/en-GB/child/flower.m4a'), tr: require('../../assets/sounds/tr/flower.m4a') },
+  keys: { enGB: require('../../assets/sounds/en-GB/child/keys.m4a'), tr: require('../../assets/sounds/tr/keys.m4a') },
+  cup: { enGB: require('../../assets/sounds/en-GB/child/cup.m4a'), tr: require('../../assets/sounds/tr/cup.m4a') },
+  brush: { enGB: require('../../assets/sounds/en-GB/child/brush.m4a'), tr: require('../../assets/sounds/tr/brush.m4a') },
+  coat: { enGB: require('../../assets/sounds/en-GB/child/coat.m4a'), tr: require('../../assets/sounds/tr/coat.m4a') },
+  shoes: { enGB: require('../../assets/sounds/en-GB/child/shoes.m4a'), tr: require('../../assets/sounds/tr/shoes.m4a') },
+  hat: { enGB: require('../../assets/sounds/en-GB/child/hat.m4a'), tr: require('../../assets/sounds/tr/hat.m4a') },
+  socks: { enGB: require('../../assets/sounds/en-GB/child/socks.m4a'), tr: require('../../assets/sounds/tr/socks.m4a') },
+  duck: { enGB: require('../../assets/sounds/en-GB/child/duck.m4a'), tr: require('../../assets/sounds/tr/duck.m4a') },
+  pig: { enGB: require('../../assets/sounds/en-GB/child/pig.m4a'), tr: require('../../assets/sounds/tr/pig.m4a') },
+  sheep: { enGB: require('../../assets/sounds/en-GB/child/sheep.m4a'), tr: require('../../assets/sounds/tr/sheep.m4a') },
+  cow: { enGB: require('../../assets/sounds/en-GB/child/cow.m4a'), tr: require('../../assets/sounds/tr/cow.m4a') },
+  apple: { enGB: require('../../assets/sounds/en-GB/child/apple.m4a'), tr: require('../../assets/sounds/tr/apple.m4a') },
+  banana: { enGB: require('../../assets/sounds/en-GB/child/banana.m4a'), tr: require('../../assets/sounds/tr/banana.m4a') },
+  biscuit: { enGB: require('../../assets/sounds/en-GB/child/biscuit.m4a'), tr: require('../../assets/sounds/tr/biscuit.m4a') },
+  drink: { enGB: require('../../assets/sounds/en-GB/child/drink.m4a'), tr: require('../../assets/sounds/tr/drink.m4a') },
+  bed: { enGB: require('../../assets/sounds/en-GB/child/bed.m4a'), tr: require('../../assets/sounds/tr/bed.m4a') },
+  chair: { enGB: require('../../assets/sounds/en-GB/child/chair.m4a'), tr: require('../../assets/sounds/tr/chair.m4a') },
+  table: { enGB: require('../../assets/sounds/en-GB/child/table.m4a'), tr: require('../../assets/sounds/tr/table.m4a') },
+  bath: { enGB: require('../../assets/sounds/en-GB/child/bath.m4a'), tr: require('../../assets/sounds/tr/bath.m4a') },
+  eyes: { enGB: require('../../assets/sounds/en-GB/child/eyes.m4a'), tr: require('../../assets/sounds/tr/eyes.m4a') },
+  mouth: { enGB: require('../../assets/sounds/en-GB/child/mouth.m4a'), tr: require('../../assets/sounds/tr/mouth.m4a') },
+  hair: { enGB: require('../../assets/sounds/en-GB/child/hair.m4a'), tr: require('../../assets/sounds/tr/hair.m4a') },
+  nose: { enGB: require('../../assets/sounds/en-GB/child/nose.m4a'), tr: require('../../assets/sounds/tr/nose.m4a') },
+  spoon: { enGB: require('../../assets/sounds/en-GB/child/spoon.m4a'), tr: require('../../assets/sounds/tr/spoon.m4a') },
+  bag: { enGB: require('../../assets/sounds/en-GB/child/bag.m4a'), tr: require('../../assets/sounds/tr/bag.m4a') },
+  phone: { enGB: require('../../assets/sounds/en-GB/child/phone.m4a'), tr: require('../../assets/sounds/tr/phone.m4a') },
+  bricks: { enGB: require('../../assets/sounds/en-GB/child/bricks.m4a'), tr: require('../../assets/sounds/tr/bricks.m4a') },
+  eating: { enGB: require('../../assets/sounds/en-GB/child/eating.m4a'), tr: require('../../assets/sounds/tr/eating.m4a') },
+  sleeping: { enGB: require('../../assets/sounds/en-GB/child/sleeping.m4a'), tr: require('../../assets/sounds/tr/sleeping.m4a') },
+  drinking: { enGB: require('../../assets/sounds/en-GB/child/drinking.m4a'), tr: require('../../assets/sounds/tr/drinking.m4a') },
+  brushing: { enGB: require('../../assets/sounds/en-GB/child/brushing.m4a'), tr: require('../../assets/sounds/tr/brushing.m4a') },
+  sitting: { enGB: require('../../assets/sounds/en-GB/child/sitting.m4a'), tr: require('../../assets/sounds/tr/sitting.m4a') },
+  washing: { enGB: require('../../assets/sounds/en-GB/child/washing.m4a'), tr: require('../../assets/sounds/tr/washing.m4a') },
+  walking: { enGB: require('../../assets/sounds/en-GB/child/walking.m4a'), tr: require('../../assets/sounds/tr/walking.m4a') },
+  crying: { enGB: require('../../assets/sounds/en-GB/child/crying.m4a'), tr: require('../../assets/sounds/tr/crying.m4a') },
+  television: { enGB: require('../../assets/sounds/en-GB/child/television.m4a'), tr: require('../../assets/sounds/tr/television.m4a') },
+  light: { enGB: require('../../assets/sounds/en-GB/child/light.m4a'), tr: require('../../assets/sounds/tr/light.m4a') },
+  balloon: { enGB: require('../../assets/sounds/en-GB/child/balloon.m4a'), tr: require('../../assets/sounds/tr/balloon.m4a') },
+  box: { enGB: require('../../assets/sounds/en-GB/child/box.m4a'), tr: require('../../assets/sounds/tr/box.m4a') },
+  bubbles: { enGB: require('../../assets/sounds/en-GB/child/bubbles.m4a'), tr: require('../../assets/sounds/tr/bubbles.m4a') },
+  big: { enGB: require('../../assets/sounds/en-GB/child/big.m4a'), tr: require('../../assets/sounds/tr/big.m4a') },
+  splashing: { enGB: require('../../assets/sounds/en-GB/child/splashing.m4a'), tr: require('../../assets/sounds/tr/splashing.m4a') },
+  little: { enGB: require('../../assets/sounds/en-GB/child/little.m4a'), tr: require('../../assets/sounds/tr/little.m4a') },
+  garden: { enGB: require('../../assets/sounds/en-GB/child/garden.m4a'), tr: require('../../assets/sounds/tr/garden.m4a') },
+  star: { enGB: require('../../assets/sounds/en-GB/child/star.m4a'), tr: require('../../assets/sounds/tr/star.m4a') },
+  house: { enGB: require('../../assets/sounds/en-GB/child/house.m4a'), tr: require('../../assets/sounds/tr/house.m4a') },
+  tree: { enGB: require('../../assets/sounds/en-GB/child/tree.m4a'), tr: require('../../assets/sounds/tr/tree.m4a') },
+  jumping: { enGB: require('../../assets/sounds/en-GB/child/jumping.m4a'), tr: require('../../assets/sounds/tr/jumping.m4a') },
+  playing: { enGB: require('../../assets/sounds/en-GB/child/playing.m4a'), tr: require('../../assets/sounds/tr/playing.m4a') },
+  running: { enGB: require('../../assets/sounds/en-GB/child/running.m4a'), tr: require('../../assets/sounds/tr/running.m4a') },
+  kissing: { enGB: require('../../assets/sounds/en-GB/child/kissing.m4a'), tr: require('../../assets/sounds/tr/kissing.m4a') },
+  clapping: { enGB: require('../../assets/sounds/en-GB/child/clapping.m4a'), tr: require('../../assets/sounds/tr/clapping.m4a') },
+  reading: { enGB: require('../../assets/sounds/en-GB/child/reading.m4a'), tr: require('../../assets/sounds/tr/reading.m4a') },
+  cutting: { enGB: require('../../assets/sounds/en-GB/child/cutting.m4a'), tr: require('../../assets/sounds/tr/cutting.m4a') },
+  throwing: { enGB: require('../../assets/sounds/en-GB/child/throwing.m4a'), tr: require('../../assets/sounds/tr/throwing.m4a') },
+  towel: { enGB: require('../../assets/sounds/en-GB/child/towel.m4a'), tr: require('../../assets/sounds/tr/towel.m4a') },
+  soap: { enGB: require('../../assets/sounds/en-GB/child/soap.m4a'), tr: require('../../assets/sounds/tr/soap.m4a') },
+  toothbrush: { enGB: require('../../assets/sounds/en-GB/child/toothbrush.m4a'), tr: require('../../assets/sounds/tr/toothbrush.m4a') },
+  teeth: { enGB: require('../../assets/sounds/en-GB/child/teeth.m4a'), tr: require('../../assets/sounds/tr/teeth.m4a') },
+  bread: { enGB: require('../../assets/sounds/en-GB/child/bread.m4a'), tr: require('../../assets/sounds/tr/bread.m4a') },
+  dinner: { enGB: require('../../assets/sounds/en-GB/child/dinner.m4a'), tr: require('../../assets/sounds/tr/dinner.m4a') },
+  juice: { enGB: require('../../assets/sounds/en-GB/child/juice.m4a'), tr: require('../../assets/sounds/tr/juice.m4a') },
+  yogurt: { enGB: require('../../assets/sounds/en-GB/child/yogurt.m4a'), tr: require('../../assets/sounds/tr/yogurt.m4a') },
+  chicken: { enGB: require('../../assets/sounds/en-GB/child/chicken.m4a'), tr: require('../../assets/sounds/tr/chicken.m4a') },
+  monkey: { enGB: require('../../assets/sounds/en-GB/child/monkey.m4a'), tr: require('../../assets/sounds/tr/monkey.m4a') },
+  rabbit: { enGB: require('../../assets/sounds/en-GB/child/rabbit.m4a'), tr: require('../../assets/sounds/tr/rabbit.m4a') },
+  horse: { enGB: require('../../assets/sounds/en-GB/child/horse.m4a'), tr: require('../../assets/sounds/tr/horse.m4a') },
+  dress: { enGB: require('../../assets/sounds/en-GB/child/dress.m4a'), tr: require('../../assets/sounds/tr/dress.m4a') },
+  jumper: { enGB: require('../../assets/sounds/en-GB/child/jumper.m4a'), tr: require('../../assets/sounds/tr/jumper.m4a') },
+  boots: { enGB: require('../../assets/sounds/en-GB/child/boots.m4a'), tr: require('../../assets/sounds/tr/boots.m4a') },
+  trousers: { enGB: require('../../assets/sounds/en-GB/child/trousers.m4a'), tr: require('../../assets/sounds/tr/trousers.m4a') },
+  foot: { enGB: require('../../assets/sounds/en-GB/child/foot.m4a'), tr: require('../../assets/sounds/tr/foot.m4a') },
+  tummy: { enGB: require('../../assets/sounds/en-GB/child/tummy.m4a'), tr: require('../../assets/sounds/tr/tummy.m4a') },
+  hand: { enGB: require('../../assets/sounds/en-GB/child/hand.m4a'), tr: require('../../assets/sounds/tr/hand.m4a') },
+  ear: { enGB: require('../../assets/sounds/en-GB/child/ear.m4a'), tr: require('../../assets/sounds/tr/ear.m4a') },
+  up: { enGB: require('../../assets/sounds/en-GB/child/up.m4a'), tr: require('../../assets/sounds/tr/up.m4a') },
+  down: { enGB: require('../../assets/sounds/en-GB/child/down.m4a'), tr: require('../../assets/sounds/tr/down.m4a') },
+  swing: { enGB: require('../../assets/sounds/en-GB/child/swing.m4a'), tr: require('../../assets/sounds/tr/swing.m4a') },
+  bike: { enGB: require('../../assets/sounds/en-GB/child/bike.m4a'), tr: require('../../assets/sounds/tr/bike.m4a') },
+  boat: { enGB: require('../../assets/sounds/en-GB/child/boat.m4a'), tr: require('../../assets/sounds/tr/boat.m4a') },
+  bus: { enGB: require('../../assets/sounds/en-GB/child/bus.m4a'), tr: require('../../assets/sounds/tr/bus.m4a') },
+  aeroplane: { enGB: require('../../assets/sounds/en-GB/child/aeroplane.m4a'), tr: require('../../assets/sounds/tr/aeroplane.m4a') },
+  train: { enGB: require('../../assets/sounds/en-GB/child/train.m4a'), tr: require('../../assets/sounds/tr/train.m4a') },
+  wet: { enGB: require('../../assets/sounds/en-GB/child/wet.m4a'), tr: require('../../assets/sounds/tr/wet.m4a') },
+  dirty: { enGB: require('../../assets/sounds/en-GB/child/dirty.m4a'), tr: require('../../assets/sounds/tr/dirty.m4a') },
+  hot: { enGB: require('../../assets/sounds/en-GB/child/hot.m4a'), tr: require('../../assets/sounds/tr/hot.m4a') },
+  cold: { enGB: require('../../assets/sounds/en-GB/child/cold.m4a'), tr: require('../../assets/sounds/tr/cold.m4a') },
 };
+
+// Extract locale-specific mappings
+const EN_GB_SOUNDS: { [key: string]: any } = {};
+const TR_SOUNDS: { [key: string]: any } = {};
+
+Object.entries(SOUND_FILES).forEach(([word, sounds]) => {
+  EN_GB_SOUNDS[word] = sounds.enGB;
+  TR_SOUNDS[word] = sounds.tr;
+});
+
+/**
+ * Get sound mapping for a specific locale
+ * @param locale - The locale code (e.g., 'en-GB', 'tr', 'en')
+ * @returns Sound mapping for the locale, or default (en-GB) if not found
+ */
+export const getWordSounds = (locale?: string): { [key: string]: any } => {
+  if (!locale) return EN_GB_SOUNDS;
+  
+  // Exact match
+  if (locale === 'tr') return TR_SOUNDS;
+  if (locale === 'en-GB') return EN_GB_SOUNDS;
+  
+  // Language code match (e.g., 'en' -> 'en-GB')
+  const langCode = locale.split('-')[0];
+  if (langCode === 'tr') return TR_SOUNDS;
+  if (langCode === 'en') return EN_GB_SOUNDS;
+  
+  // Default fallback
+  return EN_GB_SOUNDS;
+};
+
+// Legacy export for backward compatibility
+export const WORD_SOUNDS = EN_GB_SOUNDS;
 
 // Reward sound for successful matches
 export const REWARD_SOUND = require('../../assets/sounds/_Reward_.m4a');
@@ -196,17 +230,19 @@ export const stopCurrentSpeech = async () => {
 /**
  * Play a word sound
  * @param wordKey - The word key (e.g., 'ball', 'cat')
+ * @param locale - Optional locale for sound selection
  */
-export const playWordSound = async (wordKey: string) => {
+export const playWordSound = async (wordKey: string, locale?: string) => {
   try {
     // Stop any currently playing sound
     await stopCurrentSound();
     await stopCurrentSpeech();
     await setIsAudioActiveAsync(true);
 
-    const soundSource = WORD_SOUNDS[wordKey];
+    const wordSounds = getWordSounds(locale);
+    const soundSource = wordSounds[wordKey];
     if (!soundSource) {
-      console.warn(`No sound found for word: ${wordKey}`);
+      console.warn(`No sound found for word: ${wordKey} in locale: ${locale}`);
       return;
     }
 
@@ -298,12 +334,13 @@ export const playWordAndWait = async (
   }
 
   // Bundled recording
-  if (WORD_SOUNDS[wordKey]) {
+  const wordSounds = getWordSounds(options?.locale);
+  if (wordSounds[wordKey]) {
     try {
       await stopCurrentSound();
       await stopCurrentSpeech();
       await setIsAudioActiveAsync(true);
-      const player = createAudioPlayer(WORD_SOUNDS[wordKey], { keepAudioSessionActive: true });
+      const player = createAudioPlayer(wordSounds[wordKey], { keepAudioSessionActive: true });
       currentSoundInstance = player;
       const finishedPromise = new Promise<void>((resolve) => {
         const sub = player.addListener('playbackStatusUpdate', (status: any) => {
@@ -416,9 +453,10 @@ export const playWord = async (
   }
 
   // Check for bundled sound
-  const hasRecording = Boolean(WORD_SOUNDS[wordKey]);
+  const wordSounds = getWordSounds(options?.locale);
+  const hasRecording = Boolean(wordSounds[wordKey]);
   if (hasRecording) {
-    await playWordSound(wordKey);
+    await playWordSound(wordKey, options?.locale);
     return;
   }
   

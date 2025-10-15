@@ -3,15 +3,19 @@ import { AudioModule, RecordingPresets, createAudioPlayer, requestRecordingPermi
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, Keyboard, Platform, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
+import { useWordTranslation } from '../src/hooks/useWordTranslation';
 import { SFProText, getSFProFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
 import { initializeAudio, isLikelySoundUri, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
 export default function WordEditorScreen() {
+  const { t, i18n } = useTranslation();
+  const { getTranslatedWord, updateWordTranslation, currentLocale } = useWordTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { mode, index, text, image } = useLocalSearchParams<{ mode?: string; index?: string; text?: string; image?: string }>();
@@ -20,7 +24,25 @@ export default function WordEditorScreen() {
 
   const { wordList, setWordList, settings, locale, setShouldScrollToBottom } = useSettings();
 
-  const [wordText, setWordText] = useState<string>(isEditMode ? (text as string) ?? '' : '');
+  // Get initial values for edit mode
+  const getInitialValues = () => {
+    if (!isEditMode || typeof editIndex !== 'number' || editIndex < 0 || editIndex >= wordList.length) {
+      return { displayText: '', originalText: '' };
+    }
+    
+    const wordItem = wordList[editIndex] as any;
+    const displayText = getTranslatedWord(wordItem);
+    
+    return {
+      displayText,
+      originalText: wordItem.text
+    };
+  };
+
+  const initialValues = useMemo(() => getInitialValues(), [isEditMode, editIndex, wordList, currentLocale]);
+
+  const [wordText, setWordText] = useState<string>(initialValues.displayText);
+  const [originalText] = useState<string>(initialValues.originalText);
   // If adding a new word, start with no image so we can show the upload icon
   const [imageKey, setImageKey] = useState<string | null>(
     isEditMode ? ((image as string) ?? 'ball') : null
@@ -222,10 +244,22 @@ export default function WordEditorScreen() {
       const updated = [...wordList];
       const prev: any = updated[editIndex];
       const newSound = normalizeSoundUri(recordedSoundUri ?? prev?.sound ?? null);
-      updated[editIndex] = { image: imageKey ?? 'ball', text: trimmed, sound: newSound } as any;
+      
+      updated[editIndex] = { 
+        image: imageKey ?? prev.image ?? 'ball', 
+        text: prev.text, // Keep original key
+        sound: newSound,
+        translations: updateWordTranslation(prev, trimmed)
+      } as any;
       setWordList(updated);
     } else {
-      setWordList([...wordList, { image: imageKey ?? 'ball', text: trimmed, sound: normalizeSoundUri(recordedSoundUri) } as any]);
+      // New word - save with current locale as default
+      setWordList([...wordList, { 
+        image: imageKey ?? 'ball', 
+        text: trimmed, 
+        sound: normalizeSoundUri(recordedSoundUri),
+        translations: undefined
+      } as any]);
     }
 
     router.back();
@@ -244,7 +278,7 @@ export default function WordEditorScreen() {
           })}
         >
           <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
-            Copy
+            {t('buttons.copy')}
           </SFProText>
         </Pressable>
       ),
@@ -257,7 +291,7 @@ export default function WordEditorScreen() {
           })}
         >
           <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
-            Cancel
+            {t('buttons.cancel')}
           </SFProText>
         </Pressable>
       ),
@@ -270,7 +304,7 @@ export default function WordEditorScreen() {
           })}
         >
           <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
-            Save
+            {t('buttons.save')}
           </SFProText>
         </Pressable>
       ),
@@ -285,26 +319,26 @@ export default function WordEditorScreen() {
             <View style={styles.landscapeRow}>
               <View style={styles.landCol}>
                 <View style={styles.group}>
-                  <SFProText weight="semibold" style={styles.label}>Word</SFProText>
+                  <SFProText weight="semibold" style={styles.label}>{t('wordEditor.word')}</SFProText>
                   <TextInput
                     value={wordText}
                     onChangeText={setWordText}
-                    placeholder="Type here"
+                    placeholder={t('wordEditor.typeHere')}
                     placeholderTextColor="#757575"
                     style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
                   />
                 </View>
                 {settings?.recordNewSounds && (
                   <View style={styles.group}>
-                    <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                    <SFProText weight="medium" style={styles.label}>{t('wordEditor.sound')}</SFProText>
                     <View style={[styles.row, !onTablet && styles.rowPhone]}>
                       <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={isRecording ? stopRecording : startRecording}>
                         <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                        <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
+                        <SFProText weight="semibold" style={styles.actionText}>{isRecording ? t('wordEditor.stop') : t('wordEditor.record')}</SFProText>
                       </Pressable>
                       <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone]} onPress={playRecorded}>
                         <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
-                        <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                        <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.play')}</SFProText>
                       </Pressable>
                     </View>
                   </View>
@@ -312,7 +346,7 @@ export default function WordEditorScreen() {
               </View>
               <View style={styles.landCol}>
                 <View style={styles.group}>
-                  <SFProText weight="semibold" style={styles.label}>Picture</SFProText>
+                  <SFProText weight="semibold" style={styles.label}>{t('wordEditor.picture')}</SFProText>
                 <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone, onTablet && styles.imageBoxTablet]}>
                   {imageKey ? (
                     <Image
@@ -329,11 +363,11 @@ export default function WordEditorScreen() {
                   <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
                     <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={pickFromGallery}>
                       <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
+                      <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.gallery')}</SFProText>
                     </Pressable>
                     <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={takePhoto}>
                       <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
+                      <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.camera')}</SFProText>
                     </Pressable>
                   </View>
                 </View>
@@ -342,18 +376,18 @@ export default function WordEditorScreen() {
           ) : (
             <>
               <View style={styles.group}>
-                <SFProText weight="semibold" style={styles.label}>Word</SFProText>
+                <SFProText weight="semibold" style={styles.label}>{t('wordEditor.word')}</SFProText>
                 <TextInput
                   value={wordText}
                   onChangeText={setWordText}
-                  placeholder="Type here"
+                  placeholder={t('wordEditor.typeHere')}
                   placeholderTextColor="#757575"
                   style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
                 />
               </View>
 
               <View style={[styles.group, onTablet && styles.groupTablet]}>
-                <SFProText weight="semibold" style={styles.label}>Picture</SFProText>
+                <SFProText weight="semibold" style={styles.label}>{t('wordEditor.picture')}</SFProText>
                 <View style={[styles.imageBox, !onTablet && styles.imageBoxPhone, onTablet && styles.imageBoxTablet]}>
                   {imageKey ? (
                     <Image
@@ -370,26 +404,26 @@ export default function WordEditorScreen() {
                 <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
                   <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={pickFromGallery}>
                     <Image source={require('../assets/images/gallery-icon.png')} style={styles.actionIcon} />
-                    <SFProText weight="semibold" style={styles.actionText}>Gallery</SFProText>
+                    <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.gallery')}</SFProText>
                   </Pressable>
                   <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={takePhoto}>
                     <Image source={require('../assets/images/camera-icon.png')} style={styles.actionIcon} />
-                    <SFProText weight="semibold" style={styles.actionText}>Camera</SFProText>
+                    <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.camera')}</SFProText>
                   </Pressable>
                 </View>
               </View>
 
               {settings?.recordNewSounds && (
                 <View style={styles.group}>
-                  <SFProText weight="medium" style={styles.label}>Sound</SFProText>
+                  <SFProText weight="medium" style={styles.label}>{t('wordEditor.sound')}</SFProText>
                   <View style={[styles.row, !onTablet && styles.rowPhone, onTablet && styles.rowTablet]}>
                     <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={isRecording ? stopRecording : startRecording}>
                       <Image source={require('../assets/images/record-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>{isRecording ? 'Stop' : 'Record'}</SFProText>
+                      <SFProText weight="semibold" style={styles.actionText}>{isRecording ? t('wordEditor.stop') : t('wordEditor.record')}</SFProText>
                     </Pressable>
                     <Pressable style={[styles.actionBtn, !onTablet && styles.actionBtnPhone, onTablet && styles.actionBtnTablet]} onPress={playRecorded}>
                       <Image source={require('../assets/images/play-icon.png')} style={styles.actionIcon} />
-                      <SFProText weight="semibold" style={styles.actionText}>Play</SFProText>
+                      <SFProText weight="semibold" style={styles.actionText}>{t('wordEditor.play')}</SFProText>
                     </Pressable>
                   </View>
                 </View>

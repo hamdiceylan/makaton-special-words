@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Localization from 'expo-localization';
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { words as originalWords } from '../constants/words';
 import { normalizeSoundUri } from '../utils/soundUtils';
@@ -7,6 +8,7 @@ interface WordItem {
   image: string;
   text: string;
   sound?: string | null;
+  translations?: { [locale: string]: string };
 }
 
 function normalizeWordSoundEntry<T extends { sound?: string | null }>(item: T): T {
@@ -86,12 +88,29 @@ interface SettingsProviderProps {
   children: ReactNode;
 }
 
+// Helper to map i18n language code to sound locale
+const mapLanguageToSoundLocale = (languageCode: string): string => {
+  switch (languageCode) {
+    case 'tr':
+      return 'tr';
+    case 'en':
+    default:
+      return 'en-GB';
+  }
+};
+
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
   // Profiles: default to "profile1"; can be expanded with real profiles later
   const [profileId, setProfileId] = useState('profile1');
 
+  // Get device locale on mount
+  const deviceLanguage = useMemo(() => {
+    const langCode = Localization.getLocales()[0]?.languageCode || 'en';
+    return mapLanguageToSoundLocale(langCode);
+  }, []);
+
   // Per-profile, persisted fields
-  const [locale, setLocale] = useState('en-GB');
+  const [locale, setLocale] = useState(deviceLanguage);
   const [cardsPerPage, setCardsPerPage] = useState(4);
   const [shuffleMode, setShuffleMode] = useState<'off' | 'page' | 'all'>('off');
   const [animationSpeed, internalSetAnimationSpeed] = useState(0.5);
@@ -133,8 +152,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   };
 
   // Namespaced storage keys per profile
+  // Note: locale is NOT persisted - always use device language
   const storageKeys = useMemo(() => ({
-    locale: `settings:${profileId}:locale`,
     animationSpeed: `settings:${profileId}:animationSpeed`,
     cardsPerPage: `settings:${profileId}:cardsPerPage`,
     shuffleMode: `settings:${profileId}:shuffleMode`,
@@ -149,8 +168,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     let cancelled = false;
     (async () => {
       try {
-        const [storedLocale, storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedSwitchCount, storedFlags, storedWordList, storedIsWordListEdited] = await Promise.all([
-          AsyncStorage.getItem(storageKeys.locale),
+        const [storedAnimationSpeed, storedCardsPerPage, storedShuffleMode, storedSwitchCount, storedFlags, storedWordList, storedIsWordListEdited] = await Promise.all([
           AsyncStorage.getItem(storageKeys.animationSpeed),
           AsyncStorage.getItem(storageKeys.cardsPerPage),
           AsyncStorage.getItem(storageKeys.shuffleMode),
@@ -160,7 +178,9 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
           AsyncStorage.getItem(storageKeys.isWordListEdited),
         ]);
         if (!cancelled) {
-          if (storedLocale) setLocale(storedLocale);
+          // Always use device language - don't persist locale
+          // This ensures the app language always matches the device language
+          setLocale(deviceLanguage);
           if (storedAnimationSpeed) {
             const parsed = parseFloat(storedAnimationSpeed);
             if (!Number.isNaN(parsed)) {
@@ -209,17 +229,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     return () => { cancelled = true; };
   }, [storageKeys]);
 
-  // Persist locale when it changes for the active profile
-  useEffect(() => {
-    (async () => {
-      try {
-        await AsyncStorage.setItem(storageKeys.locale, locale);
-      } catch (error) {
-        // ignore
-      }
-    })();
-  }, [locale, storageKeys]);
-
+  // Note: locale is NOT persisted - always use device language
+  
   // Persist animationSpeed per profile when it changes
   useEffect(() => {
     (async () => {

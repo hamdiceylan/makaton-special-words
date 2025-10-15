@@ -2,14 +2,17 @@ import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Image, Platform, Pressable, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomAlertDialog from '../src/components/CustomAlertDialog';
 import { SettingsProvider } from '../src/contexts/SettingsContext';
+import '../src/i18n/i18n';
 import { JostText } from '../src/theme/typography';
 
 function RootLayoutContent() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
 
   const handleParentLock = () => {
@@ -48,7 +51,7 @@ function RootLayoutContent() {
                   color: '#000',
                 }}
               >
-                Special Words
+                {t('app.name')}
               </JostText>
             ),
             headerRight: () => (
@@ -209,7 +212,7 @@ function RootLayoutContent() {
         <Stack.Screen
           name="word-list"
           options={{
-            title: 'Word List',
+            title: t('tabs.wordList'),
             headerTitleAlign: 'center',
             headerTintColor: '#4664CD',
             headerTitleStyle: {
@@ -223,7 +226,7 @@ function RootLayoutContent() {
         <Stack.Screen
           name="settings"
           options={{
-            title: 'Settings',
+            title: t('buttons.settings'),
             headerTitleAlign: 'center',
             headerTintColor: '#4664CD',
             headerTitleStyle: {
@@ -236,7 +239,7 @@ function RootLayoutContent() {
                 onPress={() => router.back()}
                 style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
               >
-                <Text style={{ color: '#4664CD', fontSize: 16 }}>Close</Text>
+                <Text style={{ color: '#4664CD', fontSize: 16 }}>{t('buttons.close')}</Text>
               </Pressable>
             ),
           }}
@@ -245,7 +248,7 @@ function RootLayoutContent() {
         <Stack.Screen
           name="extra-actions"
           options={{
-            title: 'Extra Actions',
+            title: t('extraActions.title'),
             headerTitleAlign: 'center',
             headerTintColor: '#4664CD',
             headerTitleStyle: {
@@ -258,7 +261,7 @@ function RootLayoutContent() {
                 onPress={() => router.back()}
                 style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1 })}
               >
-                <Text style={{ color: '#4664CD', fontSize: 16 }}>Back</Text>
+                <Text style={{ color: '#4664CD', fontSize: 16 }}>{t('buttons.back')}</Text>
               </Pressable>
             ),
             headerRight: () => (

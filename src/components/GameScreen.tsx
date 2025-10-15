@@ -1,22 +1,24 @@
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-    Alert,
-    Animated,
-    BackHandler,
-    Dimensions,
-    Easing,
-    Image,
-    LayoutChangeEvent,
-    PanResponder,
-    Platform,
-    StyleSheet,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  BackHandler,
+  Dimensions,
+  Easing,
+  Image,
+  LayoutChangeEvent,
+  PanResponder,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../contexts/SettingsContext';
 import { useSwitchControl } from '../hooks/useSwitchControl';
+import { useWordTranslation } from '../hooks/useWordTranslation';
 import { SFProText } from '../theme/typography';
 import { GAME_CONFIGS, GameType } from '../types/gameTypes';
 import { createFlipAnimations, createShakeAnimation, createShakeTransform, use2DAnimations } from '../utils/animationUtils';
@@ -33,6 +35,7 @@ interface GameCard {
   text: string;
   sound?: string;
   isMatched: boolean;
+  translations?: { [locale: string]: string };
 }
 
 interface GameState {
@@ -52,6 +55,8 @@ interface GameScreenProps {
 }
 
 export default function GameScreen({ gameType }: GameScreenProps) {
+  const { t } = useTranslation();
+  const { getTranslatedWord } = useWordTranslation();
   const config = GAME_CONFIGS[gameType];
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -236,6 +241,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         text: w.text,
         sound: w.sound || undefined,
         isMatched: false,
+        translations: (w as any).translations,
       }));
 
       const indices = staticCards.map((_, i) => i);
@@ -271,6 +277,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       text: target.text,
       sound: target.sound,
       isMatched: false,
+      translations: target.translations,
     };
 
     setGameState(prev => ({
@@ -792,10 +799,11 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const isAtStart = gameState.currentGroupStart === 0;
   const isAtEnd = gameState.currentGroupStart + cardsPerPage >= wordList.length;
 
-  const handleLockPress = () => Alert.alert('Info', 'Kilitlemek için 3 saniye basılı tut.');
+  const handleLockPress = () => Alert.alert(t('help.padlock'), t('help.padlock'));
   const handleLockLongPress = () => setIsLocked(p => !p);
   
   const handleRefresh = () => performPageTransition(gameState.currentGroupStart);
+
 
   // ==============================
   // RENDER HELPERS
@@ -824,7 +832,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           adjustsFontSizeToFit
           minimumFontScale={0.6}
         >
-          {settings.capitalLetters ? card.text.toLocaleUpperCase(locale) : card.text}
+          {settings.capitalLetters ? getTranslatedWord(card).toLocaleUpperCase(locale) : getTranslatedWord(card)}
         </SFProText>
       );
     } else {

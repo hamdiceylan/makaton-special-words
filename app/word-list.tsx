@@ -2,10 +2,12 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, FlatList, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
+import { useWordTranslation } from '../src/hooks/useWordTranslation';
 import { SFProText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
 import { resolveImageSource } from '../src/utils/imageUtils';
@@ -27,6 +29,7 @@ interface WordItemProps {
 }
 
 const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode, onRemove, onInfo, drag, isActive, enableEditing }) => {
+  const { getTranslatedWord } = useWordTranslation();
   const tablet = isTablet();
   const cellHeight = tablet ? 60 : 50;
   
@@ -56,7 +59,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
         fadeDuration={0}
       />
       <SFProText weight="semibold" style={styles.wordText}>
-        {item.text}
+        {getTranslatedWord(item)}
       </SFProText>
       
       {isEditMode ? (
@@ -89,6 +92,7 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
 });
 
 export default function WordListScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { settings, wordList, setWordList, resetWordList, isWordListEdited, shouldScrollToBottom, setShouldScrollToBottom } = useSettings();
@@ -125,12 +129,12 @@ export default function WordListScreen() {
 
   const handleReset = () => {
     Alert.alert(
-      'Reset Word List',
-      'Are you sure you want to reset the word list to its original order? This will undo all your changes.',
+      t('wordList.resetTitle'),
+      t('wordList.resetMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         { 
-          text: 'Reset', 
+          text: t('buttons.reset'), 
           style: 'destructive',
           onPress: () => {
             resetWordList();
@@ -143,12 +147,12 @@ export default function WordListScreen() {
 
   const handleRemoveWord = (index: number) => {
     Alert.alert(
-      'Remove Word',
-      'Are you sure you want to remove this word?',
+      t('wordList.removeTitle'),
+      t('wordList.removeMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         { 
-          text: 'Remove', 
+          text: t('buttons.delete'), 
           style: 'destructive',
           onPress: () => {
             const newList = wordList.filter((_, i) => i !== index);
@@ -204,7 +208,7 @@ export default function WordListScreen() {
           })}
         >
           <SFProText weight="semibold" style={{ color: '#4664CD', fontSize: 16 }}>
-            Done
+            {t('buttons.done')}
           </SFProText>
         </Pressable>
       ) : undefined,

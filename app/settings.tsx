@@ -1,16 +1,17 @@
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-  Dimensions,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
+    Dimensions,
+    Modal,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
@@ -30,6 +31,7 @@ interface SettingSection {
 }
 
 export default function Settings() {
+  const { t } = useTranslation();
   const { 
     settings, 
     toggleSetting, 
@@ -48,7 +50,7 @@ export default function Settings() {
 
   const sections: SettingSection[] = [
     {
-      title: 'ANIMATION SPEED',
+      title: t('settings.animationSpeed'),
       items: [
         {
           id: 'animationSpeed',
@@ -59,124 +61,124 @@ export default function Settings() {
       ],
     },
     {
-      title: 'ADVANCING TO NEXT PAGE',
+      title: t('settings.advancingToNextPage'),
       items: [
         {
           id: 'automatic',
-          title: 'Automatic',
+          title: t('settings.automatic'),
           type: 'toggle',
           value: settings.automatic,
         },
       ],
     },
     {
-      title: 'USING SOUND',
+      title: t('settings.usingSound'),
       items: [
         {
           id: 'playBeforeMatch',
-          title: 'Play Before Match',
+          title: t('settings.playBeforeMatch'),
           type: 'toggle',
           value: settings.playBeforeMatch,
         },
         {
           id: 'playAfterMatch',
-          title: 'Play After Match',
+          title: t('settings.playAfterMatch'),
           type: 'toggle',
           value: settings.playAfterMatch,
         },
         {
           id: 'recordNewSounds',
-          title: 'Record New Sounds',
+          title: t('settings.recordNewSounds'),
           type: 'toggle',
           value: settings.recordNewSounds,
         },
         {
           id: 'textToSpeech',
-          title: 'Text To Speech',
+          title: t('settings.textToSpeech'),
           type: 'toggle',
           value: settings.textToSpeech,
         },
       ],
     },
     {
-      title: 'OTHER OPTIONS',
+      title: t('settings.otherOptions'),
       items: [
         {
           id: 'font',
-          title: 'Font',
+          title: t('settings.font'),
           type: 'navigation',
           value: 'Rockwell Bold',
         },
         {
           id: 'capitalLetters',
-          title: 'Capital Letters',
+          title: t('settings.capitalLetters'),
           type: 'toggle',
           value: settings.capitalLetters,
         },
         {
           id: 'largeText',
-          title: 'Large Text',
+          title: t('settings.largeText'),
           type: 'toggle',
           value: settings.largeText,
         },
         {
           id: 'enableEditing',
-          title: 'Enable Editing',
+          title: t('settings.enableEditing'),
           type: 'toggle',
           value: settings.enableEditing,
         },
         {
           id: 'enableReward',
-          title: 'Enable Reward',
+          title: t('settings.enableReward'),
           type: 'toggle',
           value: settings.enableReward,
         },
         {
           id: 'shuffleCards',
-          title: 'Shuffle Cards',
+          title: t('settings.shuffleCards'),
           type: 'navigation',
-          value: shuffleMode === 'off' ? 'Off' : shuffleMode === 'page' ? 'Page' : 'All',
+          value: shuffleMode === 'off' ? t('settings.off') : shuffleMode === 'page' ? t('settings.page') : t('settings.all'),
           onPress: () => setShowShuffleModeModal(true),
         },
         {
           id: 'cardsPerPage',
-          title: 'Cards Per Page',
+          title: t('settings.cardsPerPage'),
           type: 'navigation',
           value: cardsPerPage.toString(),
           onPress: () => setShowCardsPerPageModal(true),
         },
         {
           id: 'switches',
-          title: 'Switches',
+          title: t('settings.switches'),
           type: 'navigation',
           value: switchCount.toString(),
           onPress: () => setShowSwitchCountModal(true),
         },
         {
           id: 'enableDebugging',
-          title: 'Enable Debugging',
+          title: t('settings.enableDebugging'),
           type: 'toggle',
           value: settings.enableDebugging,
         },
       ],
     },
     {
-      title: 'ABOUT',
+      title: t('settings.about'),
       items: [
         {
           id: 'registration',
-          title: 'Registration',
+          title: t('settings.registration'),
           type: 'navigation',
         },
         {
           id: 'version',
-          title: 'Version',
+          title: t('settings.version'),
           type: 'info',
           value: `${Constants.expoConfig?.version || '1.0.0'} (${Constants.expoConfig?.ios?.buildNumber || Constants.expoConfig?.android?.versionCode || '1'})`,
         },
         {
           id: 'acknowledgements',
-          title: 'Acknowledgements',
+          title: t('settings.acknowledgements'),
           type: 'navigation',
         },
       ],
@@ -261,9 +263,9 @@ export default function Settings() {
 
   const cardsPerPageOptions = [1, 2, 3, 4, 6, 8];
   const shuffleOptions: { key: 'off' | 'page' | 'all'; label: string }[] = [
-    { key: 'off', label: 'Off' },
-    { key: 'page', label: 'Page' },
-    { key: 'all', label: 'All' },
+    { key: 'off', label: t('settings.off') },
+    { key: 'page', label: t('settings.page') },
+    { key: 'all', label: t('settings.all') },
   ];
   const switchCountOptions = [0, 1, 2, 3];
 
@@ -407,7 +409,7 @@ export default function Settings() {
                   styles.modalOptionText,
                   switchCount === option && styles.modalOptionTextSelected
                 ]}>
-                  {option === 0 ? 'Off' : `${option} Switch${option > 1 ? 'es' : ''}`}
+                  {option === 0 ? t('settings.off') : `${option} ${option > 1 ? t('settings.switchPlural') : t('settings.switch')}`}
                 </Text>
                 {switchCount === option && (
                   <Image

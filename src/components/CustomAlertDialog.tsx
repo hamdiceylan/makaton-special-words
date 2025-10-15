@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Alert, Modal, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SFProText } from '../theme/typography';
 
@@ -15,8 +16,9 @@ const CustomAlertDialog = ({
   onCancel,
   onSuccess,
   onDisableFeature,
-  title = "Child Safety Gate",
+  title,
 }: CustomAlertDialogProps) => {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
   const [question, setQuestion] = useState("");
@@ -26,16 +28,16 @@ const CustomAlertDialog = ({
   const showIOSPrompt = (currentQuestion: string, currentGateKey: number, errorMessage?: string) => {
     if (Platform.OS === 'ios') {
       Alert.prompt(
-        title,
+        title || t('other.childSafetyGate'),
         errorMessage ? `${errorMessage}\n\n${currentQuestion} =` : `${currentQuestion} =`,
         [
           {
-            text: 'Cancel',
+            text: t('buttons.cancel'),
             onPress: onCancel,
             style: 'cancel',
           },
           {
-            text: 'Open',
+            text: t('buttons.open'),
             onPress: (value?: string) => handleIOSConfirm(value || '', currentGateKey),
           },
         ],
@@ -60,13 +62,13 @@ const CustomAlertDialog = ({
         const newQuestion = generateQuestionAndReturn();
         // Yeni soru üretildikten sonra tekrar göster
         setTimeout(() => {
-          showIOSPrompt(newQuestion.expression, newQuestion.result, 'Wrong answer. Please try again.');
+          showIOSPrompt(newQuestion.expression, newQuestion.result, t('safetyGate.wrongAnswer'));
         }, 100);
       }
     } else {
       // Geçersiz input: tekrar göster
       setTimeout(() => {
-        showIOSPrompt(question, currentGateKey, 'Please enter a valid number.');
+        showIOSPrompt(question, currentGateKey, t('safetyGate.invalidNumber'));
       }, 100);
     }
   };
@@ -183,7 +185,7 @@ const CustomAlertDialog = ({
           }}
         >
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10, textAlign: "center" }}>
-            {title}
+            {title || t('other.childSafetyGate')}
           </Text>
           <Text style={{ marginBottom: 10, textAlign: "center" }}>
             {question} = ?
@@ -200,12 +202,12 @@ const CustomAlertDialog = ({
             keyboardType="numeric"
             value={input}
             onChangeText={setInput}
-            placeholder="Your answer"
+            placeholder={t('safetyGate.yourAnswer')}
           />
 
           {error && (
             <Text style={{ color: "red", marginTop: 8 }}>
-              Wrong answer. Please try again.
+              {t('safetyGate.wrongAnswer')}
             </Text>
           )}
 
@@ -218,13 +220,13 @@ const CustomAlertDialog = ({
           >
             <TouchableOpacity onPress={onCancel}>
               <SFProText weight="semibold" style={{ color: '#1785FD', fontSize: 18 }}>
-                Cancel
+                {t('buttons.cancel')}
               </SFProText>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleConfirm}>
               <SFProText weight="semibold" style={{ color: '#1785FD', fontSize: 18 }}>
-                Open
+                {t('buttons.open')}
               </SFProText>
             </TouchableOpacity>
           </View>

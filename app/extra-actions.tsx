@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomAlertDialog from '../src/components/CustomAlertDialog';
@@ -55,6 +56,7 @@ const ActionItem: React.FC<ActionItemProps> = ({ icon, title, onPress, isDestruc
 };
 
 export default function ExtraActionsScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { resetWordList, isWordListEdited } = useSettings();
@@ -91,39 +93,39 @@ export default function ExtraActionsScreen() {
   }, [navigation]);
 
   const handleViewDocumentation = () => {
-    Alert.alert('Documentation', 'View online documentation feature');
+    Alert.alert(t('documentation.title'), t('extraActions.viewDocumentation'));
   };
 
   const handleManageProfiles = () => {
-    Alert.alert('Profiles', 'Manage profiles feature');
+    Alert.alert(t('profiles.profiles'), t('extraActions.manageProfiles'));
   };
 
   const handleExportWordList = () => {
-    Alert.alert('Export', 'Export word list feature');
+    Alert.alert(t('extraActions.exportWordList'), t('extraActions.chooseFormat'));
   };
 
   const handleImportWordList = () => {
-    Alert.alert('Import', 'Import word list feature');
+    Alert.alert(t('extraActions.importWordList'), t('extraActions.useMailApp'));
   };
 
   const handleReset = () => {
     if (!isWordListEdited) {
-      Alert.alert('No Changes', 'The word list has not been modified.');
+      Alert.alert(t('wordList.noChanges'), t('wordList.noChangesMessage'));
       return;
     }
 
     Alert.alert(
-      'Reset Word List',
-      'Are you sure you want to reset the word list to its original order? This will undo all your changes.',
+      t('wordList.resetTitle'),
+      t('wordList.resetMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         { 
-          text: 'Reset', 
+          text: t('buttons.reset'), 
           style: 'destructive',
           onPress: () => {
             resetWordList();
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            Alert.alert('Success', 'Word list has been reset to original order.');
+            Alert.alert(t('wordList.successTitle'), t('wordList.successMessage'));
           }
         }
       ]
@@ -145,31 +147,31 @@ export default function ExtraActionsScreen() {
           <View style={styles.content}>
             <ActionItem
               icon={require('../assets/images/documentation-icon.png')}
-              title="View Online Documentation"
+              title={t('extraActions.viewDocumentation')}
               onPress={handleViewDocumentation}
             />
 
             <ActionItem
               icon={require('../assets/images/profile-icon.png')}
-              title="Manage Profiles"
+              title={t('extraActions.manageProfiles')}
               onPress={handleManageProfiles}
             />
 
             <ActionItem
               icon={require('../assets/images/export-icon.png')}
-              title="Export Word List"
+              title={t('extraActions.exportWordList')}
               onPress={handleExportWordList}
             />
 
             <ActionItem
               icon={require('../assets/images/import-icon.png')}
-              title="Import Word List"
+              title={t('extraActions.importWordList')}
               onPress={handleImportWordList}
             />
 
             <ActionItem
               icon={require('../assets/images/reset-icon.png')}
-              title="Reset"
+              title={t('buttons.reset')}
               onPress={handleReset}
               isDestructive={true}
               showChevron={false}

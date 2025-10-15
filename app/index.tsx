@@ -1,6 +1,7 @@
 import { SFProText } from '@/src/theme/typography';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { isLandscape, isTablet } from '../src/utils/device';
@@ -119,6 +120,7 @@ interface CardItemProps {
 }
 
 export default function Home() {
+  const { t } = useTranslation();
   const [layout, setLayout] = useState({ w: 0, h: 0 });
   const [screenDimensions, setScreenDimensions] = useState(Dimensions.get('window'));
   const insets = useSafeAreaInsets();
@@ -137,13 +139,13 @@ export default function Home() {
   const { LEFT, RIGHT, COL_GAP, ROW_GAP, COLUMNS, SQUARE_SIZE } = gridConfig;
 
   const items: Item[] = [
-    { title: 'Match Pictures',  color: '#279095', image: 'match-pictures', route: '/match-pictures' },
-    { title: 'Match Words',     color: '#9893CA', image: 'match-words', route: '/match-words' },
-    { title: 'Word to Picture', color: '#954D27', image: 'word-to-picture', route: '/word-to-picture' },
-    { title: 'Picture to Word', color: '#273F95', image: 'picture-to-word', route: '/picture-to-word' },
-    { title: 'Sound to Picture',color: '#952769', image: 'sound-to-picture', route: '/sound-to-picture' },
-    { title: 'Sound to Word',   color: '#4C9527', image: 'sound-to-word', route: '/sound-to-word' },
-    { title: 'Word list',       color: '#6675AA', image: 'word-list', route: '/word-list' },
+    { title: t('tabs.matchPictures'),  color: '#279095', image: 'match-pictures', route: '/match-pictures' },
+    { title: t('tabs.matchWords'),     color: '#9893CA', image: 'match-words', route: '/match-words' },
+    { title: t('tabs.wordToPicture'), color: '#954D27', image: 'word-to-picture', route: '/word-to-picture' },
+    { title: t('tabs.pictureToWord'), color: '#273F95', image: 'picture-to-word', route: '/picture-to-word' },
+    { title: t('tabs.soundToPicture'),color: '#952769', image: 'sound-to-picture', route: '/sound-to-picture' },
+    { title: t('tabs.soundToWord'),   color: '#4C9527', image: 'sound-to-word', route: '/sound-to-word' },
+    { title: t('tabs.wordList'),       color: '#6675AA', image: 'word-list', route: '/word-list' },
   ];
 
   const cellW = SQUARE_SIZE;
