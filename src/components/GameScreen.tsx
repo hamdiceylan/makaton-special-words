@@ -183,7 +183,10 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          onPress={isLocked ? undefined : () => navigation.goBack()}
+          onPress={isLocked ? undefined : () => {
+            cleanupCurrentRound();
+            navigation.goBack();
+          }}
           disabled={isLocked}
           style={{ 
             opacity: isLocked ? 0.4 : 1,
