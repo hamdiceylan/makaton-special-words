@@ -500,7 +500,7 @@ export function computeLayout(
 
   setGrid3x3();
 
-  if (cardsPerPage === 6 && !isPortrait) {
+  if (!isPortrait && (cardsPerPage === 6 || cardsPerPage === 8)) {
     const thirdW = playW / 3;
     const columnCenters = [thirdW / 2, playW / 2, playW - thirdW / 2];
     const clampLeft = (centerX: number) => {
