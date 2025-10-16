@@ -48,7 +48,7 @@ function compute4CardPortraitThirds(playW: number, playH: number, isPad: boolean
         minPadding: 24,
         targetWidthFactor: 0.34,
         desiredGapFactor: 0.06,
-        offsetFactor: 0.1,
+        offsetFactor: 0,
       }
     : {
         verticalMarginFactor: 0.03,
@@ -88,24 +88,27 @@ function compute4CardPortraitThirds(playW: number, playH: number, isPad: boolean
     w = h / CARD_ASPECT;
   }
 
-  const maxGap = Math.max(minColumnGap, playW - 2 * minPadding - 2 * w);
-  const desiredGapBase = Math.max(minColumnGap, playW * config.desiredGapFactor);
-  const gap = Math.min(desiredGapBase, maxGap);
-  const padding = Math.max(minPadding, (playW - 2 * w - gap) / 2);
-
   const targetOffset = thirdH * config.offsetFactor;
   const maxOffset = Math.max(0, thirdH / 2 - verticalMargin - h / 2);
   const centerOffset = Math.min(targetOffset, maxOffset);
+
+  const maxCenterOffsetX = Math.max(0, playW / 2 - (minPadding + w / 2));
+  const minCenterOffsetX = Math.min(maxCenterOffsetX, (w + minColumnGap) / 2);
+  let centerOffsetX = Math.min(maxCenterOffsetX, playW / 4);
+  centerOffsetX = Math.max(centerOffsetX, minCenterOffsetX);
+
+  const leftCenterX = playW / 2 - centerOffsetX;
+  const rightCenterX = playW / 2 + centerOffsetX;
 
   const topCenterY = thirdH / 2 + centerOffset;
   const bottomCenterY = playH - thirdH / 2 - centerOffset;
   const matchCenterY = playH / 2;
 
   const statics: Rect[] = [
-    { left: padding, top: topCenterY - h / 2, width: w, height: h },
-    { left: playW - padding - w, top: topCenterY - h / 2, width: w, height: h },
-    { left: padding, top: bottomCenterY - h / 2, width: w, height: h },
-    { left: playW - padding - w, top: bottomCenterY - h / 2, width: w, height: h },
+    { left: leftCenterX - w / 2, top: topCenterY - h / 2, width: w, height: h },
+    { left: rightCenterX - w / 2, top: topCenterY - h / 2, width: w, height: h },
+    { left: leftCenterX - w / 2, top: bottomCenterY - h / 2, width: w, height: h },
+    { left: rightCenterX - w / 2, top: bottomCenterY - h / 2, width: w, height: h },
   ];
   const match: Rect = { left: (playW - w) / 2, top: matchCenterY - h / 2, width: w, height: h };
 
@@ -115,13 +118,13 @@ function compute4CardPortraitThirds(playW: number, playH: number, isPad: boolean
 function compute4CardLandscapeThirds(playW: number, playH: number, isPad: boolean): LayoutResult {
   const config = isPad
     ? {
-        verticalMarginFactor: 0.05,
+        verticalMarginFactor: 0.045,
         minPaddingXFactor: 0.05,
         minPaddingX: 28,
         minRowGapFactor: 0.06,
-        targetHeightFactor: 0.42,
-        offsetFactor: 0.08,
-        rowOffsetFactor: 0.22,
+        targetHeightFactor: 0.44,
+        offsetFactor: 0,
+        rowOffsetFactor: 1 / 3,
       }
     : {
         verticalMarginFactor: 0.06,
@@ -167,7 +170,8 @@ function compute4CardLandscapeThirds(playW: number, playH: number, isPad: boolea
 
   const minRowOffset = cardH / 2 + minRowGap / 2;
   const maxRowOffset = Math.max(0, playH / 2 - marginTop - cardH / 2);
-  const desiredRowOffset = Math.max(minRowOffset, playH * config.rowOffsetFactor);
+  const desiredRowOffsetBase = isPad ? playH * config.rowOffsetFactor : playH * config.rowOffsetFactor;
+  const desiredRowOffset = Math.max(minRowOffset, desiredRowOffsetBase);
   const rowOffset = Math.min(maxRowOffset, desiredRowOffset);
 
   const topCenterY = matchCenterY - rowOffset;
@@ -231,10 +235,14 @@ export function computeLayout(
   };
 
   if (cardsPerPage === 4 && USE_SPECIAL_4_LAYOUT) {
-    if (isPortrait) {
-      return compute4CardPortraitThirds(playW, playH, isPad);
+    if (isPad) {
+      return isPortrait
+        ? compute4CardPortraitThirds(playW, playH, true)
+        : compute4CardLandscapeThirds(playW, playH, true);
     }
-    return compute4CardLandscapeThirds(playW, playH, isPad);
+    return isPortrait
+      ? compute4CardPortraitThirds(playW, playH, false)
+      : compute4CardLandscapeThirds(playW, playH, false);
   }
 
   if (cardsPerPage === 3 || cardsPerPage === 4) {
