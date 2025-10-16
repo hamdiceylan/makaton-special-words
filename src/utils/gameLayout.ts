@@ -1,5 +1,5 @@
-import { isLandscape, isTablet } from './device';
 import { Platform } from 'react-native';
+import { isLandscape, isTablet } from './device';
 export type Rect = { left: number; top: number; width: number; height: number };
 export type LayoutResult = {
   match: Rect;
@@ -76,6 +76,54 @@ export function computeLayout(
   };
 
   if (cardsPerPage === 4 && USE_SPECIAL_4_LAYOUT) {
+    if (isPortrait && !isPad) {
+      const thirdH = playH / 3;
+      let verticalMargin = Math.max(MIN_GAP_Y, playH * 0.03);
+      if (thirdH - 2 * verticalMargin <= 0) {
+        verticalMargin = Math.max(4, thirdH / 2 - 1);
+      }
+      const minColumnGap = Math.max(18, playW * 0.06);
+      const minPadding = Math.max(16, playW * 0.045);
+      const widthLimit = Math.max(0, (playW - minColumnGap - 2 * minPadding) / 2);
+      const heightLimit = Math.max(0, thirdH - 2 * verticalMargin);
+      const targetWidth = playW * 0.38;
+
+      let w = Math.min(targetWidth, widthLimit);
+      if (!isFinite(w) || w <= 0) {
+        w = Math.max(0, widthLimit);
+      }
+
+      let h = w * CARD_ASPECT;
+      if (heightLimit > 0 && h > heightLimit) {
+        h = heightLimit;
+        w = h / CARD_ASPECT;
+      } else if (heightLimit === 0) {
+        h = 0;
+        w = 0;
+      }
+
+      const maxGap = Math.max(minColumnGap, playW - 2 * minPadding - 2 * w);
+      const desiredGap = Math.min(Math.max(minColumnGap, playW * 0.08), maxGap);
+      const PADDING = Math.max(minPadding, (playW - 2 * w - desiredGap) / 2);
+
+      const targetOffset = thirdH * 0.07;
+      const maxOffset = Math.max(0, thirdH / 2 - verticalMargin - h / 2);
+      const centerOffset = Math.min(targetOffset, maxOffset);
+
+      const topCenterY = thirdH / 2 + centerOffset;
+      const bottomCenterY = playH - thirdH / 2 - centerOffset;
+      const matchCenterY = playH / 2;
+
+      const statics: Rect[] = [
+        { left: PADDING, top: topCenterY - h / 2, width: w, height: h },
+        { left: playW - PADDING - w, top: topCenterY - h / 2, width: w, height: h },
+        { left: PADDING, top: bottomCenterY - h / 2, width: w, height: h },
+        { left: playW - PADDING - w, top: bottomCenterY - h / 2, width: w, height: h },
+      ];
+      const match: Rect = { left: (playW - w) / 2, top: matchCenterY - h / 2, width: w, height: h };
+      return { match, statics, cardSize: { w, h } };
+    }
+
     let w = 0;
     let h = 0;
     let PADDING = 0;
@@ -107,23 +155,16 @@ export function computeLayout(
           PADDING = Math.max(12, reqPadding);
         }
       }
-    } else {
-      if (isPad) {
-        w = playW * (300 / 1024);
-        h = w * (230 / 300);
-        PADDING = 120;
-        OFFSET_Y = playH * (198 / 1400);
-        const currentGap = playW - 2 * PADDING - 2 * w;
-        const minGap = 140;
-        if (currentGap < minGap) {
-          const reqPadding = (playW - 2 * w - minGap) / 2;
-          PADDING = Math.max(20, reqPadding);
-        }
-      } else {
-        w = playW * (130 / 390);
-        h = w * (100 / 130);
-        PADDING = 24;
-        OFFSET_Y = 86;
+    } else if (isPad) {
+      w = playW * (300 / 1024);
+      h = w * (230 / 300);
+      PADDING = 120;
+      OFFSET_Y = playH * (198 / 1400);
+      const currentGap = playW - 2 * PADDING - 2 * w;
+      const minGap = 140;
+      if (currentGap < minGap) {
+        const reqPadding = (playW - 2 * w - minGap) / 2;
+        PADDING = Math.max(20, reqPadding);
       }
     }
 
@@ -319,5 +360,3 @@ export function computeLayout(
 export function getStaticCenters(layout: LayoutResult) {
   return layout.statics.map(r => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 }));
 }
-
-
