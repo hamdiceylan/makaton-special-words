@@ -266,6 +266,72 @@ function compute3CardLandscapeThirds(playW: number, playH: number, isPad: boolea
   return { match, statics, cardSize: { w: cardW, h: cardH } };
 }
 
+function compute2CardLandscapeHalves(playW: number, playH: number, isPad: boolean): LayoutResult {
+  const config = isPad
+    ? {
+        verticalMarginFactor: 0.04,
+        minPaddingXFactor: 0.05,
+        minPaddingX: 28,
+        targetWidthFactor: 0.36,
+        minRowGapFactor: 0.08,
+        desiredSplitFactor: 0.24,
+      }
+    : {
+        verticalMarginFactor: 0.05,
+        minPaddingXFactor: 0.04,
+        minPaddingX: 18,
+        targetWidthFactor: 0.4,
+        minRowGapFactor: 0.1,
+        desiredSplitFactor: 0.26,
+      };
+
+  const halfW = playW / 2;
+  const minPaddingX = Math.max(config.minPaddingX, playW * config.minPaddingXFactor);
+  const verticalMargin = Math.max(MIN_GAP_Y, playH * config.verticalMarginFactor);
+  const minRowGap = Math.max(MIN_GAP_Y, playH * config.minRowGapFactor);
+
+  const widthLimit = Math.max(0, halfW - 2 * minPaddingX);
+  const targetWidth = playW * config.targetWidthFactor;
+  let cardW = Math.min(targetWidth, widthLimit);
+  if (!isFinite(cardW) || cardW <= 0) {
+    cardW = Math.max(0, widthLimit);
+  }
+
+  let cardH = cardW * CARD_ASPECT;
+  const maxCardH = Math.max(0, (playH - 2 * verticalMargin - minRowGap) / 2);
+  if (cardH > maxCardH) {
+    cardH = maxCardH;
+    cardW = cardH / CARD_ASPECT;
+  }
+
+  const minRowOffset = cardH / 2 + minRowGap / 2;
+  const maxRowOffset = Math.max(0, playH / 2 - verticalMargin - cardH / 2);
+  const desiredSplit = playH * config.desiredSplitFactor;
+  const desiredRowOffset = Math.max(minRowOffset, Math.min(desiredSplit, maxRowOffset));
+  const rowOffset = Math.min(maxRowOffset, desiredRowOffset);
+
+  const staticCenterY = playH / 2 - rowOffset;
+  const matchCenterY = playH / 2 + rowOffset;
+
+  const leftCenterX = playW / 4;
+  const rightCenterX = playW - playW / 4;
+  const matchCenterX = playW / 2;
+
+  const statics: Rect[] = [
+    { left: leftCenterX - cardW / 2, top: staticCenterY - cardH / 2, width: cardW, height: cardH },
+    { left: rightCenterX - cardW / 2, top: staticCenterY - cardH / 2, width: cardW, height: cardH },
+  ];
+
+  const match: Rect = {
+    left: matchCenterX - cardW / 2,
+    top: matchCenterY - cardH / 2,
+    width: cardW,
+    height: cardH,
+  };
+
+  return { match, statics, cardSize: { w: cardW, h: cardH } };
+}
+
 export function computeLayout(
   cardsPerPage: 1 | 2 | 3 | 4 | 6 | 8,
   playW: number,
@@ -411,18 +477,13 @@ export function computeLayout(
   }
 
   if (cardsPerPage === 2) {
-    if (isPortrait) {
-      marginLeft = (isPad ? 40 : 20) * magnification;
-      cardW = (playW - 3 * marginLeft) / 2;
-      cardH = cardW * CARD_ASPECT;
-      marginTop = (playH - 2 * cardH) / 3;
-    } else {
-      // Phone landscape: enlarge cards by reducing gaps and bringing columns closer
-      marginTop = (isPad ? 40 : 12) * magnification;
-      marginLeft = (isPad ? 40 : 60) * magnification;
-      cardH = (playH - 3 * marginTop) / 2;
-      cardW = cardH / CARD_ASPECT;
+    if (!isPortrait) {
+      return compute2CardLandscapeHalves(playW, playH, isPad);
     }
+    marginLeft = (isPad ? 40 : 20) * magnification;
+    cardW = (playW - 3 * marginLeft) / 2;
+    cardH = cardW * CARD_ASPECT;
+    marginTop = (playH - 2 * cardH) / 3;
     ({ marginTop, cardH, cardW } = enforceVerticalSpacing(2, playH, marginTop, cardH, cardW));
     left1 = marginLeft;
     left2 = (playW - cardW) / 2;
