@@ -499,6 +499,31 @@ export function computeLayout(
   }
 
   setGrid3x3();
+
+  if (cardsPerPage === 6 && !isPortrait) {
+    const thirdW = playW / 3;
+    const columnCenters = [thirdW / 2, playW / 2, playW - thirdW / 2];
+    const clampLeft = (centerX: number) => {
+      const desired = centerX - cardW / 2;
+      return Math.min(Math.max(desired, 0), playW - cardW);
+    };
+    left1 = clampLeft(columnCenters[0]);
+    left2 = clampLeft(columnCenters[1]);
+    left3 = clampLeft(columnCenters[2]);
+
+    const thirdH = playH / 3;
+    const clampTop = (centerY: number) => {
+      const desired = centerY - cardH / 2;
+      const minTop = MIN_GAP_Y;
+      const maxTop = Math.max(minTop, playH - cardH - MIN_GAP_Y);
+      return Math.min(Math.max(desired, minTop), maxTop);
+    };
+
+    top1 = clampTop(thirdH / 2);
+    top2 = clampTop(playH / 2);
+    top3 = clampTop(playH - thirdH / 2);
+  }
+
   const match: Rect = { left: left2, top: top2, width: cardW, height: cardH };
   if (cardsPerPage === 6) {
     const statics: Rect[] = [
