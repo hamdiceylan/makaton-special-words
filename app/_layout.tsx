@@ -26,7 +26,7 @@ function RootLayoutContent() {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: '#FBFBFE' },

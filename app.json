@@ -13,7 +13,8 @@
       "userInterfaceStyle": "light",
       "bundleIdentifier": "com.makaton.test",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIUserInterfaceStyle": "Light"
       }
     },
     "android": {
