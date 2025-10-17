@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Makaton",
-    "slug": "Makaton",
+    "slug": "makaton-special-words",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "userInterfaceStyle": "light"
+      "userInterfaceStyle": "light",
+      "bundleIdentifier": "com.makaton.test",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -45,6 +49,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "25b31210-5c45-4669-9843-067d1e87e969"
+      }
+    },
+    "owner": "webronsoftwareltd"
   }
 }
