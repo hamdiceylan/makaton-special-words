@@ -121,23 +121,26 @@ function compute4CardLandscapeThirds(playW: number, playH: number, isPad: boolea
         verticalMarginFactor: 0.045,
         minPaddingXFactor: 0.05,
         minPaddingX: 28,
+        minColumnGapFactor: 0.05,
+        minColumnGap: 36,
         minRowGapFactor: 0.06,
         targetHeightFactor: 0.44,
-        offsetFactor: 0,
         rowOffsetFactor: 1 / 3,
       }
     : {
         verticalMarginFactor: 0.06,
         minPaddingXFactor: 0.04,
         minPaddingX: 20,
+        minColumnGapFactor: 0.045,
+        minColumnGap: 18,
         minRowGapFactor: 0.08,
         targetHeightFactor: 0.48,
-        offsetFactor: 0.12,
         rowOffsetFactor: 0.26,
       };
 
   const thirdW = playW / 3;
   const minPaddingX = Math.max(config.minPaddingX, playW * config.minPaddingXFactor);
+  const minColumnGap = Math.max(config.minColumnGap, playW * config.minColumnGapFactor);
 
   const verticalMarginBase = Math.max(MIN_GAP_Y, playH * config.verticalMarginFactor);
   const minRowGap = Math.max(18, playH * config.minRowGapFactor);
@@ -151,9 +154,11 @@ function compute4CardLandscapeThirds(playW: number, playH: number, isPad: boolea
 
   let cardW = cardH / CARD_ASPECT;
   const availableWidth = Math.max(0, thirdW - 2 * minPaddingX);
+  const gapWidthLimit = Math.max(0, playW / 3 - minColumnGap);
+  const maxCardW = Math.max(0, Math.min(availableWidth, gapWidthLimit));
 
-  if (cardW > availableWidth) {
-    cardW = availableWidth;
+  if (cardW > maxCardW) {
+    cardW = maxCardW;
     cardH = cardW * CARD_ASPECT;
   }
 
@@ -162,23 +167,36 @@ function compute4CardLandscapeThirds(playW: number, playH: number, isPad: boolea
     cardW = cardH / CARD_ASPECT;
   }
 
-  const maxOffsetX = Math.max(0, thirdW / 2 - minPaddingX - cardW / 2);
-  const centerOffsetX = Math.min(thirdW * config.offsetFactor, maxOffsetX);
-
   const matchCenterX = playW / 2;
   const matchCenterY = playH / 2;
 
-  const minRowOffset = cardH / 2 + minRowGap / 2;
-  const maxRowOffset = Math.max(0, playH / 2 - marginTop - cardH / 2);
-  const desiredRowOffsetBase = isPad ? playH * config.rowOffsetFactor : playH * config.rowOffsetFactor;
-  const desiredRowOffset = Math.max(minRowOffset, desiredRowOffsetBase);
-  const rowOffset = Math.min(maxRowOffset, desiredRowOffset);
+  const thirdH = playH / 3;
+  const desiredTopCenter = thirdH / 2;
+  const minTopCenter = marginTop + cardH / 2;
+  const maxTopCenter = matchCenterY - cardH / 2 - minRowGap / 2;
+  const topCenterY = Math.min(Math.max(desiredTopCenter, minTopCenter), Math.max(minTopCenter, maxTopCenter));
+  const bottomCenterY = playH - topCenterY;
 
-  const topCenterY = matchCenterY - rowOffset;
-  const bottomCenterY = matchCenterY + rowOffset;
+  const desiredOffsetX = playW / 3;
+  const minOffsetX = Math.max((cardW + minColumnGap) / 2, cardW);
+  const maxOffsetX = Math.max(minOffsetX, playW / 2 - cardW / 2);
+  const centerOffsetX = Math.min(Math.max(desiredOffsetX, minOffsetX), maxOffsetX);
 
-  const leftCenterX = thirdW / 2 + centerOffsetX;
-  const rightCenterX = playW - thirdW / 2 - centerOffsetX;
+  let leftCenterX = matchCenterX - centerOffsetX;
+  let rightCenterX = matchCenterX + centerOffsetX;
+
+  if (leftCenterX - cardW / 2 < minPaddingX) {
+    const deficit = minPaddingX - (leftCenterX - cardW / 2);
+    leftCenterX += deficit;
+    rightCenterX += deficit;
+  }
+
+  const rightEdge = playW - minPaddingX;
+  if (rightCenterX + cardW / 2 > rightEdge) {
+    const deficit = (rightCenterX + cardW / 2) - rightEdge;
+    leftCenterX -= deficit;
+    rightCenterX -= deficit;
+  }
 
   const statics: Rect[] = [
     { left: leftCenterX - cardW / 2, top: topCenterY - cardH / 2, width: cardW, height: cardH },
@@ -343,6 +361,14 @@ export function computeLayout(
   playW = playW - horizontalPadding;
   playH = playH;
   const magnification = isPad ? Math.max(playW, playH) / 1024 : Math.min(playW, playH) / 320;
+  const horizontalInset = horizontalPadding / 2;
+
+  const applyHorizontalInset = (layout: LayoutResult): LayoutResult => {
+    if (horizontalInset === 0) return layout;
+    const adjustedMatch: Rect = { ...layout.match, left: layout.match.left + horizontalInset };
+    const adjustedStatics: Rect[] = layout.statics.map(rect => ({ ...rect, left: rect.left + horizontalInset }));
+    return { ...layout, match: adjustedMatch, statics: adjustedStatics };
+  };
 
   let marginTop = 0, marginLeft = 0;
   let cardW = 0, cardH = 0;
@@ -371,17 +397,21 @@ export function computeLayout(
 
   if (cardsPerPage === 4 && USE_SPECIAL_4_LAYOUT) {
     if (isPad) {
-      return isPortrait
-        ? compute4CardPortraitThirds(playW, playH, true)
-        : compute4CardLandscapeThirds(playW, playH, true);
+      return applyHorizontalInset(
+        isPortrait
+          ? compute4CardPortraitThirds(playW, playH, true)
+          : compute4CardLandscapeThirds(playW, playH, true)
+      );
     }
-    return isPortrait
-      ? compute4CardPortraitThirds(playW, playH, false)
-      : compute4CardLandscapeThirds(playW, playH, false);
+    return applyHorizontalInset(
+      isPortrait
+        ? compute4CardPortraitThirds(playW, playH, false)
+        : compute4CardLandscapeThirds(playW, playH, false)
+    );
   }
 
   if (cardsPerPage === 3 && !isPortrait) {
-    return compute3CardLandscapeThirds(playW, playH, isPad);
+    return applyHorizontalInset(compute3CardLandscapeThirds(playW, playH, isPad));
   }
 
   if (cardsPerPage === 3 || cardsPerPage === 4) {
@@ -427,7 +457,7 @@ export function computeLayout(
         { left: left1, top: top3, width: cardW, height: cardH },
         { left: left3, top: top3, width: cardW, height: cardH },
       ];
-      return { match, statics, cardSize: { w: cardW, h: cardH } };
+      return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
     } else {
       if (isPortrait) {
         const match: Rect = { left: left1, top: top2, width: cardW, height: cardH };
@@ -436,7 +466,7 @@ export function computeLayout(
           { left: left3, top: top2, width: cardW, height: cardH },
           { left: left3, top: top3, width: cardW, height: cardH },
         ];
-        return { match, statics, cardSize: { w: cardW, h: cardH } };
+        return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
       } else {
         const match: Rect = { left: left2, top: top3, width: cardW, height: cardH };
         const statics: Rect[] = [
@@ -444,7 +474,7 @@ export function computeLayout(
           { left: left2, top: top1, width: cardW, height: cardH },
           { left: left3, top: top1, width: cardW, height: cardH },
         ];
-        return { match, statics, cardSize: { w: cardW, h: cardH } };
+        return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
       }
     }
   }
@@ -460,7 +490,7 @@ export function computeLayout(
       const topBot = playH - Math.max(mt, MIN_GAP_Y) - cardH;
       const match: Rect = { left: ml, top: topBot, width: cardW, height: cardH };
       const statics: Rect[] = [{ left: ml, top: topTop, width: cardW, height: cardH }];
-      return { match, statics, cardSize: { w: cardW, h: cardH } };
+      return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
     } else {
       const ml = 40 * magnification;
       cardW = (playW - 3 * ml) / 2;
@@ -472,13 +502,13 @@ export function computeLayout(
       const right = playW - ml - cardW;
       const match: Rect = { left, top, width: cardW, height: cardH };
       const statics: Rect[] = [{ left: right, top, width: cardW, height: cardH }];
-      return { match, statics, cardSize: { w: cardW, h: cardH } };
+      return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
     }
   }
 
   if (cardsPerPage === 2) {
     if (!isPortrait) {
-      return compute2CardLandscapeHalves(playW, playH, isPad);
+      return applyHorizontalInset(compute2CardLandscapeHalves(playW, playH, isPad));
     }
     marginLeft = (isPad ? 40 : 20) * magnification;
     cardW = (playW - 3 * marginLeft) / 2;
@@ -495,7 +525,7 @@ export function computeLayout(
       { left: left1, top: top1, width: cardW, height: cardH },
       { left: left3, top: top1, width: cardW, height: cardH },
     ];
-    return { match, statics, cardSize: { w: cardW, h: cardH } };
+    return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
   }
 
   setGrid3x3();
@@ -534,7 +564,7 @@ export function computeLayout(
       { left: left2, top: top3, width: cardW, height: cardH },
       { left: left3, top: top3, width: cardW, height: cardH },
     ];
-    return { match, statics, cardSize: { w: cardW, h: cardH } };
+    return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
   } else {
     const statics: Rect[] = [
       { left: left1, top: top1, width: cardW, height: cardH },
@@ -546,7 +576,7 @@ export function computeLayout(
       { left: left2, top: top3, width: cardW, height: cardH },
       { left: left3, top: top3, width: cardW, height: cardH },
     ];
-    return { match, statics, cardSize: { w: cardW, h: cardH } };
+    return applyHorizontalInset({ match, statics, cardSize: { w: cardW, h: cardH } });
   }
 }
 
