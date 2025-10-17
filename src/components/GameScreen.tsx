@@ -79,7 +79,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const portrait = !isLandscape(screen.width, screen.height);
 
   // Animation states
-  const [cardPosition] = useState(new Animated.ValueXY());
+  const [cardTranslateX] = useState(new Animated.Value(0));
+  const [cardTranslateY] = useState(new Animated.Value(0));
   const [cardScale] = useState(new Animated.Value(1));
   const [flipAnimation] = useState(new Animated.Value(0));
   const [cardOpacity] = useState(new Animated.Value(1));
@@ -361,7 +362,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
     onPanResponderGrant: () => {},
-    onPanResponderMove: Animated.event([null, { dx: cardPosition.x, dy: cardPosition.y }], { useNativeDriver: false }),
+    onPanResponderMove: Animated.event([null, { dx: cardTranslateX, dy: cardTranslateY }], { useNativeDriver: false }),
     onPanResponderRelease: (e, g) => {
       if (gameState.isAnimating) return;
       const tap = Math.abs(g.dx) < 10 && Math.abs(g.dy) < 10;
@@ -377,7 +378,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           }
         }
         Animated.parallel([
-          Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
+          Animated.spring(cardTranslateX, { toValue: 0, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
+          Animated.spring(cardTranslateY, { toValue: 0, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
           Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
         ]).start();
         return;
@@ -411,11 +413,17 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     if (!target) return;
 
     Animated.parallel([
-      Animated.timing(cardPosition, {
-        toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
+      Animated.timing(cardTranslateX, {
+        toValue: target.x - initialPosition.current.x,
         duration: DURATION.move,
         easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false,
+        useNativeDriver: !useLegacyAnimations,
+      }),
+      Animated.timing(cardTranslateY, {
+        toValue: target.y - initialPosition.current.y,
+        duration: DURATION.move,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: !useLegacyAnimations,
       }),
       Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
     ]).start(() => {
@@ -551,7 +559,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   const handleFailedMatch = () => {
     Animated.parallel([
-      Animated.spring(cardPosition, { toValue: { x: 0, y: 0 }, tension: 100, friction: 8, useNativeDriver: false }),
+      Animated.spring(cardTranslateX, { toValue: 0, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
+      Animated.spring(cardTranslateY, { toValue: 0, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
       Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }),
     ]).start();
   };
@@ -565,11 +574,17 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
     const moveToTarget = () => {
       Animated.parallel([
-        Animated.timing(cardPosition, {
-          toValue: { x: target.x - initialPosition.current.x, y: target.y - initialPosition.current.y },
+        Animated.timing(cardTranslateX, {
+          toValue: target.x - initialPosition.current.x,
           duration: DURATION.move,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: false,
+          useNativeDriver: !useLegacyAnimations,
+        }),
+        Animated.timing(cardTranslateY, {
+          toValue: target.y - initialPosition.current.y,
+          duration: DURATION.move,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: !useLegacyAnimations,
         }),
         Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
       ]).start(() => {
@@ -600,13 +615,13 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       });
     };
 
-    if (useLegacyAnimations) {
-      cardScale.stopAnimation();
-      cardScale.setValue(1);
-      moveToTarget();
-    } else {
-      Animated.spring(cardScale, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }).start(moveToTarget);
-    }
+    cardTranslateX.stopAnimation();
+    cardTranslateY.stopAnimation();
+    cardScale.stopAnimation();
+    cardTranslateX.setValue(0);
+    cardTranslateY.setValue(0);
+    cardScale.setValue(1);
+    moveToTarget();
   };
 
   const advanceOrFinish = async () => {
@@ -626,7 +641,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;
         if (newStart < wordList.length) {
-          cardPosition.stopAnimation();
+          cardTranslateX.stopAnimation();
+          cardTranslateY.stopAnimation();
           cardScale.stopAnimation();
           flipAnimation.stopAnimation();
           cardOpacity.stopAnimation();
@@ -684,7 +700,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const freezeAnimations = () => {
     // Sadece animasyonları durdur ama resetleme (freeze efekti için)
     roundIdRef.current += 1;
-    cardPosition.stopAnimation();
+    cardTranslateX.stopAnimation();
+    cardTranslateY.stopAnimation();
     cardScale.stopAnimation();
     flipAnimation.stopAnimation();
     cardOpacity.stopAnimation();
@@ -701,7 +718,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   const resetAnimationValues = () => {
     // Tüm animasyon değerlerini ve state'leri resetle
-    cardPosition.setValue({ x: 0, y: 0 });
+    cardTranslateX.setValue(0);
+    cardTranslateY.setValue(0);
     cardScale.setValue(1);
     flipAnimation.setValue(0);
     cardOpacity.setValue(1);
@@ -907,7 +925,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     const commonStyle = [
       styles.matchCard,
       { left: r.left, top: r.top, width: r.width, height: r.height },
-      { transform: [{ translateX: cardPosition.x }, { translateY: cardPosition.y }] },
+      { transform: [{ translateX: cardTranslateX }, { translateY: cardTranslateY }] },
       (hideMatchCardBorder || (canShowText && !config.matchCardContent.includes('question'))) && { borderWidth: 0 },
     ];
 
