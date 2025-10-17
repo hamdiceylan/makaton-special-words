@@ -1,9 +1,9 @@
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Platform, Pressable, Text } from 'react-native';
+import { Appearance, Image, Platform, Pressable, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomAlertDialog from '../src/components/CustomAlertDialog';
 import { SettingsProvider } from '../src/contexts/SettingsContext';
@@ -14,6 +14,10 @@ function RootLayoutContent() {
   const router = useRouter();
   const { t } = useTranslation();
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
+
+  useEffect(() => {
+    Appearance.setColorScheme('light');
+  }, []);
 
   const handleParentLock = () => {
     setShowParentLockDialog(true);
