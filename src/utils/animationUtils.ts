@@ -99,13 +99,13 @@ export const createShakeAnimation = (shakeValue: Animated.Value, idx: number, sp
     const sign = (idx === 0 || idx === 3) ? +1 : -1;
     const shakeDistance = 8; // pixels
     shakeValue.setValue(0);
-    Animated.timing(shakeValue, { toValue: -shakeDistance * sign, duration: 500 * speed, useNativeDriver: true })
+    Animated.timing(shakeValue, { toValue: -shakeDistance * sign, duration: 500 * speed, useNativeDriver: false })
       .start(f1 => {
         if (!f1) return;
-        Animated.timing(shakeValue, { toValue: shakeDistance * sign, duration: 1000 * speed, useNativeDriver: true })
+        Animated.timing(shakeValue, { toValue: shakeDistance * sign, duration: 1000 * speed, useNativeDriver: false })
           .start(f2 => {
             if (!f2) return;
-            Animated.timing(shakeValue, { toValue: 0, duration: 500 * speed, useNativeDriver: true }).start();
+            Animated.timing(shakeValue, { toValue: 0, duration: 500 * speed, useNativeDriver: false }).start();
           });
       });
   } else {
