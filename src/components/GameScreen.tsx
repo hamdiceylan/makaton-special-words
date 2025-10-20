@@ -79,7 +79,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const portrait = !isLandscape(screen.width, screen.height);
 
   // Animation states
-  const [cardPosition] = useState(new Animated.ValueXY());
+  const [cardTranslateX] = useState(() => new Animated.Value(0));
+  const [cardTranslateY] = useState(() => new Animated.Value(0));
   const [cardScale] = useState(new Animated.Value(1));
   const [flipAnimation] = useState(new Animated.Value(0));
   const [cardOpacity] = useState(new Animated.Value(1));
@@ -163,11 +164,14 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const pendingPlayOnVisibleRef = useRef(false);
 
   const resetMatchCardPosition = useCallback(() => {
-    cardPosition.stopAnimation();
-    cardPosition.setOffset({ x: 0, y: 0 });
-    cardPosition.setValue({ x: 0, y: 0 });
+    cardTranslateX.stopAnimation();
+    cardTranslateY.stopAnimation();
+    cardTranslateX.setOffset(0);
+    cardTranslateY.setOffset(0);
+    cardTranslateX.setValue(0);
+    cardTranslateY.setValue(0);
     cardOffset.current = { x: 0, y: 0 };
-  }, [cardPosition]);
+  }, [cardTranslateX, cardTranslateY]);
 
   useEffect(() => {
     const setup = async () => {
@@ -381,11 +385,12 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   };
   
   const getCardPositionValue = () => {
-    const rawValue = (cardPosition as unknown as { __getValue?: () => { x: number; y: number } }).__getValue?.();
-    if (rawValue && typeof rawValue.x === 'number' && typeof rawValue.y === 'number') {
-      return rawValue;
-    }
-    return { x: 0, y: 0 };
+    const x = (cardTranslateX as unknown as { __getValue?: () => number }).__getValue?.();
+    const y = (cardTranslateY as unknown as { __getValue?: () => number }).__getValue?.();
+    return {
+      x: typeof x === 'number' ? x : 0,
+      y: typeof y === 'number' ? y : 0,
+    };
   };
 
   const clampTranslation = (x: number, y: number) => {
@@ -416,10 +421,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   const applyClampedTranslation = (rawX: number, rawY: number) => {
     const clamped = clampTranslation(rawX, rawY);
-    cardPosition.setValue({
-      x: clamped.x - cardOffset.current.x,
-      y: clamped.y - cardOffset.current.y,
-    });
+    cardTranslateX.setValue(clamped.x - cardOffset.current.x);
+    cardTranslateY.setValue(clamped.y - cardOffset.current.y);
     return clamped;
   };
 
@@ -430,10 +433,13 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     onStartShouldSetPanResponder: () => !gameState.isAnimating,
     onMoveShouldSetPanResponder: () => !gameState.isAnimating,
     onPanResponderGrant: () => {
-      cardPosition.stopAnimation();
+      cardTranslateX.stopAnimation();
+      cardTranslateY.stopAnimation();
       cardOffset.current = clampTranslation(cardOffset.current.x, cardOffset.current.y);
-      cardPosition.setOffset(cardOffset.current);
-      cardPosition.setValue({ x: 0, y: 0 });
+      cardTranslateX.setOffset(cardOffset.current.x);
+      cardTranslateY.setOffset(cardOffset.current.y);
+      cardTranslateX.setValue(0);
+      cardTranslateY.setValue(0);
     },
     onPanResponderMove: (_, gestureState) => {
       if (gameState.isAnimating) return;
@@ -443,7 +449,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     },
     onPanResponderRelease: (e, g) => {
       if (gameState.isAnimating) return;
-      cardPosition.flattenOffset();
+      cardTranslateX.flattenOffset();
+      cardTranslateY.flattenOffset();
       const currentOffset = getCardPositionValue();
       cardOffset.current = currentOffset;
 
@@ -498,12 +505,23 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       y: target.y - initialPosition.current.y,
     };
 
+    cardTranslateX.stopAnimation();
+    cardTranslateY.stopAnimation();
+    cardTranslateX.flattenOffset();
+    cardTranslateY.flattenOffset();
+
     Animated.parallel([
-      Animated.timing(cardPosition, {
-        toValue: targetTranslation,
+      Animated.timing(cardTranslateX, {
+        toValue: targetTranslation.x,
         duration: DURATION.move,
         easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardTranslateY, {
+        toValue: targetTranslation.y,
+        duration: DURATION.move,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
       }),
       Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
     ]).start(({ finished }) => {
@@ -655,12 +673,23 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     };
 
     const moveToTarget = () => {
+      cardTranslateX.stopAnimation();
+      cardTranslateY.stopAnimation();
+      cardTranslateX.flattenOffset();
+      cardTranslateY.flattenOffset();
+
       Animated.parallel([
-        Animated.timing(cardPosition, {
-          toValue: targetTranslation,
+        Animated.timing(cardTranslateX, {
+          toValue: targetTranslation.x,
           duration: DURATION.move,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: false,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardTranslateY, {
+          toValue: targetTranslation.y,
+          duration: DURATION.move,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
         }),
         Animated.timing(cardScale, { toValue: 1, duration: DURATION.scale, useNativeDriver: !useLegacyAnimations }),
       ]).start(({ finished }) => {
@@ -718,7 +747,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;
         if (newStart < wordList.length) {
-          cardPosition.stopAnimation();
+          cardTranslateX.stopAnimation();
+          cardTranslateY.stopAnimation();
           cardScale.stopAnimation();
           flipAnimation.stopAnimation();
           cardOpacity.stopAnimation();
@@ -776,7 +806,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const freezeAnimations = () => {
     // Sadece animasyonları durdur ama resetleme (freeze efekti için)
     roundIdRef.current += 1;
-    cardPosition.stopAnimation();
+    cardTranslateX.stopAnimation();
+    cardTranslateY.stopAnimation();
     cardScale.stopAnimation();
     flipAnimation.stopAnimation();
     cardOpacity.stopAnimation();
@@ -793,8 +824,10 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   const resetAnimationValues = () => {
     // Tüm animasyon değerlerini ve state'leri resetle
-    cardPosition.setOffset({ x: 0, y: 0 });
-    cardPosition.setValue({ x: 0, y: 0 });
+    cardTranslateX.setOffset(0);
+    cardTranslateY.setOffset(0);
+    cardTranslateX.setValue(0);
+    cardTranslateY.setValue(0);
     cardOffset.current = { x: 0, y: 0 };
     cardScale.setValue(1);
     flipAnimation.setValue(0);
@@ -1003,7 +1036,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     const commonStyle = [
       styles.matchCard,
       { left: r.left, top: r.top, width: r.width, height: r.height },
-      { transform: [{ translateX: cardPosition.x }, { translateY: cardPosition.y }] },
+      { transform: [{ translateX: cardTranslateX }, { translateY: cardTranslateY }] },
       (hideMatchCardBorder || (canShowText && !config.matchCardContent.includes('question'))) && { borderWidth: 0 },
     ];
 
