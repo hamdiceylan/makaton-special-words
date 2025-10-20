@@ -95,6 +95,19 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const gameStateRef = useRef<GameState>(gameState);
   const useLegacyAnimations = use2DAnimations();
 
+  // Playable list helper: exclude silent words in sound games when TTS is off
+  const isSoundGame = gameType === 'sound-to-picture' || gameType === 'sound-to-word';
+  const getPlayableBaseList = useCallback(() => {
+    let base: any[] = wordList;
+    if (isSoundGame && !settings.textToSpeech) {
+      base = base.filter((w: any) => Boolean(w.sound));
+    }
+    if (shuffleMode === 'all') {
+      base = [...base].sort(() => Math.random() - 0.5);
+    }
+    return base;
+  }, [wordList, shuffleMode, settings.textToSpeech, isSoundGame]);
+
   // Switch control for accessibility
   const switchControl = useSwitchControl({
     items: gameState.staticCards,
@@ -224,17 +237,19 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
     setTimeout(() => {
       const groupSize = cardsPerPage;
-      const endIndex = Math.min(startIndex + groupSize, wordList.length);
-      let currentGroup = wordList.slice(startIndex, endIndex);
+      const baseList = getPlayableBaseList();
+      const endIndex = Math.min(startIndex + groupSize, baseList.length);
+      let currentGroup = baseList.slice(startIndex, endIndex);
       
-      if (shuffleMode === 'all') {
-        const shuffledWords = [...wordList].sort(() => Math.random() - 0.5);
-        currentGroup = shuffledWords.slice(startIndex, endIndex);
-      } else if (shuffleMode === 'page') {
+      if (shuffleMode === 'page') {
         currentGroup = [...currentGroup].sort(() => Math.random() - 0.5);
       }
 
       if (currentGroup.length === 0) {
+        if (baseList.length === 0) {
+          // No playable items; keep empty state
+          return;
+        }
         return initializeGame(0);
       }
 
@@ -786,21 +801,23 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   };
   
   const handleNext = () => {
+    const baseLength = getPlayableBaseList().length;
     const newStart = gameState.currentGroupStart + cardsPerPage;
-    if (newStart < wordList.length) {
+    if (newStart < baseLength) {
       performPageTransition(newStart);
     }
   };
   
   const handleToEnd = () => {
+    const baseLength = getPlayableBaseList().length;
     const size = cardsPerPage;
-    const remainder = wordList.length % size;
-    const lastStart = Math.max(0, wordList.length - (remainder === 0 ? size : remainder));
+    const remainder = baseLength % size;
+    const lastStart = Math.max(0, baseLength - (remainder === 0 ? size : remainder));
     performPageTransition(lastStart);
   };
 
   const isAtStart = gameState.currentGroupStart === 0;
-  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= wordList.length;
+  const isAtEnd = gameState.currentGroupStart + cardsPerPage >= getPlayableBaseList().length;
 
   const handleLockPress = () => Alert.alert(t('help.padlock'), t('help.padlock'));
   const handleLockLongPress = () => setIsLocked(p => !p);
