@@ -19,7 +19,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useSettings } from '../contexts/SettingsContext';
 import { useSwitchControl } from '../hooks/useSwitchControl';
 import { useWordTranslation } from '../hooks/useWordTranslation';
-import { SFProText } from '../theme/typography';
+import { SpecialLettersText } from '../theme/typography';
 import { GAME_CONFIGS, GameType } from '../types/gameTypes';
 import { createFlipAnimations, createShakeAnimation, createShakeTransform, use2DAnimations } from '../utils/animationUtils';
 import { isLandscape, isTablet } from '../utils/device';
@@ -954,8 +954,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       return <Image source={resolveImageSource(card.image)} style={styles.cardImage} resizeMode="cover" />;
     } else if (contentType === 'text') {
       return (
-        <SFProText
-          weight="semibold"
+        <SpecialLettersText
           style={[
             styles.cardText,
             fontSize ? { fontSize: fontSize * (settings.largeText ? 1.2 : 1) } : undefined,
@@ -965,7 +964,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
           minimumFontScale={0.6}
         >
           {settings.capitalLetters ? getTranslatedWord(card).toLocaleUpperCase(locale) : getTranslatedWord(card)}
-        </SFProText>
+        </SpecialLettersText>
       );
     } else {
       return (

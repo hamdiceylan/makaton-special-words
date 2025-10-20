@@ -8,7 +8,7 @@ import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flat
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { useWordTranslation } from '../src/hooks/useWordTranslation';
-import { SFProText } from '../src/theme/typography';
+import { SFProText, SpecialLettersText } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
 import { resolveImageSource } from '../src/utils/imageUtils';
 
@@ -58,9 +58,9 @@ const WordItem: React.FC<WordItemProps> = React.memo(({ item, index, isEditMode,
         resizeMethod="resize"
         fadeDuration={0}
       />
-      <SFProText weight="semibold" style={styles.wordText}>
+      <SpecialLettersText style={styles.wordText}>
         {getTranslatedWord(item)}
-      </SFProText>
+      </SpecialLettersText>
       
       {isEditMode ? (
         <Pressable 

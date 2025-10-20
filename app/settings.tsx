@@ -3,15 +3,15 @@ import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    Dimensions,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    View,
+  Dimensions,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSettings } from '../src/contexts/SettingsContext';
@@ -107,7 +107,7 @@ export default function Settings() {
           id: 'font',
           title: t('settings.font'),
           type: 'navigation',
-          value: 'Rockwell Bold',
+          value: 'Special Letters',
         },
         {
           id: 'capitalLetters',

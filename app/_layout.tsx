@@ -310,6 +310,9 @@ export default function RootLayout() {
     'SF-Pro-Display-Bold': require('../assets/fonts/SF-pro/SF-Pro-Display-Bold.otf'),
     'SF-Pro-Display-Heavy': require('../assets/fonts/SF-pro/SF-Pro-Display-Heavy.otf'),
     'SF-Pro-Display-Black': require('../assets/fonts/SF-pro/SF-Pro-Display-Black.otf'),
+
+    // Special Letters font
+    'SpecialLetters': require('../assets/fonts/SpecialLetters/SpecialLetters.ttf'),
   });
 
   if (!fontsLoaded) {

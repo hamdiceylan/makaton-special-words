@@ -24,6 +24,9 @@ const sfProFontFamilyMap: Record<FontWeight, string> = {
   black: 'SF-Pro-Display-Black',
 };
 
+// Special Letters font family
+const specialLettersFontFamily = 'SpecialLetters';
+
 // Legacy font family map (for Jost backward compatibility)
 const fontFamilyMap = jostFontFamilyMap;
 
@@ -34,6 +37,7 @@ const androidFontDefaultPaddingFix = Platform.OS === 'android' ? {
 // Helper functions to get font family based on weight
 export const getJostFontFamily = (weight: FontWeight = 'regular') => jostFontFamilyMap[weight];
 export const getSFProFontFamily = (weight: FontWeight = 'regular') => sfProFontFamilyMap[weight];
+export const getSpecialLettersFontFamily = () => specialLettersFontFamily;
 
 // Legacy helper function (for Jost backward compatibility)
 export const getFontFamily = (weight: FontWeight = 'regular') => getJostFontFamily(weight);
@@ -89,6 +93,20 @@ export function SFProText({ style, weight = 'regular', ...props }: TextProps & {
         { fontFamily: getSFProFontFamily(weight) },
         androidFontDefaultPaddingFix,
         style,
+      ]}
+    />
+  );
+}
+
+// Special Letters Text component
+export function SpecialLettersText(props: TextProps) {
+  return (
+    <Text
+      {...props}
+      style={[
+        { fontFamily: specialLettersFontFamily },
+        androidFontDefaultPaddingFix,
+        props.style,
       ]}
     />
   );

@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WORD_IMAGES } from '../src/constants/words';
 import { useSettings } from '../src/contexts/SettingsContext';
 import { useWordTranslation } from '../src/hooks/useWordTranslation';
-import { SFProText, getSFProFontFamily } from '../src/theme/typography';
+import { SFProText, getSpecialLettersFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
 import { initializeAudio, isLikelySoundUri, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
@@ -325,7 +325,7 @@ export default function WordEditorScreen() {
                     onChangeText={setWordText}
                     placeholder={t('wordEditor.typeHere')}
                     placeholderTextColor="#757575"
-                    style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
+                    style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSpecialLettersFontFamily() }]}
                   />
                 </View>
                 {settings?.recordNewSounds && (
@@ -382,7 +382,7 @@ export default function WordEditorScreen() {
                   onChangeText={setWordText}
                   placeholder={t('wordEditor.typeHere')}
                   placeholderTextColor="#757575"
-                  style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSFProFontFamily('semibold') }]}
+                  style={[styles.input, !onTablet && styles.inputPhone, onTablet && styles.inputTablet, { fontFamily: getSpecialLettersFontFamily() }]}
                 />
               </View>
 
