@@ -2,6 +2,7 @@ import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Slider from '@react-native-community/slider';
 import {
   Dimensions,
   Modal,
@@ -47,6 +48,11 @@ export default function Settings() {
   const [showCardsPerPageModal, setShowCardsPerPageModal] = useState(false);
   const [showShuffleModeModal, setShowShuffleModeModal] = useState(false);
   const [showSwitchCountModal, setShowSwitchCountModal] = useState(false);
+
+  const handleAnimationSpeedChange = (value: number) => {
+    const clampedValue = Math.min(1, Math.max(0, value));
+    setAnimationSpeed(clampedValue);
+  };
 
   const sections: SettingSection[] = [
     {
@@ -187,36 +193,24 @@ export default function Settings() {
 
   const renderSlider = () => (
     <View style={styles.sliderContainer}>
-      <Pressable
-        onPress={() => setAnimationSpeed(Math.max(0, animationSpeed - 0.1))}
-      >
-        <Image
-          source={require('../assets/images/decrease-icon.png')}
-          style={styles.sliderIcon}
-        />
-      </Pressable>
-      <View style={styles.sliderTrack}>
-        <View
-          style={[
-            styles.sliderProgress,
-            { width: `${animationSpeed * 100}%` }
-          ]}
-        />
-        <View
-          style={[
-            styles.sliderThumb,
-            { left: `${animationSpeed * 100}%` }
-          ]}
-        />
-      </View>
-      <Pressable
-        onPress={() => setAnimationSpeed(Math.min(1, animationSpeed + 0.1))}
-      >
-        <Image
-          source={require('../assets/images/increase-icon.png')}
-          style={styles.sliderIcon}
-        />
-      </Pressable>
+      <Image
+        source={require('../assets/images/decrease-icon.png')}
+        style={styles.sliderIcon}
+      />
+      <Slider
+        style={styles.sliderControl}
+        value={animationSpeed}
+        onValueChange={handleAnimationSpeedChange}
+        minimumValue={0}
+        maximumValue={1}
+        minimumTrackTintColor="#4664CD"
+        maximumTrackTintColor="#B0B0B0"
+        thumbTintColor="#4664CD"
+      />
+      <Image
+        source={require('../assets/images/increase-icon.png')}
+        style={styles.sliderIcon}
+      />
     </View>
   );
 
@@ -487,47 +481,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
   },
-  sliderButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sliderButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+  sliderControl: {
+    flex: 1,
+    marginHorizontal: 12,
   },
   sliderIcon: {
     width: 25,
     height: 25,
-
-  },
-  sliderTrack: {
-    flex: 1,
-    height: 2,
-    backgroundColor: '#B0B0B0',
-    borderRadius: 3,
-    marginHorizontal: 12,
-    position: 'relative',
-  },
-  sliderProgress: {
-    height: '100%',
-    backgroundColor: '#4664CD',
-    borderRadius: 2,
-  },
-  sliderThumb: {
-    position: 'absolute',
-    top: -6,
-    width: 16,
-    height: 16,
-    borderRadius: 10,
-    backgroundColor: '#4664CD',
-    marginLeft: -10,
   },
   toggleContainer: {
     justifyContent: 'center',
