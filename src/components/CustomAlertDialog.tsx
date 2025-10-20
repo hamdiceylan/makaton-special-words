@@ -88,11 +88,16 @@ const CustomAlertDialog = ({
       }
     }
 
-    const [n0, n1, n2] = numbers;
+    // Şart: n1 > n3 > n2 ve ifade: n1 - n2 + n3
+    // En büyüğü n1, ortancası n3, en küçüğü n2 olsun
+    const sortedDesc = [...numbers].sort((a, b) => b - a);
+    const n1 = sortedDesc[0]; // en büyük
+    const n3 = sortedDesc[1]; // ortanca
+    const n2 = sortedDesc[2]; // en küçük
 
-    // Format: n2 - n0 + n1
-    const expression = `${n2} - ${n0} + ${n1}`;
-    const result = n2 - n0 + n1;
+    // Format: n1 - n2 + n3 (işaretler sırasıyla '-' ve '+')
+    const expression = `${n1} - ${n2} + ${n3}`;
+    const result = n1 - n2 + n3;
 
     setQuestion(expression);
     setGateKey(result);
