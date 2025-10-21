@@ -1,8 +1,9 @@
+import Slider from '@react-native-community/slider';
 import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Slider from '@react-native-community/slider';
+
 import {
   Dimensions,
   Modal,
