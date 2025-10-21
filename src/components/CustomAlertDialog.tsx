@@ -20,16 +20,15 @@ const CustomAlertDialog = ({
 }: CustomAlertDialogProps) => {
   const { t } = useTranslation();
   const [input, setInput] = useState("");
-  const [error, setError] = useState(false);
   const [question, setQuestion] = useState("");
   const [gateKey, setGateKey] = useState(0);
 
   // iOS için Alert.prompt göster
-  const showIOSPrompt = (currentQuestion: string, currentGateKey: number, errorMessage?: string) => {
+  const showIOSPrompt = (currentQuestion: string, currentGateKey: number) => {
     if (Platform.OS === 'ios') {
       Alert.prompt(
         title || t('other.childSafetyGate'),
-        errorMessage ? `${errorMessage}\n\n${currentQuestion} =` : `${currentQuestion} =`,
+        `${currentQuestion} =`,
         [
           {
             text: t('buttons.cancel'),
@@ -62,13 +61,13 @@ const CustomAlertDialog = ({
         const newQuestion = generateQuestionAndReturn();
         // Yeni soru üretildikten sonra tekrar göster
         setTimeout(() => {
-          showIOSPrompt(newQuestion.expression, newQuestion.result, t('safetyGate.wrongAnswer'));
+          showIOSPrompt(newQuestion.expression, newQuestion.result);
         }, 100);
       }
     } else {
       // Geçersiz input: tekrar göster
       setTimeout(() => {
-        showIOSPrompt(question, currentGateKey, t('safetyGate.invalidNumber'));
+        showIOSPrompt(question, currentGateKey);
       }, 100);
     }
   };
@@ -102,7 +101,6 @@ const CustomAlertDialog = ({
     setQuestion(expression);
     setGateKey(result);
     setInput("");
-    setError(false);
 
     return { expression, result };
   };
@@ -141,13 +139,11 @@ const CustomAlertDialog = ({
       // }
       // Normal doğrulama: gateKey ile eşleşme
       if (userInput === gateKey) {
-        setError(false);
         onSuccess();
         setInput("");
       }
       // Yanlış cevap: yeni soru üret
       else {
-        setError(true);
         setInput("");
         generateQuestion();
       }
@@ -199,7 +195,7 @@ const CustomAlertDialog = ({
           <TextInput
             style={{
               borderWidth: 1,
-              borderColor: error ? "red" : "#ccc",
+              borderColor: "#ccc",
               borderRadius: 8,
               padding: 8,
               textAlign: "center"
@@ -207,14 +203,8 @@ const CustomAlertDialog = ({
             keyboardType="numeric"
             value={input}
             onChangeText={setInput}
-            placeholder={t('safetyGate.yourAnswer')}
+            placeholder=""
           />
-
-          {error && (
-            <Text style={{ color: "red", marginTop: 8 }}>
-              {t('safetyGate.wrongAnswer')}
-            </Text>
-          )}
 
           <View
             style={{

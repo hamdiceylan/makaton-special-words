@@ -181,11 +181,6 @@
     "childSafetyGate": "Ebeveyn Denetimi",
     "storyTitle": "Öykü Başlığı: %@"
   },
-  "safetyGate": {
-    "yourAnswer": "Cevabınız",
-    "wrongAnswer": "Yanlış cevap. Lütfen tekrar deneyin.",
-    "invalidNumber": "Lütfen geçerli bir sayı girin."
-  },
   "wordList": {
     "resetTitle": "Kelime Listesini Sıfırla",
     "resetMessage": "Kelime listesini orijinal sırasına sıfırlamak istediğinizden emin misiniz? Bu işlem tüm değişikliklerinizi geri alacaktır.",
@@ -337,4 +332,3 @@
     "cold": "soğuk"
   }
 }
-

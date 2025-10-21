@@ -931,7 +931,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const isAtStart = gameState.currentGroupStart === 0;
   const isAtEnd = gameState.currentGroupStart + cardsPerPage >= getPlayableBaseList().length;
 
-  const handleLockPress = () => Alert.alert(t('help.padlock'), t('help.padlock'));
+  const handleLockPress = () => Alert.alert(t('keyboard.padlock'), t('help.padlock'));
   const handleLockLongPress = () => setIsLocked(p => !p);
   
   const handleRefresh = () => performPageTransition(gameState.currentGroupStart);

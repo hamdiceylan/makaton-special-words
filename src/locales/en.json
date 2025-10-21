@@ -181,11 +181,6 @@
     "childSafetyGate": "Child Safety Gate",
     "storyTitle": "Story title: %@"
   },
-  "safetyGate": {
-    "yourAnswer": "Your answer",
-    "wrongAnswer": "Wrong answer. Please try again.",
-    "invalidNumber": "Please enter a valid number."
-  },
   "wordList": {
     "resetTitle": "Reset Word List",
     "resetMessage": "Are you sure you want to reset the word list to its original order? This will undo all your changes.",
@@ -337,4 +332,3 @@
     "cold": "cold"
   }
 }
-
