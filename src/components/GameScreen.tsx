@@ -162,6 +162,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
   const afterMatchWaitRef = useRef<Promise<void> | null>(null);
   const roundIdRef = useRef(0);
   const pendingPlayOnVisibleRef = useRef(false);
+  const borderContactActiveRef = useRef(false);
+  const borderContactIndexRef = useRef<number | null>(null);
 
   const resetMatchCardPosition = useCallback(() => {
     cardTranslateX.stopAnimation();
@@ -426,6 +428,51 @@ export default function GameScreen({ gameType }: GameScreenProps) {
     return clamped;
   };
 
+  const checkBorderContact = (translation: { x: number; y: number }) => {
+    if (!layout) return;
+    const matchRect = {
+      left: layout.match.left + translation.x,
+      top: layout.match.top + translation.y,
+      right: layout.match.left + layout.match.width + translation.x,
+      bottom: layout.match.top + layout.match.height + translation.y,
+    };
+
+    let isTouching = false;
+    let touchingIndex: number | null = null;
+    for (let i = 0; i < layout.statics.length; i++) {
+      const rect = layout.statics[i];
+      const staticRect = {
+        left: rect.left,
+        top: rect.top,
+        right: rect.left + rect.width,
+        bottom: rect.top + rect.height,
+      };
+
+      const overlaps =
+        matchRect.left <= staticRect.right &&
+        matchRect.right >= staticRect.left &&
+        matchRect.top <= staticRect.bottom &&
+        matchRect.bottom >= staticRect.top;
+
+      if (overlaps) {
+        isTouching = true;
+        touchingIndex = i;
+        break;
+      }
+    }
+
+    const wasTouching = borderContactActiveRef.current;
+    if (isTouching && !wasTouching) {
+      borderContactActiveRef.current = true;
+      borderContactIndexRef.current = touchingIndex;
+    } else if (!isTouching && wasTouching) {
+      borderContactActiveRef.current = false;
+      borderContactIndexRef.current = null;
+    } else if (isTouching && touchingIndex !== null) {
+      borderContactIndexRef.current = touchingIndex;
+    }
+  };
+
   // ==============================
   // DRAG & DROP
   // ==============================
@@ -440,12 +487,15 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       cardTranslateY.setOffset(cardOffset.current.y);
       cardTranslateX.setValue(0);
       cardTranslateY.setValue(0);
+      borderContactActiveRef.current = false;
+      borderContactIndexRef.current = null;
     },
     onPanResponderMove: (_, gestureState) => {
       if (gameState.isAnimating) return;
       const nextTranslationX = cardOffset.current.x + gestureState.dx;
       const nextTranslationY = cardOffset.current.y + gestureState.dy;
-      applyClampedTranslation(nextTranslationX, nextTranslationY);
+      const clampedTranslation = applyClampedTranslation(nextTranslationX, nextTranslationY);
+      checkBorderContact(clampedTranslation);
     },
     onPanResponderRelease: (e, g) => {
       if (gameState.isAnimating) return;
@@ -453,6 +503,9 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       cardTranslateY.flattenOffset();
       const currentOffset = getCardPositionValue();
       cardOffset.current = currentOffset;
+      borderContactActiveRef.current = false;
+      const contactIndex = borderContactIndexRef.current;
+      borderContactIndexRef.current = null;
 
       const tap = Math.abs(g.dx) < 10 && Math.abs(g.dy) < 10;
       if (tap) {
@@ -468,6 +521,19 @@ export default function GameScreen({ gameType }: GameScreenProps) {
         }
         Animated.spring(cardScale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: !useLegacyAnimations }).start();
         return;
+      }
+      
+      if (typeof contactIndex === 'number') {
+        const candidateCard = gameState.staticCards[contactIndex];
+        if (candidateCard) {
+          const isMatch = config.matchProperty === 'image'
+            ? candidateCard.image === gameState.matchCard.image
+            : candidateCard.text === gameState.matchCard.text;
+          if (isMatch) {
+            handleProgrammaticMatch(candidateCard, contactIndex);
+            return;
+          }
+        }
       }
       
       const dropPos = {
