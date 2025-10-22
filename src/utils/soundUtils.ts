@@ -1,29 +1,180 @@
 import { AudioModule, createAudioPlayer, setAudioModeAsync, setIsAudioActiveAsync } from 'expo-audio';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Speech from 'expo-speech';
 
 const URI_SCHEME_REGEX = /^[a-zA-Z][a-zA-Z0-9+\-.]*:\/\//;
+const SOUND_DIRECTORY = 'word-sounds';
+const PERSISTENT_SOUND_SCHEME = 'app-audio://';
+const FALLBACK_SOUND_EXTENSION = 'm4a';
+
+const getDocumentDirectory = () => {
+  const dir = FileSystem.documentDirectory;
+  return typeof dir === 'string' ? dir : null;
+};
+
+const ensureSoundDirectoryAsync = async () => {
+  const baseDir = getDocumentDirectory();
+  if (!baseDir) {
+    return null;
+  }
+
+  const targetDir = `${baseDir}${SOUND_DIRECTORY}`;
+  try {
+    await FileSystem.makeDirectoryAsync(targetDir, { intermediates: true });
+  } catch (error: any) {
+    if (error?.code !== 'E_DIR_EXISTS') {
+      throw error;
+    }
+  }
+  return targetDir.endsWith('/') ? targetDir : `${targetDir}/`;
+};
+
+const buildPersistentSoundKey = (relativePath: string) =>
+  `${PERSISTENT_SOUND_SCHEME}${relativePath.replace(/^\/+/, '')}`;
+
+const extractSoundExtension = (uri: string) => {
+  try {
+    const withoutQuery = uri.split('?')[0] ?? '';
+    const match = withoutQuery.match(/\.([a-zA-Z0-9]+)$/);
+    return match ? match[1] : FALLBACK_SOUND_EXTENSION;
+  } catch {
+    return FALLBACK_SOUND_EXTENSION;
+  }
+};
+
+const getRelativePathFromUri = (uri: string) => {
+  const marker = `/${SOUND_DIRECTORY}/`;
+  const markerIndex = uri.indexOf(marker);
+  if (markerIndex >= 0) {
+    const relative = uri.slice(markerIndex + 1);
+    return relative.replace(/^\/+/, '');
+  }
+  return null;
+};
+
+const getRelativePathFromDocumentUri = (uri: string) => {
+  const baseDir = getDocumentDirectory();
+  if (baseDir && uri.startsWith(baseDir)) {
+    const relative = uri.slice(baseDir.length).replace(/^\/+/, '');
+    if (relative.startsWith(`${SOUND_DIRECTORY}/`)) {
+      return relative;
+    }
+  }
+  return getRelativePathFromUri(uri);
+};
+
+const resolvePersistentSoundUri = (key: string) => {
+  if (!isPersistentSoundKey(key)) {
+    return null;
+  }
+  const baseDir = getDocumentDirectory();
+  if (!baseDir) {
+    return null;
+  }
+  const relative = key.slice(PERSISTENT_SOUND_SCHEME.length).replace(/^\/+/, '');
+  return `${baseDir}${relative}`;
+};
+
+export const isPersistentSoundKey = (value: string | null | undefined): value is string =>
+  typeof value === 'string' && value.startsWith(PERSISTENT_SOUND_SCHEME);
+
+export const normalizeSoundStorageKey = (value: string | null | undefined): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  if (isPersistentSoundKey(value)) {
+    return value;
+  }
+
+  const stringValue = value as string;
+
+  if (URI_SCHEME_REGEX.test(stringValue)) {
+    if (stringValue.startsWith('file://')) {
+      const relative = getRelativePathFromDocumentUri(stringValue);
+      if (relative) {
+        return buildPersistentSoundKey(relative);
+      }
+    }
+    return stringValue;
+  }
+
+  if (stringValue.startsWith('/')) {
+    return `file://${stringValue}`;
+  }
+
+  return stringValue;
+};
+
+export const copySoundToPersistentStorage = async (uri: string | null | undefined) => {
+  if (!uri) {
+    return null;
+  }
+
+  const normalizedKey = normalizeSoundStorageKey(uri);
+  if (normalizedKey && isPersistentSoundKey(normalizedKey)) {
+    return normalizedKey;
+  }
+
+  const fileUri = typeof uri === 'string' ? uri : String(uri);
+  if (!fileUri.startsWith('file://')) {
+    return normalizedKey ?? fileUri;
+  }
+
+  const targetDir = await ensureSoundDirectoryAsync();
+  if (!targetDir) {
+    return normalizedKey ?? fileUri;
+  }
+
+  try {
+    const extension = extractSoundExtension(fileUri);
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension}`;
+    const destinationRelative = `${SOUND_DIRECTORY}/${fileName}`;
+    const destinationAbsolute = `${targetDir}${fileName}`;
+
+    await FileSystem.copyAsync({ from: fileUri, to: destinationAbsolute });
+    return buildPersistentSoundKey(destinationRelative);
+  } catch {
+    return normalizedKey ?? fileUri;
+  }
+};
 
 export const normalizeSoundUri = (value: string | null | undefined): string | null => {
   if (!value) {
     return null;
   }
-  if (URI_SCHEME_REGEX.test(value)) {
-    return value;
+  if (isPersistentSoundKey(value)) {
+    return resolvePersistentSoundUri(value) ?? value;
   }
-  if (value.startsWith('/')) {
-    return `file://${value}`;
+  const stringValue = value as string;
+  if (URI_SCHEME_REGEX.test(stringValue)) {
+    if (stringValue.startsWith('file://')) {
+      const relative = getRelativePathFromDocumentUri(stringValue);
+      if (relative) {
+        const resolved = resolvePersistentSoundUri(buildPersistentSoundKey(relative));
+        return resolved ?? stringValue;
+      }
+    }
+    return stringValue;
   }
-  return value;
+  if (stringValue.startsWith('/')) {
+    return `file://${stringValue}`;
+  }
+  return stringValue;
 };
 
 export const isLikelySoundUri = (value: string | null | undefined): value is string => {
   if (!value) {
     return false;
   }
-  if (value.startsWith('/')) {
+  if (isPersistentSoundKey(value)) {
     return true;
   }
-  return URI_SCHEME_REGEX.test(value);
+  const stringValue = value as string;
+  if (stringValue.startsWith('/')) {
+    return true;
+  }
+  return URI_SCHEME_REGEX.test(stringValue);
 };
 
 // Base sound mappings - React Native requires static paths

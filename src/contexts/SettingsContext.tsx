@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { words as originalWords } from '../constants/words';
-import { normalizeSoundUri } from '../utils/soundUtils';
+import { DEFAULT_IMAGE_KEY, normalizeImageStorageKey } from '../utils/imageUtils';
+import { normalizeSoundStorageKey } from '../utils/soundUtils';
 
 interface WordItem {
   image: string;
@@ -16,7 +17,7 @@ function normalizeWordSoundEntry<T extends { sound?: string | null }>(item: T): 
     return item;
   }
   const currentSound = item.sound ?? null;
-  const normalized = normalizeSoundUri(currentSound);
+  const normalized = normalizeSoundStorageKey(currentSound);
   if (normalized === currentSound) {
     return item;
   }
@@ -26,14 +27,33 @@ function normalizeWordSoundEntry<T extends { sound?: string | null }>(item: T): 
   };
 }
 
-function normalizeWordCollection<T extends { sound?: string | null }>(items: T[]): T[] {
+function normalizeWordImageEntry<T extends { image?: string | null }>(item: T): T {
+  if (!item) {
+    return item;
+  }
+  const currentImage = (item as any).image ?? null;
+  const normalized = normalizeImageStorageKey(currentImage);
+  if (normalized === currentImage) {
+    return item;
+  }
+  return {
+    ...item,
+    image: normalized ?? DEFAULT_IMAGE_KEY,
+  };
+}
+
+function normalizeWordCollection<T extends { sound?: string | null; image?: string | null }>(items: T[]): T[] {
   let changed = false;
   const normalized = items.map((item) => {
-    const next = normalizeWordSoundEntry(item);
+    let next = normalizeWordSoundEntry(item);
     if (next !== item) {
       changed = true;
     }
-    return next;
+    const withImage = normalizeWordImageEntry(next);
+    if (withImage !== next) {
+      changed = true;
+    }
+    return withImage;
   });
   return changed ? normalized : items;
 }

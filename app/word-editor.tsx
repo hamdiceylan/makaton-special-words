@@ -11,8 +11,8 @@ import { useSettings } from '../src/contexts/SettingsContext';
 import { useWordTranslation } from '../src/hooks/useWordTranslation';
 import { SFProText, getSpecialLettersFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
-import { copyImageToPersistentStorage, resolveImageSource } from '../src/utils/imageUtils';
-import { initializeAudio, isLikelySoundUri, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
+import { copyImageToPersistentStorage, isPersistentImageKey, normalizeImageStorageKey, resolveImageSource } from '../src/utils/imageUtils';
+import { copySoundToPersistentStorage, initializeAudio, isLikelySoundUri, normalizeSoundStorageKey, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
 export default function WordEditorScreen() {
   const { t, i18n } = useTranslation();
@@ -44,10 +44,12 @@ export default function WordEditorScreen() {
 
   const [wordText, setWordText] = useState<string>(initialValues.displayText);
   const [originalText] = useState<string>(initialValues.originalText);
-  // If adding a new word, start with no image so we can show the upload icon
-  const [imageKey, setImageKey] = useState<string | null>(
-    isEditMode ? ((image as string) ?? 'ball') : null
+  const initialImageKey = useMemo(
+    () => (isEditMode ? normalizeImageStorageKey((image as string) ?? 'ball') : null),
+    [image, isEditMode]
   );
+  // If adding a new word, start with no image so we can show the upload icon
+  const [imageKey, setImageKey] = useState<string | null>(initialImageKey);
   const [isRecording, setIsRecording] = useState(false);
   const [recorder, setRecorder] = useState<InstanceType<typeof AudioModule.AudioRecorder> | null>(null);
   const [recordedSoundUri, setRecordedSoundUri] = useState<string | null>(null);
@@ -61,11 +63,17 @@ export default function WordEditorScreen() {
   }, []);
 
   useEffect(() => {
+    if (isEditMode) {
+      setImageKey(initialImageKey);
+    }
+  }, [initialImageKey, isEditMode]);
+
+  useEffect(() => {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const existing: any = wordList[editIndex];
-      const normalizedSound = normalizeSoundUri(typeof existing?.sound === 'string' ? existing.sound : null);
-      if (normalizedSound && isLikelySoundUri(normalizedSound)) {
-        setRecordedSoundUri(normalizedSound);
+      const storageSound = normalizeSoundStorageKey(typeof existing?.sound === 'string' ? existing.sound : null);
+      if (storageSound && isLikelySoundUri(storageSound)) {
+        setRecordedSoundUri(storageSound);
       } else {
         setRecordedSoundUri(null);
       }
@@ -92,7 +100,7 @@ export default function WordEditorScreen() {
       });
       if (!result.canceled && result.assets && result.assets[0]?.uri) {
         const persistentUri = await copyImageToPersistentStorage(result.assets[0].uri);
-        setImageKey(persistentUri ?? null);
+        setImageKey(normalizeImageStorageKey(persistentUri) ?? null);
       }
     } catch {}
   };
@@ -107,7 +115,7 @@ export default function WordEditorScreen() {
       });
       if (!result.canceled && result.assets && result.assets[0]?.uri) {
         const persistentUri = await copyImageToPersistentStorage(result.assets[0].uri);
-        setImageKey(persistentUri ?? null);
+        setImageKey(normalizeImageStorageKey(persistentUri) ?? null);
       }
     } catch {}
   };
@@ -131,8 +139,9 @@ export default function WordEditorScreen() {
         await recorder.stop();
         const state = recorder.getStatus();
         const candidate = typeof recorder.uri === 'string' && recorder.uri ? recorder.uri : (typeof state?.url === 'string' ? state.url : null);
-        const normalized = normalizeSoundUri(candidate);
-        if (normalized) setRecordedSoundUri(normalized);
+        const persistentKey = await copySoundToPersistentStorage(normalizeSoundUri(candidate) ?? candidate ?? null);
+        if (persistentKey) setRecordedSoundUri(normalizeSoundStorageKey(persistentKey));
+        else setRecordedSoundUri(normalizeSoundStorageKey(candidate));
         setIsRecording(false);
         setRecorder(null);
         await setAudioModeAsync({ allowsRecording: false });
@@ -197,7 +206,11 @@ export default function WordEditorScreen() {
       // Fallback: bundled sound by image key or text
       const textKey = (wordText || '').trim().toLowerCase();
       const imageKeyCandidate = imageKey || '';
-      const looksLikeUri = typeof imageKeyCandidate === 'string' && (imageKeyCandidate.startsWith('http') || imageKeyCandidate.startsWith('file:'));
+      const looksLikeUri = typeof imageKeyCandidate === 'string' && (
+        imageKeyCandidate.startsWith('http') ||
+        imageKeyCandidate.startsWith('file:') ||
+        isPersistentImageKey(imageKeyCandidate)
+      );
       const finalKey = (!looksLikeUri && imageKeyCandidate) ? imageKeyCandidate : textKey;
       if (finalKey) {
         await playWord(finalKey, { ttsEnabled: settings?.textToSpeech, locale, text: wordText || undefined });
@@ -213,9 +226,9 @@ export default function WordEditorScreen() {
     // Copy the current word
     const wordToCopy = wordList[editIndex] as any;
     const copiedWord = {
-      image: wordToCopy.image ?? 'ball',
+      image: normalizeImageStorageKey(wordToCopy.image ?? 'ball') ?? 'ball',
       text: wordToCopy.text ?? '',
-      sound: normalizeSoundUri(wordToCopy.sound ?? null),
+      sound: normalizeSoundStorageKey(wordToCopy.sound ?? null),
     };
 
     // Add to word list
@@ -238,10 +251,11 @@ export default function WordEditorScreen() {
     if (isEditMode && typeof editIndex === 'number' && editIndex >= 0 && editIndex < wordList.length) {
       const updated = [...wordList];
       const prev: any = updated[editIndex];
-      const newSound = normalizeSoundUri(recordedSoundUri ?? prev?.sound ?? null);
+      const newSound = normalizeSoundStorageKey(recordedSoundUri ?? prev?.sound ?? null);
+      const storedImageKey = normalizeImageStorageKey(imageKey ?? prev.image ?? 'ball') ?? 'ball';
       
       updated[editIndex] = { 
-        image: imageKey ?? prev.image ?? 'ball', 
+        image: storedImageKey, 
         text: prev.text, // Keep original key
         sound: newSound,
         translations: updateWordTranslation(prev, trimmed)
@@ -249,10 +263,11 @@ export default function WordEditorScreen() {
       setWordList(updated);
     } else {
       // New word - save with current locale as default
+      const storedImageKey = normalizeImageStorageKey(imageKey ?? 'ball') ?? 'ball';
       setWordList([...wordList, { 
-        image: imageKey ?? 'ball', 
+        image: storedImageKey, 
         text: trimmed, 
-        sound: normalizeSoundUri(recordedSoundUri),
+        sound: normalizeSoundStorageKey(recordedSoundUri),
         translations: undefined
       } as any]);
     }
