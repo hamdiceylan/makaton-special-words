@@ -450,7 +450,6 @@ export default function WordEditorScreen() {
                         weight="semibold"
                         style={styles.actionText}
                         numberOfLines={1}
-                        adjustsFontSizeToFit
                       >
                         {t('wordDetails.choosePicture')}
                       </SFProText>
@@ -463,7 +462,6 @@ export default function WordEditorScreen() {
                         weight="semibold"
                         style={styles.actionText}
                         numberOfLines={1}
-                        adjustsFontSizeToFit
                       >
                         {t('wordDetails.takePicture')}
                       </SFProText>
@@ -482,7 +480,6 @@ export default function WordEditorScreen() {
                       weight="semibold"
                       style={styles.actionText}
                       numberOfLines={1}
-                      adjustsFontSizeToFit
                       >
                         {isRecording ? t('wordDetails.stopRecording') : t('wordDetails.recordSound')}
                         </SFProText>
@@ -495,7 +492,6 @@ export default function WordEditorScreen() {
                           weight="semibold"
                           style={styles.actionText}
                           numberOfLines={1}
-                          adjustsFontSizeToFit
                         >
                           {t('wordDetails.playSound')}
                         </SFProText>
@@ -527,7 +523,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentPhone: {
-    width: 225,
+   width:"100%",
+   maxWidth: 375
   },
   landscapeRow: {
     flexDirection: 'row',
@@ -536,6 +533,7 @@ const styles = StyleSheet.create({
   },
   landCol: {
     width: 225,
+    
   },
   group: {
     marginBottom: 38,
@@ -559,8 +557,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   inputPhone: {
-    width: 225,
+    width: "100%",
     height: 52,
+    alignSelf: "center"
+   
   },
   inputTablet: {
     width: 357,
@@ -571,14 +571,15 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#E1E1E1',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
     overflow: 'hidden',
+    alignSelf: "center"
   },
   imageBoxPhone: {
-    width: 225,
+    width: "100%",
     height: 159,
     overflow: 'hidden',
   },
@@ -593,6 +594,7 @@ const styles = StyleSheet.create({
   },
   rowPhone: {
     gap: 7,
+    justifyContent: "center"
   },
   rowTablet: {
     gap: 12,
@@ -605,9 +607,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    flex: 1
   },
   actionBtnPhone: {
-    width: 110,
     height: 36,
     paddingHorizontal: 7,
   },
@@ -618,7 +620,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 13,
     textAlign: 'center',
     includeFontPadding: false,
   },
@@ -629,8 +631,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionIcon: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
     flexShrink: 0,
     marginRight: 6,
   },
