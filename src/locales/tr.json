@@ -191,17 +191,6 @@
     "successTitle": "Başarılı",
     "successMessage": "Kelime listesi orijinal sırasına sıfırlandı."
   },
-  "wordEditor": {
-    "word": "Kelime",
-    "picture": "Resim",
-    "sound": "Ses",
-    "gallery": "Galeri",
-    "camera": "Kamera",
-    "record": "Kaydet",
-    "play": "Çal",
-    "stop": "Durdur",
-    "typeHere": "Buraya yazın"
-  },
   "settings": {
     "title": "Ayarlar",
     "animationSpeed": "OYNATMA HIZI",

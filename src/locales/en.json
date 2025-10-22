@@ -191,17 +191,6 @@
     "successTitle": "Success",
     "successMessage": "Word list has been reset to original order."
   },
-  "wordEditor": {
-    "word": "Word",
-    "picture": "Picture",
-    "sound": "Sound",
-    "gallery": "Gallery",
-    "camera": "Camera",
-    "record": "Record",
-    "play": "Play",
-    "stop": "Stop",
-    "typeHere": "Type here"
-  },
   "settings": {
     "title": "Settings",
     "animationSpeed": "ANIMATION SPEED",
