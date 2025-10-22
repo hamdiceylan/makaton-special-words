@@ -11,6 +11,7 @@ import { useSettings } from '../src/contexts/SettingsContext';
 import { useWordTranslation } from '../src/hooks/useWordTranslation';
 import { SFProText, getSpecialLettersFontFamily } from '../src/theme/typography';
 import { isTablet } from '../src/utils/device';
+import { copyImageToPersistentStorage, resolveImageSource } from '../src/utils/imageUtils';
 import { initializeAudio, isLikelySoundUri, normalizeSoundUri, playWord, stopCurrentSound, stopCurrentSpeech } from '../src/utils/soundUtils';
 
 export default function WordEditorScreen() {
@@ -80,14 +81,6 @@ export default function WordEditorScreen() {
     return hasText && hasImage && hasSound;
   }, [wordText, imageKey, isEditMode, settings?.recordNewSounds, recordedSoundUri]);
 
-  const resolveImageSource = (key: string | null) => {
-    if (!key) return undefined;
-    const mapped = WORD_IMAGES[key as string];
-    if (mapped) return mapped;
-    // Treat as URI fallback (gallery/camera)
-    return { uri: key as string } as const;
-  };
-
   const pickFromGallery = async () => {
     try {
       const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -98,7 +91,8 @@ export default function WordEditorScreen() {
         allowsEditing: true,
       });
       if (!result.canceled && result.assets && result.assets[0]?.uri) {
-        setImageKey(result.assets[0].uri);
+        const persistentUri = await copyImageToPersistentStorage(result.assets[0].uri);
+        setImageKey(persistentUri ?? null);
       }
     } catch {}
   };
@@ -112,7 +106,8 @@ export default function WordEditorScreen() {
         allowsEditing: true,
       });
       if (!result.canceled && result.assets && result.assets[0]?.uri) {
-        setImageKey(result.assets[0].uri);
+        const persistentUri = await copyImageToPersistentStorage(result.assets[0].uri);
+        setImageKey(persistentUri ?? null);
       }
     } catch {}
   };
