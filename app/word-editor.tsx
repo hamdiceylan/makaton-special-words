@@ -376,7 +376,7 @@ export default function WordEditorScreen() {
                   {imageKey ? (
                     <Image
                       source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
-                      style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
+                      style={onTablet ? { width: 357, height: 237 } : { width: 215, height: 159 }}
                       resizeMode="cover"
                       resizeMethod="resize"
                       fadeDuration={0}
@@ -433,7 +433,7 @@ export default function WordEditorScreen() {
                   {imageKey ? (
                     <Image
                       source={resolveImageSource(imageKey) || WORD_IMAGES['ball']}
-                      style={onTablet ? { width: 357, height: 237 } : { width: 207, height: 159 }}
+                      style={onTablet ? { width: 357, height: 237 } : { width: 215, height: 159 }}
                       resizeMode="cover"
                       resizeMethod="resize"
                       fadeDuration={0}
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentPhone: {
-    width: 207,
+    width: 215,
   },
   landscapeRow: {
     flexDirection: 'row',
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   landCol: {
-    width: 207,
+    width: 215,
   },
   group: {
     marginBottom: 38,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   inputPhone: {
-    width: 207,
+    width: 215,
     height: 52,
   },
   inputTablet: {
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   imageBoxPhone: {
-    width: 207,
+    width: 215,
     height: 159,
     overflow: 'hidden',
   },
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   actionBtnPhone: {
-    width: 100,
+    width: 105,
     height: 36,
     paddingHorizontal: 7,
   },
