@@ -42,17 +42,18 @@ export const useWordTranslation = () => {
     const defaultTranslation = t(translationKey);
     const hasDefaultTranslation = defaultTranslation !== translationKey;
     
-    // If new text matches the default translation, remove custom translation
-    if (hasDefaultTranslation && newText === defaultTranslation) {
+    const matchesDefaultTranslation = hasDefaultTranslation && newText === defaultTranslation;
+    const matchesOriginalText = newText === wordItem?.text;
+
+    if (matchesDefaultTranslation) {
+      // Matches bundled translation, so no override needed.
       delete existingTranslations[currentLocale];
-    }
-    // If new text is different from original, save as custom translation
-    else if (newText !== wordItem?.text) {
+    } else if (!hasDefaultTranslation && matchesOriginalText) {
+      // No bundled translation and matches original text, so remove redundant override.
+      delete existingTranslations[currentLocale];
+    } else {
+      // Persist override even if it matches the original text to allow reverting translations.
       existingTranslations[currentLocale] = newText;
-    }
-    // If new text matches original and there's no default translation, remove custom
-    else {
-      delete existingTranslations[currentLocale];
     }
     
     // Return undefined if no translations left, otherwise return the object
@@ -61,4 +62,3 @@ export const useWordTranslation = () => {
 
   return { getTranslatedWord, updateWordTranslation, currentLocale: i18n.language };
 };
-
