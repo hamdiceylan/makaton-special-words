@@ -666,6 +666,9 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       const d2 = Math.max(1, Math.round(total / 5));
       const d3 = Math.max(1, Math.round(total / 4));
 
+      // Show gray border overlay during entire double flip
+      setShowMatchBorder(true);
+
       Animated.timing(flipAnimation, {
         toValue: 0.5,
         duration: d0,
@@ -715,6 +718,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
               }, Math.max(100, Math.round(100 * m)));
               ongoingTimeouts.current.push(timeout3);
               flipAnimation.setValue(0);
+              setShowMatchBorder(false);
             });
           });
         });
@@ -1103,6 +1107,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       { left: r.left, top: r.top, width: r.width, height: r.height },
       { transform: [{ translateX: cardTranslateX }, { translateY: cardTranslateY }] },
       (hideMatchCardBorder || (canShowText && !config.matchCardContent.includes('question'))) && { borderWidth: 0 },
+      showMatchBorder && { shadowColor: 'transparent', shadowOpacity: 0, elevation: 0 },
     ];
 
     if (useLegacyAnimations) {
@@ -1243,8 +1248,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E6EEF8',
-    shadowColor: '#000',
+    borderColor: '#000000',
+    shadowColor: '#000000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1.0,
+    shadowRadius: 4,
+    elevation: 8,
     overflow: 'visible',
     zIndex: 2,
   },
@@ -1254,14 +1263,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E1E1E1',
+    borderColor: '#000000',
     overflow: 'hidden',
   },
   
   highlightedCard: {
     borderWidth: 4,
-    borderColor: '#4664CD',
-    shadowColor: '#4664CD',
+    borderColor: 'transparent',
+    shadowColor: 'transparent',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 8,
@@ -1304,8 +1313,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderWidth: 3,
-    borderColor: '#B1D8F2',
+    borderWidth: 1,
+    borderColor: 'transparent',
     borderRadius: 6,
   },
   
@@ -1316,7 +1325,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     borderWidth: 1,
-    borderColor: '#E1E1E1',
+    borderColor: '#000000',
     borderRadius: 6,
   },
   
