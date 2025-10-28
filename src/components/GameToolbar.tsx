@@ -77,7 +77,7 @@ export default function GameToolbar({
                 delayLongPress={3000}
               >
                 <Image
-                  source={isLocked ? require('../../assets/images/unlock.png') : require('../../assets/images/lock-icon.png')}
+                  source={isLocked ? require('../../assets/images/lock-icon.png') : require('../../assets/images/unlock.png')}
                   style={styles.toolbarIcon}
                   resizeMode="contain"
                 />
