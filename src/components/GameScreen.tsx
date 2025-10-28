@@ -666,6 +666,9 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       const d2 = Math.max(1, Math.round(total / 5));
       const d3 = Math.max(1, Math.round(total / 4));
 
+      // Show gray border overlay during entire double flip
+      setShowMatchBorder(true);
+
       Animated.timing(flipAnimation, {
         toValue: 0.5,
         duration: d0,
@@ -715,6 +718,7 @@ export default function GameScreen({ gameType }: GameScreenProps) {
               }, Math.max(100, Math.round(100 * m)));
               ongoingTimeouts.current.push(timeout3);
               flipAnimation.setValue(0);
+              setShowMatchBorder(false);
             });
           });
         });
