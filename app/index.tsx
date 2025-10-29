@@ -117,6 +117,7 @@ interface CardItemProps {
   isSpecial?: boolean;
   cardHeight?: number;
   onPress?: () => void;
+  horizontalPadding?: number;
 }
 
 export default function Home() {
@@ -137,6 +138,10 @@ export default function Home() {
   const isLandscapeMode = isLandscape(contentWidth, screenDimensions.height);
   const gridConfig = getGridConfig(contentWidth, screenDimensions.height);
   const { LEFT, RIGHT, COL_GAP, ROW_GAP, COLUMNS, SQUARE_SIZE } = gridConfig;
+  const safeLeft = Number.isFinite(LEFT) ? LEFT : 0;
+  const safeRight = Number.isFinite(RIGHT) ? RIGHT : 0;
+  const containerPadding = Math.min(safeLeft, safeRight);
+  const cardTextPadding = Math.max(16, Math.min(containerPadding, 32));
 
   const items: Item[] = [
     { title: t('tabs.matchPictures'),  color: '#279095', image: 'match-pictures', route: '/match-pictures' },
@@ -191,6 +196,7 @@ export default function Home() {
                 item={it} 
                 isSpecial={stretchFull} 
                 cardHeight={height} 
+                horizontalPadding={cardTextPadding}
                 onPress={() => handleCardPress(it.route)}
               />
             </View>
@@ -247,12 +253,15 @@ export default function Home() {
 }
 
 /** Kart içeriği */
-function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
+function CardItem({ item, isSpecial, cardHeight, onPress, horizontalPadding }: CardItemProps) {
+  const effectivePadding = horizontalPadding ?? (isTablet() ? 24 : 16);
   if (isSpecial) {
+    const iconWidth = isTablet() ? 149 : 104;
+    const leftPadding = Math.min(effectivePadding, Math.floor(iconWidth * 0.3));
     // special row: left colored icon box + black text on right
     return (
       <Pressable 
-        style={styles.specialRow} 
+        style={[styles.specialRow, { paddingRight: effectivePadding }]} 
         onPress={onPress}
         android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
       >
@@ -268,7 +277,22 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
             style={styles.specialIcon} 
           />
         </View>
-        <SFProText weight="semibold" style={[styles.specialText, { fontSize: isTablet() ? 40 : 24 }]}>{item.title}</SFProText>
+        <SFProText
+          weight="semibold"
+          style={[
+            styles.specialText,
+            {
+              fontSize: isTablet() ? 40 : 24,
+              paddingLeft: leftPadding,
+              paddingRight: effectivePadding,
+            },
+          ]}
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
+          {item.title}
+        </SFProText>
       </Pressable>
     );
   }
@@ -303,6 +327,7 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
         styles.textContainer, 
         { 
           backgroundColor: item.color,
+          paddingHorizontal: effectivePadding,
           height: cardHeight ? 
             (isTablet() 
               ? (cardHeight * TABLET_TEXT_BAR_RATIO) 
@@ -310,7 +335,15 @@ function CardItem({ item, isSpecial, cardHeight, onPress }: CardItemProps) {
             42
         }
       ]}>
-        <SFProText weight="semibold" style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]} numberOfLines={1}>{item.title}</SFProText>
+        <SFProText
+          weight="semibold"
+          style={[styles.text, { fontSize: isTablet() ? 24 : 18 }]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.8}
+        >
+          {item.title}
+        </SFProText>
       </View>
     </Pressable>
   );
@@ -385,6 +418,5 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     flex: 1,
-    marginLeft: -60,
   },
 });
