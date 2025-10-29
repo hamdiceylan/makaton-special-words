@@ -1,5 +1,5 @@
 import { useFocusEffect, useNavigation } from 'expo-router';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
@@ -37,6 +37,15 @@ interface GameCard {
   isMatched: boolean;
   translations?: { [locale: string]: string };
 }
+
+const shuffleArray = <T,>(items: T[]): T[] => {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
 
 interface GameState {
   level: number;
@@ -98,16 +107,30 @@ export default function GameScreen({ gameType }: GameScreenProps) {
 
   // Playable list helper: exclude silent words in sound games when TTS is off
   const isSoundGame = gameType === 'sound-to-picture' || gameType === 'sound-to-word';
-  const getPlayableBaseList = useCallback(() => {
+  const playableBaseList = useMemo(() => {
     let base: any[] = wordList;
     if (isSoundGame && !settings.textToSpeech) {
       base = base.filter((w: any) => Boolean(w.sound));
     }
+
     if (shuffleMode === 'all') {
-      base = [...base].sort(() => Math.random() - 0.5);
+      const seen = new Set<string>();
+      const uniqueItems: any[] = [];
+      base.forEach((item: any) => {
+        if (!item) return;
+        const key = `${(item.text || '').toLowerCase()}::${item.image || ''}::${item.sound || ''}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniqueItems.push(item);
+        }
+      });
+      return shuffleArray(uniqueItems);
     }
-    return base;
+
+    return [...base];
   }, [wordList, shuffleMode, settings.textToSpeech, isSoundGame]);
+
+  const getPlayableBaseList = useCallback(() => playableBaseList, [playableBaseList]);
 
   // Switch control for accessibility
   const switchControl = useSwitchControl({
@@ -260,6 +283,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       
       if (shuffleMode === 'page') {
         currentGroup = [...currentGroup].sort(() => Math.random() - 0.5);
+      } else if (shuffleMode === 'all') {
+        currentGroup = shuffleArray(currentGroup);
       }
 
       if (currentGroup.length === 0) {
@@ -816,7 +841,8 @@ export default function GameScreen({ gameType }: GameScreenProps) {
       
       if (settings.automatic) {
         const newStart = currentGroupStart + cardsPerPage;
-        if (newStart < wordList.length) {
+        const baseLength = getPlayableBaseList().length;
+        if (newStart < baseLength) {
           cardTranslateX.stopAnimation();
           cardTranslateY.stopAnimation();
           cardScale.stopAnimation();
