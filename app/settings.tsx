@@ -167,6 +167,12 @@ export default function Settings() {
           type: 'toggle',
           value: settings.enableDebugging,
         },
+        {
+          id: 'childSafetyGate',
+          title: t('settings.childSafetyGate'),
+          type: 'toggle',
+          value: settings.childSafetyGate,
+        },
       ],
     },
     {

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Appearance, Image, Platform, Pressable, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomAlertDialog from '../src/components/CustomAlertDialog';
-import { SettingsProvider } from '../src/contexts/SettingsContext';
+import { SettingsProvider, useSettings } from '../src/contexts/SettingsContext';
 import '../src/i18n/i18n';
 import { JostText } from '../src/theme/typography';
 
@@ -14,12 +14,17 @@ function RootLayoutContent() {
   const router = useRouter();
   const { t } = useTranslation();
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
+  const { settings } = useSettings();
 
   useEffect(() => {
     Appearance.setColorScheme('light');
   }, []);
 
   const handleParentLock = () => {
+    if (!settings.childSafetyGate) {
+      router.push("/settings");
+      return;
+    }
     setShowParentLockDialog(true);
   };
 
@@ -284,7 +289,7 @@ function RootLayoutContent() {
       </Stack>
 
       <CustomAlertDialog
-        visible={showParentLockDialog}
+        visible={settings.childSafetyGate && showParentLockDialog}
         onCancel={() => setShowParentLockDialog(false)}
         onSuccess={handleSuccess}
       />

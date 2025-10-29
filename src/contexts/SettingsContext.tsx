@@ -83,6 +83,7 @@ interface SettingsContextType {
     enableEditing: boolean;
     enableReward: boolean;
     enableDebugging: boolean;
+    childSafetyGate: boolean;
   };
   toggleSetting: (key: keyof SettingsContextType['settings']) => void;
   // Word list management
@@ -146,6 +147,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     enableEditing: true,
     enableReward: true,
     enableDebugging: false,
+    childSafetyGate: true,
   });
 
   // Word list management

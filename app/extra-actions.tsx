@@ -59,11 +59,15 @@ export default function ExtraActionsScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { resetWordList, isWordListEdited } = useSettings();
+  const { resetWordList, isWordListEdited, settings } = useSettings();
 
   const [showParentLockDialog, setShowParentLockDialog] = useState(false);
 
   const handleParentLock = () => {
+    if (!settings.childSafetyGate) {
+      router.push("/settings");
+      return;
+    }
     setShowParentLockDialog(true);
   };
 
@@ -90,7 +94,7 @@ export default function ExtraActionsScreen() {
         </Pressable>
       ),
     });
-  }, [navigation]);
+  }, [navigation, settings.childSafetyGate]);
 
   const handleViewDocumentation = () => {
     Alert.alert(t('documentation.title'), t('extraActions.viewDocumentation'));
@@ -180,7 +184,7 @@ export default function ExtraActionsScreen() {
       </ScrollView>
 
       <CustomAlertDialog
-              visible={showParentLockDialog}
+              visible={settings.childSafetyGate && showParentLockDialog}
               onCancel={() => setShowParentLockDialog(false)}
               onSuccess={handleSuccess}
       />
